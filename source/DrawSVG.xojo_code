@@ -1,5 +1,24 @@
 #tag Module
 Protected Module DrawSVG
+	#tag Method, Flags = &h21
+		Private Function determineColor(info As String) As Color
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
+		  Dim col As Color
+		  Static ColorTable As new Dictionary("lime" : &c00ff00)
+		  
+		  col = &c000000
+		  
+		  if ColorTable.HasKey(Lowercase(Trim(info))) then
+		    col = ColorTable.Value(Lowercase(Trim(info)))
+		  end if
+		  
+		  return col
+		  
+		End Function
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub DrawSVG(Extends g As Graphics, svg As String, x As Integer, y As Integer)
 		  ' This project is a {Zoclee}™ open source initiative.
@@ -75,14 +94,14 @@ Protected Module DrawSVG
 		    // fill circle
 		    
 		    if fill <> "" then
-		      g.ForeColor = &cff0000
+		      g.ForeColor = determineColor(fill)
 		      g.FillOval (cx - r), (cy - r), r * 2, r * 2
 		    end if
 		    
 		    // stroke circle
 		    
 		    if stroke <> "" then
-		      g.ForeColor = &c0000ff
+		      g.ForeColor = determineColor(stroke)
 		      g.DrawOval (cx - r), (cy - r), r * 2, r * 2
 		    end if
 		    
