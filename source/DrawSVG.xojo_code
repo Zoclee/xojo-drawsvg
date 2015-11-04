@@ -95,14 +95,14 @@ Protected Module DrawSVG
 		    
 		    if fill <> "" then
 		      g.ForeColor = determineColor(fill)
-		      g.FillOval (cx - r), (cy - r), r * 2, r * 2
+		      g.FillOval (x + cx - r), (y + cy - r), r * 2, r * 2
 		    end if
 		    
 		    // stroke circle
 		    
 		    if stroke <> "" then
 		      g.ForeColor = determineColor(stroke)
-		      g.DrawOval (cx - r), (cy - r), r * 2, r * 2
+		      g.DrawOval (x + cx - r), (y + cy - r), r * 2, r * 2
 		    end if
 		    
 		  end if
