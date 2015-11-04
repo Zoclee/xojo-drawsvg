@@ -6,7 +6,8 @@ Protected Module DrawSVG
 		  ' www.zoclee.com
 		  
 		  Dim col As Color
-		  Static ColorTable As new Dictionary("lime" : &c00ff00)
+		  Static ColorTable As new Dictionary("aliceblue" : &cf0f8ff, "antiquewhite" : &cfaebd7, "aqua" : &c00ffff, _
+		  "lime" : &c00ff00)
 		  
 		  col = &c000000
 		  
