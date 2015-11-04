@@ -353,7 +353,8 @@ End
 	#tag ViewProperty
 		Name="SvgXML"
 		Group="Behavior"
-		Type="Integer"
+		Type="String"
+		EditorType="MultiLineEditor"
 	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Title"

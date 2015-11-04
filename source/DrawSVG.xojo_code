@@ -31,6 +31,9 @@ Protected Module DrawSVG
 		  
 		  select case node.Name
 		    
+		  case "circle"
+		    render_circle(node, g, x, y)
+		    
 		  case "svg"
 		    render_svg(node, g, x, y)
 		    
@@ -46,6 +49,44 @@ Protected Module DrawSVG
 		      MsgBox "Unknown element: " + node.Name
 		    end if
 		  #endif
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub render_circle(node As XmlNode, g As Graphics, x As Integer, y As Integer)
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
+		  Dim cx As Double
+		  Dim cy As Double
+		  Dim r As Double
+		  Dim fill As String
+		  Dim stroke As String
+		  
+		  cx = Val(node.GetAttribute("cx"))
+		  cy = Val(node.GetAttribute("cy"))
+		  r = Val(node.GetAttribute("r"))
+		  fill = node.GetAttribute("fill")
+		  stroke = node.GetAttribute("fill")
+		  
+		  if r > 0 then
+		    
+		    // fill circle
+		    
+		    if fill <> "" then
+		      g.ForeColor = &cff0000
+		      g.FillOval (cx - r), (cy - r), r * 2, r * 2
+		    end if
+		    
+		    // stroke circle
+		    
+		    if stroke <> "" then
+		      g.ForeColor = &c0000ff
+		      g.DrawOval (cx - r), (cy - r), r * 2, r * 2
+		    end if
+		    
+		  end if
 		  
 		End Sub
 	#tag EndMethod

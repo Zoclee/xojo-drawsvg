@@ -33,6 +33,6 @@ DefaultEncoding=&h0
 AppIcon=DrawSVG.xojo_resources;&h0
 OSXBundleID=com.zoclee.drawsvg
 DebuggerCommandLine=
-UseGDIPlus=False
+UseGDIPlus=True
 UseBuildsFolder=True
 IsWebProject=False
