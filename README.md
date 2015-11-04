@@ -11,6 +11,6 @@ Simply copy the DrawSVG module from the project in the [source folder](https://g
 Example Code
 ------------
 
-Sub Paint(g As Graphics, areas() As REALbasic.Rect)
-  g.DrawSVG "Some SVG XML", 100, 100
-End Sub
+	Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		g.DrawSVG "Some SVG XML", 100, 100
+	End Sub
