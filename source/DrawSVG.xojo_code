@@ -55,7 +55,14 @@ Protected Module DrawSVG
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
-		  // todo
+		  Dim i As Integer
+		  
+		  i = 0
+		  while i <= node.ChildCount
+		    renderNode node.Child(i), g, x, y
+		    i = i + 1
+		  wend
+		  
 		End Sub
 	#tag EndMethod
 
