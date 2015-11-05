@@ -293,14 +293,12 @@ Protected Module DrawSVG
 		  stroke = style.LookupString("stroke", "")
 		  strokeWidth = style.LookupDouble("stroke-width", 1)
 		  
-		  if style.HasName("fill") then
-		    if fill <> "none" then
-		      g.ForeColor = determineColor(fill)
-		      g.FillRect xOffset + x, _
-		      yOffset + y, _
-		      width, _
-		      height
-		    end if
+		  if fill <> "none" then
+		    g.ForeColor = determineColor(fill)
+		    g.FillRect xOffset + x, _
+		    yOffset + y, _
+		    width, _
+		    height
 		  end if
 		  
 		  if (stroke <> "none") and (stroke <> "") then
@@ -339,23 +337,34 @@ Protected Module DrawSVG
 		  
 		  Dim style As JSONItem
 		  Dim textStr As String
+		  Dim x As Double
+		  Dim y As Double
+		  Dim fill As String
 		  
 		  style = buildStyleItem(node)
 		  
-		  g.ForeColor = determineColor(style.Lookup("fill", "000000"))
-		  g.TextFont = style.Lookup("font-family", "Arial")
-		  g.TextSize = style.Lookup("font-size", "")
+		  x = style.LookupDouble("x")
+		  y = style.LookupDouble("y")
+		  fill = style.LookupString("fill", "#000000")
 		  
-		  textStr = ""
-		  if node.FirstChild <> nil then
-		    if node.FirstChild.Name = "#text" then
-		      textStr = Trim(node.FirstChild.Value)
+		  if fill <> "none" then
+		    
+		    g.ForeColor = determineColor(fill)
+		    g.TextFont = style.LookupString("font-family", "Arial") 
+		    g.TextSize = style.LookupDouble("font-size", 0) 
+		    
+		    textStr = ""
+		    if node.FirstChild <> nil then
+		      if node.FirstChild.Name = "#text" then
+		        textStr = Trim(node.FirstChild.Value)
+		      end if
 		    end if
+		    
+		    g.DrawString textStr, _
+		    xOffset + x, _
+		    yOffset + y 
+		    
 		  end if
-		  
-		  g.DrawString textStr, _
-		  xOffset + Val(style.Lookup("x", "")), _
-		  yOffset + Val(style.Lookup("y", "")) 
 		End Sub
 	#tag EndMethod
 
