@@ -138,32 +138,6 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function parseStyle(style As String) As JSONItem
-		  ' This project is a {Zoclee}™ open source initiative.
-		  ' www.zoclee.com
-		  
-		  Dim result as new JSONItem("{}")
-		  Dim styleArr() As String
-		  Dim itemArr() As String
-		  Dim i As Integer
-		  
-		  styleArr = style.Split(";")
-		  
-		  i = 0
-		  while i <= styleArr.Ubound
-		    itemArr = styleArr(i).Split(":")
-		    if itemArr.Ubound = 1 then
-		      result.Value(itemArr(0).Lowercase) = itemArr(1)
-		    end if
-		    i = i + 1
-		  wend
-		  
-		  return result
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub renderNode(node As XmlNode, g As Graphics, xOffset As Integer, yOffset As Integer)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
