@@ -30,7 +30,12 @@ Protected Module DrawSVG
 		  "oldlace" : &cfdf5e6, "olive" : &c808000, "olivedrab" : &c6b8e23, "orange" : &cffa500, "orangered" : &cff4500, "orchid" : &cda70d6, _
 		  "palegoldenrod" : &ceee8aa, "palegreen" : &c98fb98, "paleturquoise" : &cafeeee, "palevioletred" : &cdb7093, _
 		  "papayawhip" : &cffefd5, "peachpuff" : &cffdab9, "peru" : &ccd853f, "pink" : &cffc0cb, "plum" : &cdda0dd, _
-		  "powderblue" : &cb0e0e6, "purple" : &c800080)
+		  "powderblue" : &cb0e0e6, "purple" : &c800080, "red" : &cff0000, "rosybrown" : &cbc8f8f, "royalblue" : &c4169e1, _
+		  "saddlebrown" : &c8b4513, "salmon" : &cfa8072, "sandybrown" : &cf4a460, "seagreen" : &c2e8b57, "seashell" : &cfff5ee, _
+		  "sienna" : &ca0522d, "silver" : &cc0c0c0, "skyblue" : &c87ceeb, "slateblue" : &c6a5acd, "slategray" : &c708090, _
+		  "slategrey" : &c708090, "snow" : &cfffafa, "springgreen" : &c00ff7f, "steelblue" : &c4682b4, "tan" : &cd2b4bc, "teal" : &c008080, _
+		  "thistle" : &cd8bfd8, "tomato" : &cff6347, "turquoise" : &c40e0d0, "violet" : &cee82ee, "wheat" : &cf5deb3, "white" : &cffffff, _
+		  "whitesmoke" : &cf5f5f5, "yellow" : &cffff00, "yellowgreen" : &c9acd32)
 		  
 		  col = &c000000
 		  
@@ -50,15 +55,19 @@ Protected Module DrawSVG
 		  
 		  Dim xdoc As XmlDocument
 		  
-		  try
+		  if Len(svg) > 0 then
 		    
-		    xdoc = new XmlDocument(svg)
-		    renderNode(xdoc.FirstChild, g, x, y)
+		    try
+		      
+		      xdoc = new XmlDocument(svg)
+		      renderNode(xdoc.FirstChild, g, x, y)
+		      
+		    catch
+		      // invalid xml, so we won't be rendering anything
+		      
+		    end try
 		    
-		  catch
-		    // invalid xml, so we won't be rendering anything
-		    
-		  end try
+		  end if
 		  
 		End Sub
 	#tag EndMethod
