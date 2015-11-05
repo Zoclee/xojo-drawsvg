@@ -11,7 +11,7 @@
   </text>
 
   <text x="100" y="30" 
-        font-family="Arial" font-size="20" fill="green" >
+        font-family="Courier New" font-size="20" fill="green" >
     ABC...
   </text>  
   
