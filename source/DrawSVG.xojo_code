@@ -138,6 +138,24 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function LookupDouble(Extends Item As JSONItem, Name As String, DefaultValue As Double = 0) As Double
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
+		  Dim result As Double
+		  
+		  if Item.HasName(Name) then
+		    result = Val(Item.Value(Name))
+		  else
+		    result = DefaultValue
+		  end if
+		  
+		  return result
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub renderNode(node As XmlNode, g As Graphics, xOffset As Integer, yOffset As Integer)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
@@ -188,8 +206,13 @@ Protected Module DrawSVG
 		  ' www.zoclee.com
 		  
 		  Dim style As JSONItem
+		  Dim cx As Double
+		  Dim cy As Double
+		  Dim r As Double
 		  
 		  style = buildStyleItem(node)
+		  
+		  cx = style.LookupDouble("cx")
 		  
 		  if Val(style.Lookup("r", "")) > 0 then
 		    
