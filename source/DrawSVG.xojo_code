@@ -1,6 +1,48 @@
 #tag Module
 Protected Module DrawSVG
 	#tag Method, Flags = &h21
+		Private Function buildStyleItem(node As XmlNode) As JSONItem
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
+		  Dim i As Integer
+		  Dim j As Integer
+		  Dim xAttr As XmlAttribute
+		  Dim result as new JSONItem("{}")
+		  Dim styleArr() As String
+		  Dim itemArr() As String
+		  
+		  i = 0
+		  while i < node.AttributeCount
+		    xAttr = node.GetAttributeNode(i)
+		    
+		    if xAttr.Name = "style" then
+		      
+		      // process style attribute
+		      
+		      styleArr = node.GetAttribute(xAttr.Name).Split(";")
+		      j = 0
+		      while j <= styleArr.Ubound
+		        itemArr = styleArr(j).Split(":")
+		        if itemArr.Ubound = 1 then
+		          result.Value(itemArr(0).Lowercase) = itemArr(1)
+		        end if
+		        j = j + 1
+		      wend
+		      
+		    else
+		      result.Value(xAttr.Name.Lowercase) = node.GetAttribute(xAttr.Name)
+		    end if
+		    
+		    i = i + 1
+		  wend
+		  
+		  return result
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Function colorFromHex(s As String) As Color
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
@@ -216,6 +258,8 @@ Protected Module DrawSVG
 		  Dim x As Double
 		  Dim y As Double
 		  Dim style As JSONItem
+		  
+		  style = buildStyleItem(node)
 		  
 		  width = Val(node.GetAttribute("width"))
 		  height = Val(node.GetAttribute("height"))
