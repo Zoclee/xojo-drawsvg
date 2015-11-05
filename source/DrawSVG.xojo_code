@@ -1,7 +1,30 @@
 #tag Module
 Protected Module DrawSVG
 	#tag Method, Flags = &h21
-		Private Function determineColor(info As String) As Color
+		Private Function colorFromHex(s As String) As Color
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
+		  Dim result As Color
+		  Dim colVariant As Variant
+		  Dim tmpStr As String
+		  
+		  if Left(s, 1) = "#" then
+		    tmpStr = "&c" + Right(s, Len(s) - 1)
+		  else
+		    tmpStr = "&c" + s
+		  end if
+		  
+		  colVariant = tmpStr
+		  result = colVariant.ColorValue
+		  
+		  return result
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function determineColor(s As String) As Color
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
@@ -37,10 +60,10 @@ Protected Module DrawSVG
 		  "thistle" : &cd8bfd8, "tomato" : &cff6347, "turquoise" : &c40e0d0, "violet" : &cee82ee, "wheat" : &cf5deb3, "white" : &cffffff, _
 		  "whitesmoke" : &cf5f5f5, "yellow" : &cffff00, "yellowgreen" : &c9acd32)
 		  
-		  col = &c000000
-		  
-		  if ColorTable.HasKey(Lowercase(Trim(info))) then
-		    col = ColorTable.Value(Lowercase(Trim(info)))
+		  if ColorTable.HasKey(Lowercase(Trim(s))) then
+		    col = ColorTable.Value(Lowercase(Trim(s)))
+		  else
+		    col = colorFromHex(s)
 		  end if
 		  
 		  return col
@@ -190,7 +213,7 @@ Protected Module DrawSVG
 		  style = parseStyle(node.GetAttribute("style"))
 		  
 		  if style.HasName("fill") then
-		    g.ForeColor = &c000000
+		    g.ForeColor = determineColor(style.Value("fill"))
 		    g.FillRect (xOffset + x), (yOffset + y), width, height
 		  end if
 		End Sub

@@ -31,7 +31,7 @@ Begin Window frmMain
       AcceptTabs      =   False
       AutoDeactivate  =   True
       Backdrop        =   0
-      DoubleBuffer    =   False
+      DoubleBuffer    =   True
       Enabled         =   True
       EraseBackground =   True
       Height          =   346
