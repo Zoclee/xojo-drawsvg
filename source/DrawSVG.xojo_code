@@ -291,7 +291,7 @@ Protected Module DrawSVG
 		  
 		  g.DrawString textStr, _
 		  xOffset + Val(style.Lookup("x", "")), _
-		  yOffset + Val(style.Lookup("y", ""))
+		  yOffset + Val(style.Lookup("y", "")) - g.TextAscent
 		  
 		End Sub
 	#tag EndMethod
