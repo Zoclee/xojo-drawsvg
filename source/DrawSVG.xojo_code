@@ -132,6 +132,9 @@ Protected Module DrawSVG
 		  
 		  select case node.Name
 		    
+		  case "#comment"
+		    // ignore xml comments
+		    
 		  case "circle"
 		    render_circle(node, g, xOffset, yOffset)
 		    
