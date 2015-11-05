@@ -6,7 +6,7 @@ A module that extends the Graphics object with a DrawSVG method.
 Installation
 ------------
 
-Simply copy the DrawSVG module from the project in the [source folder](https://github.com/Zoclee/xojo-drawsvg/tree/master/source) to your own project. For Windows projects you need to set the "Use GDI Plus" option to ON.
+Simply copy the DrawSVG module from the project in the [source folder](https://github.com/Zoclee/xojo-drawsvg/tree/master/source) to your own project. For Windows projects you need to switch on the "Use GDI Plus" option.
 
 Example Code
 ------------
