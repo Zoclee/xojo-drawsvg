@@ -253,30 +253,26 @@ Protected Module DrawSVG
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
-		  Dim width As Double
-		  Dim height As Double
-		  Dim x As Double
-		  Dim y As Double
 		  Dim style As JSONItem
 		  
 		  style = buildStyleItem(node)
 		  
-		  width = Val(node.GetAttribute("width"))
-		  height = Val(node.GetAttribute("height"))
-		  x = Val(node.GetAttribute("x"))
-		  y = Val(node.GetAttribute("y"))
-		  style = parseStyle(node.GetAttribute("style"))
-		  
 		  if style.HasName("fill") then
 		    g.ForeColor = determineColor(style.Value("fill"))
-		    g.FillRect (xOffset + x), (yOffset + y), width, height
+		    g.FillRect xOffset + Val(style.Lookup("x", "")), _
+		    yOffset + Val(style.Lookup("y", "")), _
+		    Val(style.Lookup("width", "")), _
+		    Val(style.Lookup("height", ""))
 		  end if
 		  
 		  if style.HasName("stroke") then
 		    g.ForeColor = determineColor(style.Value("stroke"))
 		    g.PenWidth = Val(style.Lookup("stroke-width", "1"))
 		    g.PenHeight =g.PenWidth
-		    g.DrawRect (xOffset + x), (yOffset + y), width, height
+		    g.DrawRect xOffset + Val(style.Lookup("x", "")), _
+		    yOffset + Val(style.Lookup("y", "")), _
+		    Val(style.Lookup("width", "")), _
+		    Val(style.Lookup("height", ""))
 		  end if
 		  
 		End Sub
