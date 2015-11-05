@@ -229,6 +229,7 @@ Protected Module DrawSVG
 		  Dim r As Double
 		  Dim fill As String
 		  Dim stroke As String
+		  Dim strokeWidth As Double
 		  
 		  style = buildStyleItem(node)
 		  
@@ -237,6 +238,7 @@ Protected Module DrawSVG
 		  r = style.LookupDouble("r")
 		  fill = style.LookupString("fill", "#000000")
 		  stroke = style.LookupString("stroke", "")
+		  strokeWidth = style.LookupDouble("stroke-width", 1)
 		  
 		  if r > 0 then
 		    
@@ -254,8 +256,8 @@ Protected Module DrawSVG
 		    
 		    if (stroke <> "none") and (stroke <> "") then
 		      g.ForeColor = determineColor(stroke)
-		      g.PenWidth = 1
-		      g.PenHeight =g.PenWidth
+		      g.PenWidth = strokeWidth
+		      g.PenHeight = g.PenWidth
 		      g.DrawOval xOffset + cx - r, _
 		      yOffset + cy - r, _
 		      r * 2, _
