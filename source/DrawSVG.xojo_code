@@ -193,6 +193,9 @@ Protected Module DrawSVG
 		  case "desc"
 		    // we ignore these tags
 		    
+		  case "ellipse"
+		    render_ellipse(node, g, xOffset, yOffset)
+		    
 		  case "rect"
 		    render_rect(node, g, xOffset, yOffset)
 		    
@@ -262,6 +265,59 @@ Protected Module DrawSVG
 		      yOffset + cy - r, _
 		      r * 2, _
 		      r * 2
+		    end if
+		    
+		  end if
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub render_ellipse(node As XmlNode, g As Graphics, xOffset As Integer, yOffset As Integer)
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
+		  Dim style As JSONItem
+		  Dim cx As Double
+		  Dim cy As Double
+		  Dim rx As Double
+		  Dim ry As Double
+		  Dim fill As String
+		  Dim stroke As String
+		  Dim strokeWidth As Double
+		  
+		  style = buildStyleItem(node)
+		  
+		  cx = style.LookupDouble("cx")
+		  cy = style.LookupDouble("cy")
+		  rx = style.LookupDouble("rx")
+		  ry = style.LookupDouble("ry")
+		  fill = style.LookupString("fill", "#000000")
+		  stroke = style.LookupString("stroke", "")
+		  strokeWidth = style.LookupDouble("stroke-width", 1)
+		  
+		  if (rx > 0) and (ry > 0) then
+		    
+		    // fill circle
+		    
+		    if fill <> "none" then
+		      g.ForeColor = determineColor(fill)
+		      g.FillOval xOffset + cx - rx, _
+		      yOffset + cy - ry, _
+		      rx * 2, _
+		      ry * 2
+		    end if
+		    
+		    // stroke circle
+		    
+		    if (stroke <> "none") and (stroke <> "") then
+		      g.ForeColor = determineColor(stroke)
+		      g.PenWidth = strokeWidth
+		      g.PenHeight = g.PenWidth
+		      g.DrawOval xOffset + cx - rx, _
+		      yOffset + cy - ry, _
+		      rx * 2, _
+		      ry * 2
 		    end if
 		    
 		  end if
