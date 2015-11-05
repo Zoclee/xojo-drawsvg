@@ -213,17 +213,19 @@ Protected Module DrawSVG
 		  style = buildStyleItem(node)
 		  
 		  cx = style.LookupDouble("cx")
+		  cy = style.LookupDouble("cy")
+		  r = style.LookupDouble("r")
 		  
-		  if Val(style.Lookup("r", "")) > 0 then
+		  if r > 0 then
 		    
 		    // fill circle
 		    
 		    if style.HasName("fill") then
 		      g.ForeColor = determineColor(style.Value("fill"))
-		      g.FillOval xOffset + Val(style.Lookup("cx", "")) - Val(style.Lookup("r", "")), _
-		      yOffset + Val(style.Lookup("cy", "")) - Val(style.Lookup("r", "")), _
-		      Val(style.Lookup("r", "")) * 2, _
-		      Val(style.Lookup("r", "")) * 2
+		      g.FillOval xOffset + cx - r, _
+		      yOffset + cy - r, _
+		      r * 2, _
+		      r * 2
 		    end if
 		    
 		    // stroke circle
@@ -232,10 +234,10 @@ Protected Module DrawSVG
 		      g.ForeColor = determineColor(style.Value("stroke"))
 		      g.PenWidth = 1
 		      g.PenHeight =g.PenWidth
-		      g.DrawOval xOffset + Val(style.Lookup("cx", "")) - Val(style.Lookup("r", "")), _
-		      yOffset + Val(style.Lookup("cy", "")) - Val(style.Lookup("r", "")), _
-		      Val(style.Lookup("r", "")) * 2, _
-		      Val(style.Lookup("r", "")) * 2
+		      g.DrawOval xOffset + cx - r, _
+		      yOffset + cy - r, _
+		      r * 2, _
+		      r * 2
 		    end if
 		    
 		  end if
