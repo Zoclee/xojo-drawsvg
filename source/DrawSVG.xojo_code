@@ -228,6 +228,7 @@ Protected Module DrawSVG
 		  Dim cy As Double
 		  Dim r As Double
 		  Dim fill As String
+		  Dim stroke As String
 		  
 		  style = buildStyleItem(node)
 		  
@@ -235,6 +236,7 @@ Protected Module DrawSVG
 		  cy = style.LookupDouble("cy")
 		  r = style.LookupDouble("r")
 		  fill = style.LookupString("fill", "#000000")
+		  stroke = style.LookupString("stroke", "")
 		  
 		  if r > 0 then
 		    
@@ -250,8 +252,8 @@ Protected Module DrawSVG
 		    
 		    // stroke circle
 		    
-		    if style.HasName("stroke") then
-		      g.ForeColor = determineColor(style.Value("stroke"))
+		    if (stroke <> "none") and (stroke <> "") then
+		      g.ForeColor = determineColor(stroke)
 		      g.PenWidth = 1
 		      g.PenHeight =g.PenWidth
 		      g.DrawOval xOffset + cx - r, _
