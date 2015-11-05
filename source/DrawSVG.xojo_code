@@ -351,7 +351,7 @@ Protected Module DrawSVG
 		    
 		    g.ForeColor = determineColor(fill)
 		    g.TextFont = style.LookupString("font-family", "Arial") 
-		    g.TextSize = style.LookupDouble("font-size", 0) 
+		    g.TextSize = style.LookupDouble("font-size", 16) 
 		    
 		    textStr = ""
 		    if node.FirstChild <> nil then
