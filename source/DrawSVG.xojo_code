@@ -271,22 +271,14 @@ Protected Module DrawSVG
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
-		  Dim x As Double
-		  Dim y As Double
-		  Dim fontFamily As String
-		  Dim fontSize As Double
-		  Dim fill As String
+		  Dim style As JSONItem
 		  Dim textStr As String
 		  
-		  x = Val(node.GetAttribute("x"))
-		  y = Val(node.GetAttribute("y"))
-		  fontFamily = node.GetAttribute("font-family")
-		  fontSize = Val(node.GetAttribute("font-size"))
-		  fill = node.GetAttribute("fill")
+		  style = buildStyleItem(node)
 		  
-		  g.ForeColor = determineColor(fill)
-		  g.TextFont = fontFamily
-		  g.TextSize = fontSize
+		  g.ForeColor = determineColor(style.Lookup("fill", "000000"))
+		  g.TextFont = style.Lookup("font-family", "Arial")
+		  g.TextSize = style.Lookup("font-size", "")
 		  
 		  textStr = ""
 		  if node.FirstChild <> nil then
@@ -295,7 +287,9 @@ Protected Module DrawSVG
 		    end if
 		  end if
 		  
-		  g.DrawString textStr, (xOffset + x), (yOffset + y)
+		  g.DrawString textStr, _
+		  xOffset + Val(style.Lookup("x", "")), _
+		  yOffset + Val(style.Lookup("y", ""))
 		  
 		End Sub
 	#tag EndMethod
