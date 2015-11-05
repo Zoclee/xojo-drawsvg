@@ -230,11 +230,13 @@ Protected Module DrawSVG
 		  style = buildStyleItem(node)
 		  
 		  if style.HasName("fill") then
-		    g.ForeColor = determineColor(style.Value("fill"))
-		    g.FillRect xOffset + Val(style.Lookup("x", "")), _
-		    yOffset + Val(style.Lookup("y", "")), _
-		    Val(style.Lookup("width", "")), _
-		    Val(style.Lookup("height", ""))
+		    if style.Value("fill") <> "none" then
+		      g.ForeColor = determineColor(style.Value("fill"))
+		      g.FillRect xOffset + Val(style.Lookup("x", "")), _
+		      yOffset + Val(style.Lookup("y", "")), _
+		      Val(style.Lookup("width", "")), _
+		      Val(style.Lookup("height", ""))
+		    end if
 		  end if
 		  
 		  if style.HasName("stroke") then
