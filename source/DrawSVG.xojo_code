@@ -285,13 +285,13 @@ Protected Module DrawSVG
 		  textStr = ""
 		  if node.FirstChild <> nil then
 		    if node.FirstChild.Name = "#text" then
-		      textStr = node.FirstChild.Value
+		      textStr = Trim(node.FirstChild.Value)
 		    end if
 		  end if
 		  
 		  g.DrawString textStr, _
 		  xOffset + Val(style.Lookup("x", "")), _
-		  yOffset + Val(style.Lookup("y", "")) - g.TextAscent
+		  yOffset + Val(style.Lookup("y", "")) - g.TextHeight
 		  
 		End Sub
 	#tag EndMethod
