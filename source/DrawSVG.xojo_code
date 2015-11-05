@@ -273,27 +273,42 @@ Protected Module DrawSVG
 		  ' www.zoclee.com
 		  
 		  Dim style As JSONItem
+		  Dim x As Double
+		  Dim y As Double
+		  Dim width As Double
+		  Dim height As Double
+		  Dim fill As String
+		  Dim stroke As String
+		  Dim strokeWidth As Double
 		  
 		  style = buildStyleItem(node)
 		  
+		  x = style.LookupDouble("x")
+		  y = style.LookupDouble("y")
+		  width = style.LookupDouble("width")
+		  height = style.LookupDouble("height")
+		  fill = style.LookupString("fill", "#000000")
+		  stroke = style.LookupString("stroke", "")
+		  strokeWidth = style.LookupDouble("stroke-width", 1)
+		  
 		  if style.HasName("fill") then
-		    if style.Value("fill") <> "none" then
-		      g.ForeColor = determineColor(style.Value("fill"))
-		      g.FillRect xOffset + Val(style.Lookup("x", "")), _
-		      yOffset + Val(style.Lookup("y", "")), _
-		      Val(style.Lookup("width", "")), _
-		      Val(style.Lookup("height", ""))
+		    if fill <> "none" then
+		      g.ForeColor = determineColor(fill)
+		      g.FillRect xOffset + x, _
+		      yOffset + y, _
+		      width, _
+		      height
 		    end if
 		  end if
 		  
-		  if style.HasName("stroke") then
-		    g.ForeColor = determineColor(style.Value("stroke"))
-		    g.PenWidth = Val(style.Lookup("stroke-width", "1"))
-		    g.PenHeight =g.PenWidth
-		    g.DrawRect xOffset + Val(style.Lookup("x", "")), _
-		    yOffset + Val(style.Lookup("y", "")), _
-		    Val(style.Lookup("width", "")), _
-		    Val(style.Lookup("height", ""))
+		  if (stroke <> "none") and (stroke <> "") then
+		    g.ForeColor = determineColor(stroke)
+		    g.PenWidth = strokeWidth
+		    g.PenHeight = g.PenWidth
+		    g.DrawRect xOffset + x, _
+		    yOffset + y, _
+		    width, _
+		    height
 		  end if
 		  
 		End Sub
