@@ -213,34 +213,32 @@ Protected Module DrawSVG
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
-		  Dim cx As Double
-		  Dim cy As Double
-		  Dim r As Double
-		  Dim fill As String
-		  Dim stroke As String
+		  Dim style As JSONItem
 		  
-		  cx = Val(node.GetAttribute("cx"))
-		  cy = Val(node.GetAttribute("cy"))
-		  r = Val(node.GetAttribute("r"))
-		  fill = node.GetAttribute("fill")
-		  stroke = node.GetAttribute("fill")
+		  style = buildStyleItem(node)
 		  
-		  if r > 0 then
+		  if Val(style.Lookup("r", "")) > 0 then
 		    
 		    // fill circle
 		    
-		    if fill <> "" then
-		      g.ForeColor = determineColor(fill)
-		      g.FillOval (xOffset + cx - r), (yOffset + cy - r), r * 2, r * 2
+		    if style.HasName("fill") then
+		      g.ForeColor = determineColor(style.Value("fill"))
+		      g.FillOval xOffset + Val(style.Lookup("cx", "")) - Val(style.Lookup("r", "")), _
+		      yOffset + Val(style.Lookup("cy", "")) - Val(style.Lookup("r", "")), _
+		      Val(style.Lookup("r", "")) * 2, _
+		      Val(style.Lookup("r", "")) * 2
 		    end if
 		    
 		    // stroke circle
 		    
-		    if stroke <> "" then
-		      g.ForeColor = determineColor(stroke)
+		    if style.HasName("stroke") then
+		      g.ForeColor = determineColor(style.Value("stroke"))
 		      g.PenWidth = 1
 		      g.PenHeight =g.PenWidth
-		      g.DrawOval (xOffset + cx - r), (yOffset + cy - r), r * 2, r * 2
+		      g.DrawOval xOffset + Val(style.Lookup("cx", "")) - Val(style.Lookup("r", "")), _
+		      yOffset + Val(style.Lookup("cy", "")) - Val(style.Lookup("r", "")), _
+		      Val(style.Lookup("r", "")) * 2, _
+		      Val(style.Lookup("r", "")) * 2
 		    end if
 		    
 		  end if
