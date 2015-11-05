@@ -138,6 +138,9 @@ Protected Module DrawSVG
 		  case "circle"
 		    render_circle(node, g, xOffset, yOffset)
 		    
+		  case "desc"
+		    // we ignore this tag
+		    
 		  case "rect"
 		    render_rect(node, g, xOffset, yOffset)
 		    
