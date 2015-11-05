@@ -73,7 +73,7 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub renderNode(node As XmlNode, g As Graphics, x As Integer, y As Integer)
+		Private Sub renderNode(node As XmlNode, g As Graphics, xOffset As Integer, yOffset As Integer)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
@@ -84,10 +84,13 @@ Protected Module DrawSVG
 		  select case node.Name
 		    
 		  case "circle"
-		    render_circle(node, g, x, y)
+		    render_circle(node, g, xOffset, yOffset)
+		    
+		  case "rect"
+		    render_rect(node, g, xOffset, yOffset)
 		    
 		  case "svg"
-		    render_svg(node, g, x, y)
+		    render_svg(node, g, xOffset, yOffset)
 		    
 		  case else
 		    foundNode = false
@@ -106,7 +109,7 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub render_circle(node As XmlNode, g As Graphics, x As Integer, y As Integer)
+		Private Sub render_circle(node As XmlNode, g As Graphics, xOffset As Integer, yOffset As Integer)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
@@ -128,17 +131,38 @@ Protected Module DrawSVG
 		    
 		    if fill <> "" then
 		      g.ForeColor = determineColor(fill)
-		      g.FillOval (x + cx - r), (y + cy - r), r * 2, r * 2
+		      g.FillOval (xOffset + cx - r), (yOffset + cy - r), r * 2, r * 2
 		    end if
 		    
 		    // stroke circle
 		    
 		    if stroke <> "" then
 		      g.ForeColor = determineColor(stroke)
-		      g.DrawOval (x + cx - r), (y + cy - r), r * 2, r * 2
+		      g.DrawOval (xOffset + cx - r), (yOffset + cy - r), r * 2, r * 2
 		    end if
 		    
 		  end if
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub render_rect(node As XmlNode, g As Graphics, xOffset As Integer, yOffset As Integer)
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
+		  Dim width As Double
+		  Dim height As Double
+		  Dim x As Double
+		  Dim y As Double
+		  
+		  width = Val(node.GetAttribute("width"))
+		  height = Val(node.GetAttribute("height"))
+		  x = Val(node.GetAttribute("x"))
+		  y = Val(node.GetAttribute("y"))
+		  
+		  g.ForeColor = &c000000
+		  g.FillRect (xOffset + x), (yOffset + y), width, height
 		  
 		End Sub
 	#tag EndMethod
