@@ -187,6 +187,8 @@ Protected Module DrawSVG
 		    
 		    if stroke <> "" then
 		      g.ForeColor = determineColor(stroke)
+		      g.PenWidth = 1
+		      g.PenHeight =g.PenWidth
 		      g.DrawOval (xOffset + cx - r), (yOffset + cy - r), r * 2, r * 2
 		    end if
 		    
@@ -216,6 +218,14 @@ Protected Module DrawSVG
 		    g.ForeColor = determineColor(style.Value("fill"))
 		    g.FillRect (xOffset + x), (yOffset + y), width, height
 		  end if
+		  
+		  if style.HasName("stroke") then
+		    g.ForeColor = determineColor(style.Value("stroke"))
+		    g.PenWidth = Val(style.Lookup("stroke-width", "1"))
+		    g.PenHeight =g.PenWidth
+		    g.DrawRect (xOffset + x), (yOffset + y), width, height
+		  end if
+		  
 		End Sub
 	#tag EndMethod
 
