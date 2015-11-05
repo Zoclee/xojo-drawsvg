@@ -151,7 +151,7 @@ Protected Module DrawSVG
 		  Dim i As Integer
 		  
 		  i = 0
-		  while i <= node.ChildCount
+		  while i < node.ChildCount
 		    renderNode node.Child(i), g, x, y
 		    i = i + 1
 		  wend
