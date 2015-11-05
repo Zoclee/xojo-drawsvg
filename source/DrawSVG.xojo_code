@@ -133,19 +133,22 @@ Protected Module DrawSVG
 		  select case node.Name
 		    
 		  case "#comment"
-		    // ignore xml comments
+		    // we ignore xml comments
 		    
 		  case "circle"
 		    render_circle(node, g, xOffset, yOffset)
 		    
 		  case "desc"
-		    // we ignore this tag
+		    // we ignore these tags
 		    
 		  case "rect"
 		    render_rect(node, g, xOffset, yOffset)
 		    
 		  case "svg"
 		    render_svg(node, g, xOffset, yOffset)
+		    
+		  case "text"
+		    render_text(node, g, xOffset, yOffset)
 		    
 		  case else
 		    foundNode = false
@@ -247,6 +250,40 @@ Protected Module DrawSVG
 		    renderNode node.Child(i), g, x, y
 		    i = i + 1
 		  wend
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub render_text(node As XmlNode, g As Graphics, xOffset As Integer, yOffset As Integer)
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
+		  Dim x As Double
+		  Dim y As Double
+		  Dim fontFamily As String
+		  Dim fontSize As Double
+		  Dim fill As String
+		  Dim textStr As String
+		  
+		  x = Val(node.GetAttribute("x"))
+		  y = Val(node.GetAttribute("y"))
+		  fontFamily = node.GetAttribute("font-family")
+		  fontSize = Val(node.GetAttribute("font-size"))
+		  fill = node.GetAttribute("fill")
+		  
+		  g.ForeColor = determineColor(fill)
+		  g.TextFont = fontFamily
+		  g.TextSize = fontSize
+		  
+		  textStr = ""
+		  if node.FirstChild <> nil then
+		    if node.FirstChild.Name = "#text" then
+		      textStr = node.FirstChild.Value
+		    end if
+		  end if
+		  
+		  g.DrawString textStr, (xOffset + x), (yOffset + y)
 		  
 		End Sub
 	#tag EndMethod
