@@ -227,19 +227,21 @@ Protected Module DrawSVG
 		  Dim cx As Double
 		  Dim cy As Double
 		  Dim r As Double
+		  Dim fill As String
 		  
 		  style = buildStyleItem(node)
 		  
 		  cx = style.LookupDouble("cx")
 		  cy = style.LookupDouble("cy")
 		  r = style.LookupDouble("r")
+		  fill = style.LookupString("fill", "#000000")
 		  
 		  if r > 0 then
 		    
 		    // fill circle
 		    
-		    if style.HasName("fill") then
-		      g.ForeColor = determineColor(style.Value("fill"))
+		    if fill <> "none" then
+		      g.ForeColor = determineColor(fill)
 		      g.FillOval xOffset + cx - r, _
 		      yOffset + cy - r, _
 		      r * 2, _
