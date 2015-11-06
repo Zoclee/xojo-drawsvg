@@ -209,6 +209,9 @@ Protected Module DrawSVG
 		    case "ellipse"
 		      render_ellipse(node, g, xOffset, yOffset)
 		      
+		    case "g"
+		      render_g(node, g, xOffset, yOffset)
+		      
 		    case "line"
 		      render_line(node, g, xOffset, yOffset)
 		      
@@ -348,6 +351,22 @@ Protected Module DrawSVG
 		    end if
 		    
 		  end if
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub render_g(node As XmlNode, g As Graphics, xOffset As Integer, yOffset As Integer)
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
+		  Dim i As Integer
+		  
+		  i = 0
+		  while i < node.ChildCount
+		    renderNode node.Child(i), g, xOffset, yOffset
+		    i = i + 1
+		  wend
 		  
 		End Sub
 	#tag EndMethod
