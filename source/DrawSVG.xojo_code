@@ -212,6 +212,9 @@ Protected Module DrawSVG
 		    case "line"
 		      render_line(node, g, xOffset, yOffset)
 		      
+		    case "metadata"
+		      // we ignore these tags
+		      
 		    case "polygon"
 		      render_polygon(node, g, xOffset, yOffset)
 		      
