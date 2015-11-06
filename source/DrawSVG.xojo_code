@@ -12,6 +12,8 @@ Protected Module DrawSVG
 		  Dim styleArr() As String
 		  Dim itemArr() As String
 		  
+		  result.EscapeSlashes = false
+		  
 		  i = 0
 		  while i < node.AttributeCount
 		    xAttr = node.GetAttributeNode(i)
@@ -361,6 +363,9 @@ Protected Module DrawSVG
 		  ' www.zoclee.com
 		  
 		  Dim i As Integer
+		  Dim style As JSONItem
+		  
+		  style = buildStyleItem(node)
 		  
 		  i = 0
 		  while i < node.ChildCount
