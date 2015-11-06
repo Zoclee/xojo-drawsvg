@@ -199,6 +199,9 @@ Protected Module DrawSVG
 		  case "line"
 		    render_line(node, g, xOffset, yOffset)
 		    
+		  case "polyline"
+		    render_polyline(node, g, xOffset, yOffset)
+		    
 		  case "rect"
 		    render_rect(node, g, xOffset, yOffset)
 		    
@@ -360,6 +363,59 @@ Protected Module DrawSVG
 		    xOffset + x2, _
 		    yOffset + y2
 		  end if
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub render_polyline(node As XmlNode, g As Graphics, xOffset As Integer, yOffset As Integer)
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
+		  Dim style As JSONItem
+		  Dim fill As String
+		  Dim stroke As String
+		  Dim strokeWidth As Double
+		  Dim points() As Integer
+		  Dim tmpArr() As String
+		  Dim coord() As String
+		  Dim i As Integer
+		  
+		  style = buildStyleItem(node)
+		  
+		  points.Append 1 // sentinal value
+		  
+		  tmpArr = style.LookupString("points", "").Split(" ")
+		  i = 0
+		  while i <= tmpArr.Ubound
+		    coord = tmpArr(i).Split(",")
+		    if coord.Ubound = 1 then
+		      points.Append Val(coord(0))
+		      points.Append Val(coord(1))
+		    end if
+		    i = i + 1
+		  wend
+		  
+		  fill = style.LookupString("fill", "#000000")
+		  stroke = style.LookupString("stroke", "")
+		  strokeWidth = style.LookupDouble("stroke-width", 1)
+		  
+		  // fill polygon
+		  
+		  if fill <> "none" then
+		    g.ForeColor = determineColor(fill)
+		    g.FillPolygon points
+		  end if
+		  
+		  // stroke polygon
+		  
+		  if (stroke <> "none") and (stroke <> "") then
+		    g.ForeColor = determineColor(stroke)
+		    g.PenWidth = strokeWidth
+		    g.PenHeight = g.PenWidth
+		    g.DrawPolygon points
+		  end if
+		  
 		  
 		End Sub
 	#tag EndMethod
