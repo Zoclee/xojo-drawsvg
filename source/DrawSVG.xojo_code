@@ -119,13 +119,21 @@ Protected Module DrawSVG
 		  ' www.zoclee.com
 		  
 		  Dim xdoc As XmlDocument
+		  Dim i As Integer
 		  
 		  if Len(svg) > 0 then
 		    
 		    try
 		      
 		      xdoc = new XmlDocument(svg)
-		      renderNode(xdoc.FirstChild, g, x, y)
+		      
+		      i = 0
+		      while (i < xdoc.ChildCount) 
+		        if xdoc.Child(i).Name = "svg" then
+		          renderNode(xdoc.Child(i), g, x, y)
+		        end if
+		        i = i + 1
+		      wend
 		      
 		    catch
 		      // invalid xml, so we won't be rendering anything
