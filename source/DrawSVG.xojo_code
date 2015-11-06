@@ -1,6 +1,22 @@
 #tag Module
 Protected Module DrawSVG
 	#tag Method, Flags = &h21
+		Private Sub ApplyValues(Extends Item As JSONItem, withItem As JSONItem)
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
+		  Dim i As Integer
+		  
+		  i = 0
+		  while i < withItem.Count
+		    Item.Value(withItem.Name(i)) = withItem.Value(withItem.Name(i))
+		    i = i + 1
+		  wend
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Function buildStyleItem(node As XmlNode) As JSONItem
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
@@ -585,6 +601,7 @@ Protected Module DrawSVG
 		  ' www.zoclee.com
 		  
 		  Dim style As JSONItem
+		  Dim tspanStyle As JSONItem
 		  Dim textStr As String
 		  Dim x As Double
 		  Dim y As Double
@@ -606,6 +623,16 @@ Protected Module DrawSVG
 		    if node.FirstChild <> nil then
 		      if node.FirstChild.Name = "#text" then
 		        textStr = Trim(node.FirstChild.Value)
+		      elseif node.FirstChild.Name = "tspan" then
+		        
+		        tspanStyle = buildStyleItem(node.FirstChild)
+		        style.ApplyValues(tspanStyle)
+		        if node.FirstChild.FirstChild <> nil then
+		          if node.FirstChild.FirstChild.Name = "#text" then
+		            textStr = Trim(node.FirstChild.FirstChild.Value)
+		          end if
+		        end if
+		        
 		      end if
 		    end if
 		    
