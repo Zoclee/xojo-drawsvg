@@ -196,6 +196,9 @@ Protected Module DrawSVG
 		  case "ellipse"
 		    render_ellipse(node, g, xOffset, yOffset)
 		    
+		  case "line"
+		    render_line(node, g, xOffset, yOffset)
+		    
 		  case "rect"
 		    render_rect(node, g, xOffset, yOffset)
 		    
@@ -320,6 +323,42 @@ Protected Module DrawSVG
 		      ry * 2
 		    end if
 		    
+		  end if
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub render_line(node As XmlNode, g As Graphics, xOffset As Integer, yOffset As Integer)
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
+		  Dim style As JSONItem
+		  Dim x1 As Double
+		  Dim y1 As Double
+		  Dim x2 As Double
+		  Dim y2 As Double
+		  Dim stroke As String
+		  Dim strokeWidth As Double
+		  
+		  style = buildStyleItem(node)
+		  
+		  stroke = style.LookupString("stroke", "")
+		  strokeWidth = style.LookupDouble("stroke-width", 1)
+		  
+		  x1 = style.LookupDouble("x1") - (strokeWidth / 2)
+		  y1 = style.LookupDouble("y1") - (strokeWidth / 2)
+		  x2 = style.LookupDouble("x2") - (strokeWidth / 2)
+		  y2 = style.LookupDouble("y2") - (strokeWidth / 2)
+		  
+		  if (stroke <> "none") and (stroke <> "") then
+		    g.ForeColor = determineColor(stroke)
+		    g.PenWidth = strokeWidth
+		    g.PenHeight = g.PenWidth
+		    g.DrawLine xOffset + x1, _
+		    yOffset + y1, _
+		    xOffset + x2, _
+		    yOffset + y2
 		  end if
 		  
 		End Sub
