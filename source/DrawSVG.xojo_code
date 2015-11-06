@@ -190,42 +190,49 @@ Protected Module DrawSVG
 		  
 		  foundNode = true
 		  
-		  select case node.Name
+		  if node.Name.Left(9) = "sodipodi:" then
+		    // we ignore sodipodi tags
 		    
-		  case "#comment"
-		    // we ignore xml comments
+		  else
 		    
-		  case "circle"
-		    render_circle(node, g, xOffset, yOffset)
+		    select case node.Name
+		      
+		    case "#comment"
+		      // we ignore xml comments
+		      
+		    case "circle"
+		      render_circle(node, g, xOffset, yOffset)
+		      
+		    case "desc"
+		      // we ignore these tags
+		      
+		    case "ellipse"
+		      render_ellipse(node, g, xOffset, yOffset)
+		      
+		    case "line"
+		      render_line(node, g, xOffset, yOffset)
+		      
+		    case "polygon"
+		      render_polygon(node, g, xOffset, yOffset)
+		      
+		    case "polyline"
+		      render_polyline(node, g, xOffset, yOffset)
+		      
+		    case "rect"
+		      render_rect(node, g, xOffset, yOffset)
+		      
+		    case "svg"
+		      render_svg(node, g, xOffset, yOffset)
+		      
+		    case "text"
+		      render_text(node, g, xOffset, yOffset)
+		      
+		    case else
+		      foundNode = false
+		      
+		    end select
 		    
-		  case "desc"
-		    // we ignore these tags
-		    
-		  case "ellipse"
-		    render_ellipse(node, g, xOffset, yOffset)
-		    
-		  case "line"
-		    render_line(node, g, xOffset, yOffset)
-		    
-		  case "polygon"
-		    render_polygon(node, g, xOffset, yOffset)
-		    
-		  case "polyline"
-		    render_polyline(node, g, xOffset, yOffset)
-		    
-		  case "rect"
-		    render_rect(node, g, xOffset, yOffset)
-		    
-		  case "svg"
-		    render_svg(node, g, xOffset, yOffset)
-		    
-		  case "text"
-		    render_text(node, g, xOffset, yOffset)
-		    
-		  case else
-		    foundNode = false
-		    
-		  end select
+		  end if
 		  
 		  // we only want to display error popups when debugging
 		  
