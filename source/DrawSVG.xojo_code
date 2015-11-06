@@ -200,7 +200,7 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub renderNode(node As XmlNode, g As Graphics, xOffset As Integer, yOffset As Integer)
+		Private Sub renderNode(node As XmlNode, g As Graphics, xOffset As Double, yOffset As Double)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
@@ -270,7 +270,7 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub render_circle(node As XmlNode, g As Graphics, xOffset As Integer, yOffset As Integer)
+		Private Sub render_circle(node As XmlNode, g As Graphics, xOffset As Double, yOffset As Double)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
@@ -321,7 +321,7 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub render_ellipse(node As XmlNode, g As Graphics, xOffset As Integer, yOffset As Integer)
+		Private Sub render_ellipse(node As XmlNode, g As Graphics, xOffset As Double, yOffset As Double)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
@@ -374,7 +374,7 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub render_g(node As XmlNode, g As Graphics, xOffset As Integer, yOffset As Integer)
+		Private Sub render_g(node As XmlNode, g As Graphics, xOffset As Double, yOffset As Double)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
@@ -393,7 +393,7 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub render_line(node As XmlNode, g As Graphics, xOffset As Integer, yOffset As Integer)
+		Private Sub render_line(node As XmlNode, g As Graphics, xOffset As Double, yOffset As Double)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
@@ -429,7 +429,7 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub render_polygon(node As XmlNode, g As Graphics, xOffset As Integer, yOffset As Integer)
+		Private Sub render_polygon(node As XmlNode, g As Graphics, xOffset As Double, yOffset As Double)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
@@ -482,7 +482,7 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub render_polyline(node As XmlNode, g As Graphics, xOffset As Integer, yOffset As Integer)
+		Private Sub render_polyline(node As XmlNode, g As Graphics, xOffset As Double, yOffset As Double)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
@@ -535,7 +535,7 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub render_rect(node As XmlNode, g As Graphics, xOffset As Integer, yOffset As Integer)
+		Private Sub render_rect(node As XmlNode, g As Graphics, xOffset As Double, yOffset As Double)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
@@ -580,7 +580,7 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub render_svg(node As XmlNode, g As Graphics, x As Integer, y As Integer)
+		Private Sub render_svg(node As XmlNode, g As Graphics, x As Double, y As Double)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
@@ -596,7 +596,7 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub render_text(node As XmlNode, g As Graphics, xOffset As Integer, yOffset As Integer)
+		Private Sub render_text(node As XmlNode, g As Graphics, xOffset As Double, yOffset As Double)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
