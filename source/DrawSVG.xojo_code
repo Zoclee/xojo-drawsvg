@@ -594,7 +594,12 @@ Protected Module DrawSVG
 		    g.ForeColor = determineColor(stroke)
 		    g.PenWidth = strokeWidth
 		    g.PenHeight = g.PenWidth
-		    g.DrawPolygon points
+		    
+		    i = 3
+		    while i < points.Ubound
+		      g.DrawLine points(i - 2), points(i - 1), points(i), points(i + 1)
+		      i = i + 2
+		    wend 
 		  end if
 		  
 		  
