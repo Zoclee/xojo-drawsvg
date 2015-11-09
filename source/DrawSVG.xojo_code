@@ -392,6 +392,8 @@ Protected Module DrawSVG
 		  
 		  Dim style As JSONItem
 		  Dim matrix As JSONItem
+		  Dim element As Picture
+		  Dim eg As Graphics
 		  Dim cx As Double
 		  Dim cy As Double
 		  Dim rx As Double
@@ -413,27 +415,32 @@ Protected Module DrawSVG
 		  
 		  if (rx > 0) and (ry > 0) then
 		    
-		    // fill circle
+		    element = new Picture(rx * 2, ry * 2)
+		    eg = element.Graphics
+		    
+		    // fill
 		    
 		    if fill <> "none" then
-		      g.ForeColor = determineColor(fill)
-		      g.FillOval xOffset + cx - rx, _
-		      yOffset + cy - ry, _
+		      eg.ForeColor = determineColor(fill)
+		      eg.FillOval 0, _
+		      0, _
 		      rx * 2, _
 		      ry * 2
 		    end if
 		    
-		    // stroke circle
+		    // stroke
 		    
 		    if (stroke <> "none") and (stroke <> "") then
-		      g.ForeColor = determineColor(stroke)
-		      g.PenWidth = strokeWidth
-		      g.PenHeight = g.PenWidth
-		      g.DrawOval xOffset + cx - rx, _
-		      yOffset + cy - ry, _
+		      eg.ForeColor = determineColor(stroke)
+		      eg.PenWidth = strokeWidth
+		      eg.PenHeight = g.PenWidth
+		      eg.DrawOval 0, _
+		      0, _
 		      rx * 2, _
 		      ry * 2
 		    end if
+		    
+		    g.DrawPicture element, xOffset + cx - rx, yOffset + cy - ry
 		    
 		  end if
 		  
@@ -721,6 +728,8 @@ Protected Module DrawSVG
 		  x = style.LookupDouble("x")
 		  y = style.LookupDouble("y")
 		  fill = style.LookupString("fill", "#000000")
+		  
+		  // fill
 		  
 		  if fill <> "none" then
 		    
