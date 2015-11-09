@@ -61,55 +61,55 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function buildTransform(transform As String) As JSONItem
+		Private Function buildTransformMatrix(transform As String) As JSONItem
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
-		  Dim result as new JSONItem("[]")
-		  Dim pos As Integer
-		  Dim openBracket As Integer
-		  Dim closeBracket As Integer
-		  Dim functionName As String
-		  Dim parms As String
-		  Dim transItem As JSONItem
-		  Dim strArr() As String
-		  
-		  pos = 0
-		  
-		  do
-		    pos = pos + 1
-		    openBracket = Instr(pos, transform, "(")
-		    if openBracket > 0 then
-		      
-		      closeBracket = Instr(openBracket, transform, ")")
-		      if closeBracket > 0 then
-		        
-		        functionName = Lowercase(Trim(Mid(transform, pos, openBracket - pos)))
-		        parms = Mid(transform, openBracket + 1, closeBracket - openBracket - 1)
-		        
-		        select case functionName
-		        case "translate"
-		          transItem = new JSONItem("{}")
-		          transItem.Value("function") = "translate"
-		          strArr = parms.Split(",")
-		          if strArr.Ubound = 1 then
-		            transItem.Value("tx") = Val(strArr(0))
-		            transItem.Value("ty") = Val(strArr(1))
-		            result.Append transItem
-		          end if
-		          
-		        end select
-		        
-		        pos = closeBracket
-		      else
-		        pos = 0
-		      end if
-		      
-		    else
-		      pos = 0
-		    end if
-		    
-		  loop until (pos >= Len(transform)) or (pos = 0)
+		  Dim result as new JSONItem("[1,0,0,1,0,0]")
+		  'Dim pos As Integer
+		  'Dim openBracket As Integer
+		  'Dim closeBracket As Integer
+		  'Dim functionName As String
+		  'Dim parms As String
+		  'Dim transItem As JSONItem
+		  'Dim strArr() As String
+		  '
+		  'pos = 0
+		  '
+		  'do
+		  'pos = pos + 1
+		  'openBracket = Instr(pos, transform, "(")
+		  'if openBracket > 0 then
+		  '
+		  'closeBracket = Instr(openBracket, transform, ")")
+		  'if closeBracket > 0 then
+		  '
+		  'functionName = Lowercase(Trim(Mid(transform, pos, openBracket - pos)))
+		  'parms = Mid(transform, openBracket + 1, closeBracket - openBracket - 1)
+		  '
+		  'select case functionName
+		  'case "translate"
+		  'transItem = new JSONItem("{}")
+		  'transItem.Value("function") = "translate"
+		  'strArr = parms.Split(",")
+		  'if strArr.Ubound = 1 then
+		  'transItem.Value("tx") = Val(strArr(0))
+		  'transItem.Value("ty") = Val(strArr(1))
+		  'result.Append transItem
+		  'end if
+		  '
+		  'end select
+		  '
+		  'pos = closeBracket
+		  'else
+		  'pos = 0
+		  'end if
+		  '
+		  'else
+		  'pos = 0
+		  'end if
+		  '
+		  'loop until (pos >= Len(transform)) or (pos = 0)
 		  
 		  return result
 		End Function
@@ -330,7 +330,7 @@ Protected Module DrawSVG
 		  ' www.zoclee.com
 		  
 		  Dim style As JSONItem
-		  Dim transform As JSONItem
+		  Dim matrix As JSONItem
 		  Dim cx As Double
 		  Dim cy As Double
 		  Dim r As Double
@@ -339,7 +339,7 @@ Protected Module DrawSVG
 		  Dim strokeWidth As Double
 		  
 		  style = buildStyleItem(node)
-		  transform = buildTransform(style.Lookup("transform", ""))
+		  matrix = buildTransformMatrix(style.Lookup("transform", ""))
 		  
 		  cx = style.LookupDouble("cx")
 		  cy = style.LookupDouble("cy")
@@ -383,7 +383,7 @@ Protected Module DrawSVG
 		  ' www.zoclee.com
 		  
 		  Dim style As JSONItem
-		  Dim transform As JSONItem
+		  Dim matrix As JSONItem
 		  Dim cx As Double
 		  Dim cy As Double
 		  Dim rx As Double
@@ -393,7 +393,7 @@ Protected Module DrawSVG
 		  Dim strokeWidth As Double
 		  
 		  style = buildStyleItem(node)
-		  transform = buildTransform(style.Lookup("transform", ""))
+		  matrix = buildTransformMatrix(style.Lookup("transform", ""))
 		  
 		  cx = style.LookupDouble("cx")
 		  cy = style.LookupDouble("cy")
@@ -438,11 +438,11 @@ Protected Module DrawSVG
 		  ' www.zoclee.com
 		  
 		  Dim style As JSONItem
-		  Dim transform As JSONItem
+		  Dim matrix As JSONItem
 		  Dim i As Integer
 		  
 		  style = buildStyleItem(node)
-		  transform = buildTransform(style.Lookup("transform", ""))
+		  matrix = buildTransformMatrix(style.Lookup("transform", ""))
 		  
 		  i = 0
 		  while i < node.ChildCount
@@ -459,7 +459,7 @@ Protected Module DrawSVG
 		  ' www.zoclee.com
 		  
 		  Dim style As JSONItem
-		  Dim transform As JSONItem
+		  Dim matrix As JSONItem
 		  Dim x1 As Double
 		  Dim y1 As Double
 		  Dim x2 As Double
@@ -468,7 +468,7 @@ Protected Module DrawSVG
 		  Dim strokeWidth As Double
 		  
 		  style = buildStyleItem(node)
-		  transform = buildTransform(style.Lookup("transform", ""))
+		  matrix = buildTransformMatrix(style.Lookup("transform", ""))
 		  
 		  stroke = style.LookupString("stroke", "")
 		  strokeWidth = style.LookupDouble("stroke-width", 1)
@@ -497,7 +497,7 @@ Protected Module DrawSVG
 		  ' www.zoclee.com
 		  
 		  Dim style As JSONItem
-		  Dim transform As JSONItem
+		  Dim matrix As JSONItem
 		  Dim fill As String
 		  Dim stroke As String
 		  Dim strokeWidth As Double
@@ -507,7 +507,7 @@ Protected Module DrawSVG
 		  Dim i As Integer
 		  
 		  style = buildStyleItem(node)
-		  transform = buildTransform(style.Lookup("transform", ""))
+		  matrix = buildTransformMatrix(style.Lookup("transform", ""))
 		  
 		  points.Append 1 // sentinal value
 		  
@@ -552,7 +552,7 @@ Protected Module DrawSVG
 		  ' www.zoclee.com
 		  
 		  Dim style As JSONItem
-		  Dim transform As JSONItem
+		  Dim matrix As JSONItem
 		  Dim fill As String
 		  Dim stroke As String
 		  Dim strokeWidth As Double
@@ -562,7 +562,7 @@ Protected Module DrawSVG
 		  Dim i As Integer
 		  
 		  style = buildStyleItem(node)
-		  transform = buildTransform(style.Lookup("transform", ""))
+		  matrix = buildTransformMatrix(style.Lookup("transform", ""))
 		  
 		  points.Append 1 // sentinal value
 		  
@@ -615,7 +615,7 @@ Protected Module DrawSVG
 		  ' www.zoclee.com
 		  
 		  Dim style As JSONItem
-		  Dim transform As JSONItem
+		  Dim matrix As JSONItem
 		  Dim x As Double
 		  Dim y As Double
 		  Dim width As Double
@@ -625,7 +625,7 @@ Protected Module DrawSVG
 		  Dim strokeWidth As Double
 		  
 		  style = buildStyleItem(node)
-		  transform = buildTransform(style.Lookup("transform", ""))
+		  matrix = buildTransformMatrix(style.Lookup("transform", ""))
 		  
 		  x = style.LookupDouble("x")
 		  y = style.LookupDouble("y")
@@ -662,11 +662,11 @@ Protected Module DrawSVG
 		  ' www.zoclee.com
 		  
 		  Dim style As JSONItem
-		  Dim transform As JSONItem
+		  Dim matrix As JSONItem
 		  Dim i As Integer
 		  
 		  style = buildStyleItem(node)
-		  transform = buildTransform(style.Lookup("transform", ""))
+		  matrix = buildTransformMatrix(style.Lookup("transform", ""))
 		  
 		  i = 0
 		  while i < node.ChildCount
@@ -683,7 +683,7 @@ Protected Module DrawSVG
 		  ' www.zoclee.com
 		  
 		  Dim style As JSONItem
-		  Dim transform As JSONItem
+		  Dim matrix As JSONItem
 		  Dim tspanStyle As JSONItem
 		  Dim textStr As String
 		  Dim x As Double
@@ -691,7 +691,7 @@ Protected Module DrawSVG
 		  Dim fill As String
 		  
 		  style = buildStyleItem(node)
-		  transform = buildTransform(style.Lookup("transform", ""))
+		  matrix = buildTransformMatrix(style.Lookup("transform", ""))
 		  
 		  x = style.LookupDouble("x")
 		  y = style.LookupDouble("y")
