@@ -577,6 +577,13 @@ Protected Module DrawSVG
 		    i = i + 1
 		  wend
 		  
+		  // add reverse polygons to prevent closing line from drawing
+		  
+		  for i = points.Ubound - 3 downto 3 step 2
+		    points.Append points(i)
+		    points.Append points(i+1)
+		  next i
+		  
 		  fill = style.LookupString("fill", "#000000")
 		  stroke = style.LookupString("stroke", "")
 		  strokeWidth = style.LookupDouble("stroke-width", 1)
@@ -595,11 +602,7 @@ Protected Module DrawSVG
 		    g.PenWidth = strokeWidth
 		    g.PenHeight = g.PenWidth
 		    
-		    i = 3
-		    while i < points.Ubound
-		      g.DrawLine points(i - 2), points(i - 1), points(i), points(i + 1)
-		      i = i + 2
-		    wend 
+		    g.DrawPolygon points
 		  end if
 		  
 		  
