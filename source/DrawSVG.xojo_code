@@ -415,15 +415,15 @@ Protected Module DrawSVG
 		  
 		  if (rx > 0) and (ry > 0) then
 		    
-		    element = new Picture(rx * 2, ry * 2)
+		    element = new Picture(rx * 2 + strokeWidth, ry * 2 + strokeWidth)
 		    eg = element.Graphics
 		    
 		    // fill
 		    
 		    if fill <> "none" then
 		      eg.ForeColor = determineColor(fill)
-		      eg.FillOval 0, _
-		      0, _
+		      eg.FillOval strokeWidth / 2, _
+		      strokeWidth / 2, _
 		      rx * 2, _
 		      ry * 2
 		    end if
@@ -433,9 +433,9 @@ Protected Module DrawSVG
 		    if (stroke <> "none") and (stroke <> "") then
 		      eg.ForeColor = determineColor(stroke)
 		      eg.PenWidth = strokeWidth
-		      eg.PenHeight = g.PenWidth
-		      eg.DrawOval 0, _
-		      0, _
+		      eg.PenHeight = eg.PenWidth
+		      eg.DrawOval strokeWidth / 2, _
+		      strokeWidth / 2, _
 		      rx * 2, _
 		      ry * 2
 		    end if
