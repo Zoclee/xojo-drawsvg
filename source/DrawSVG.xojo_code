@@ -331,6 +331,8 @@ Protected Module DrawSVG
 		  
 		  Dim style As JSONItem
 		  Dim matrix As JSONItem
+		  Dim element As Picture
+		  Dim eg As Graphics
 		  Dim cx As Double
 		  Dim cy As Double
 		  Dim r As Double
@@ -341,21 +343,25 @@ Protected Module DrawSVG
 		  style = buildStyleItem(node)
 		  matrix = buildTransformMatrix(style.Lookup("transform", ""))
 		  
-		  cx = style.LookupDouble("cx")
-		  cy = style.LookupDouble("cy")
 		  r = style.LookupDouble("r")
-		  fill = style.LookupString("fill", "#000000")
-		  stroke = style.LookupString("stroke", "")
-		  strokeWidth = style.LookupDouble("stroke-width", 1)
 		  
 		  if r > 0 then
+		    
+		    cx = style.LookupDouble("cx")
+		    cy = style.LookupDouble("cy")
+		    fill = style.LookupString("fill", "#000000")
+		    stroke = style.LookupString("stroke", "")
+		    strokeWidth = style.LookupDouble("stroke-width", 1)
+		    
+		    element = new Picture(r * 2, r * 2)
+		    eg = element.Graphics
 		    
 		    // fill circle
 		    
 		    if fill <> "none" then
-		      g.ForeColor = determineColor(fill)
-		      g.FillOval xOffset + cx - r, _
-		      yOffset + cy - r, _
+		      eg.ForeColor = determineColor(fill)
+		      eg.FillOval 0, _
+		      0, _
 		      r * 2, _
 		      r * 2
 		    end if
@@ -363,14 +369,16 @@ Protected Module DrawSVG
 		    // stroke circle
 		    
 		    if (stroke <> "none") and (stroke <> "") then
-		      g.ForeColor = determineColor(stroke)
-		      g.PenWidth = strokeWidth
-		      g.PenHeight = g.PenWidth
-		      g.DrawOval xOffset + cx - r, _
-		      yOffset + cy - r, _
+		      eg.ForeColor = determineColor(stroke)
+		      eg.PenWidth = strokeWidth
+		      eg.PenHeight = g.PenWidth
+		      eg.DrawOval 0, _
+		      0, _
 		      r * 2, _
 		      r * 2
 		    end if
+		    
+		    g.DrawPicture element, cx - r, cy - r
 		    
 		  end if
 		  
