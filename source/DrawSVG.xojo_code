@@ -706,11 +706,14 @@ Protected Module DrawSVG
 		  
 		  Dim style As JSONItem
 		  Dim matrix As JSONItem
+		  Dim element As Picture
+		  Dim eg As Graphics
 		  Dim tspanStyle As JSONItem
 		  Dim textStr As String
 		  Dim x As Double
 		  Dim y As Double
 		  Dim fill As String
+		  Dim strShape as new StringShape
 		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
@@ -720,10 +723,6 @@ Protected Module DrawSVG
 		  fill = style.LookupString("fill", "#000000")
 		  
 		  if fill <> "none" then
-		    
-		    g.ForeColor = determineColor(fill)
-		    g.TextFont = style.LookupString("font-family", "Arial") 
-		    g.TextSize = style.LookupDouble("font-size", 16) 
 		    
 		    textStr = ""
 		    if node.FirstChild <> nil then
@@ -742,9 +741,30 @@ Protected Module DrawSVG
 		      end if
 		    end if
 		    
-		    g.DrawString textStr, _
-		    xOffset + x, _
-		    yOffset + y 
+		    g.TextFont = style.LookupString("font-family", "Arial")
+		    g.TextUnit = FontUnits.Pixel
+		    g.TextSize = style.LookupDouble("font-size", 16)
+		    
+		    if textStr <> "" then
+		      
+		      element = new Picture(g.StringWidth(textStr), g.TextHeight)
+		      eg = element.Graphics
+		      
+		      strShape.FillColor = determineColor(fill)
+		      strShape.TextFont = g.TextFont
+		      strShape.TextUnit = g.TextUnit
+		      strShape.TextSize = g.TextSize
+		      strShape.HorizontalAlignment = StringShape.Alignment.Left
+		      strShape.VerticalAlignment = StringShape.Alignment.Top
+		      strShape.Text = textStr
+		      
+		      eg.DrawObject strShape, _
+		      0, _
+		      0
+		      
+		      g.DrawPicture element, xOffset + x, yOffset + y - g.TextAscent
+		      
+		    end if
 		    
 		  end if
 		End Sub
