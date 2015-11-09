@@ -356,7 +356,7 @@ Protected Module DrawSVG
 		    element = new Picture(r * 2, r * 2)
 		    eg = element.Graphics
 		    
-		    // fill circle
+		    // fill
 		    
 		    if fill <> "none" then
 		      eg.ForeColor = determineColor(fill)
@@ -366,7 +366,7 @@ Protected Module DrawSVG
 		      r * 2
 		    end if
 		    
-		    // stroke circle
+		    // stroke
 		    
 		    if (stroke <> "none") and (stroke <> "") then
 		      eg.ForeColor = determineColor(stroke)
@@ -378,7 +378,7 @@ Protected Module DrawSVG
 		      r * 2
 		    end if
 		    
-		    g.DrawPicture element, cx - r, cy - r
+		    g.DrawPicture element, xOffset + cx - r, yOffset + cy - r
 		    
 		  end if
 		  
@@ -624,6 +624,8 @@ Protected Module DrawSVG
 		  
 		  Dim style As JSONItem
 		  Dim matrix As JSONItem
+		  Dim element As Picture
+		  Dim eg As Graphics
 		  Dim x As Double
 		  Dim y As Double
 		  Dim width As Double
@@ -643,24 +645,36 @@ Protected Module DrawSVG
 		  stroke = style.LookupString("stroke", "")
 		  strokeWidth = style.LookupDouble("stroke-width", 1)
 		  
-		  if fill <> "none" then
-		    g.ForeColor = determineColor(fill)
-		    g.FillRect xOffset + x, _
-		    yOffset + y, _
-		    width, _
-		    height
+		  if (width > 0) and (height > 0) then
+		    
+		    element = new Picture(width + strokeWidth, height + strokeWidth)
+		    eg = element.Graphics
+		    
+		    // fill
+		    
+		    if fill <> "none" then
+		      eg.ForeColor = determineColor(fill)
+		      eg.FillRect strokeWidth / 2, _
+		      strokeWidth / 2, _
+		      width, _
+		      height
+		    end if
+		    
+		    // stroke
+		    
+		    if (stroke <> "none") and (stroke <> "") then
+		      eg.ForeColor = determineColor(stroke)
+		      eg.PenWidth = strokeWidth
+		      eg.PenHeight = eg.PenWidth
+		      eg.DrawRect strokeWidth / 2, _
+		      strokeWidth / 2, _
+		      width, _
+		      height
+		    end if
+		    
+		    g.DrawPicture element, xOffset + x, yOffset + y
+		    
 		  end if
-		  
-		  if (stroke <> "none") and (stroke <> "") then
-		    g.ForeColor = determineColor(stroke)
-		    g.PenWidth = strokeWidth
-		    g.PenHeight = g.PenWidth
-		    g.DrawRect xOffset + x, _
-		    yOffset + y, _
-		    width, _
-		    height
-		  end if
-		  
 		End Sub
 	#tag EndMethod
 
