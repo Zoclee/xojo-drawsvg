@@ -61,7 +61,7 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function buildTransformMatrix(transform As String) As JSONItem
+		Private Function buildTransformationMatrix(transform As String) As JSONItem
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
@@ -341,7 +341,7 @@ Protected Module DrawSVG
 		  Dim strokeWidth As Double
 		  
 		  style = buildStyleItem(node)
-		  matrix = buildTransformMatrix(style.Lookup("transform", ""))
+		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
 		  
 		  r = style.LookupDouble("r")
 		  
@@ -401,7 +401,7 @@ Protected Module DrawSVG
 		  Dim strokeWidth As Double
 		  
 		  style = buildStyleItem(node)
-		  matrix = buildTransformMatrix(style.Lookup("transform", ""))
+		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
 		  
 		  cx = style.LookupDouble("cx")
 		  cy = style.LookupDouble("cy")
@@ -450,7 +450,7 @@ Protected Module DrawSVG
 		  Dim i As Integer
 		  
 		  style = buildStyleItem(node)
-		  matrix = buildTransformMatrix(style.Lookup("transform", ""))
+		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
 		  
 		  i = 0
 		  while i < node.ChildCount
@@ -476,7 +476,7 @@ Protected Module DrawSVG
 		  Dim strokeWidth As Double
 		  
 		  style = buildStyleItem(node)
-		  matrix = buildTransformMatrix(style.Lookup("transform", ""))
+		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
 		  
 		  stroke = style.LookupString("stroke", "")
 		  strokeWidth = style.LookupDouble("stroke-width", 1)
@@ -515,7 +515,7 @@ Protected Module DrawSVG
 		  Dim i As Integer
 		  
 		  style = buildStyleItem(node)
-		  matrix = buildTransformMatrix(style.Lookup("transform", ""))
+		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
 		  
 		  points.Append 1 // sentinal value
 		  
@@ -570,7 +570,7 @@ Protected Module DrawSVG
 		  Dim i As Integer
 		  
 		  style = buildStyleItem(node)
-		  matrix = buildTransformMatrix(style.Lookup("transform", ""))
+		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
 		  
 		  points.Append 1 // sentinal value
 		  
@@ -633,7 +633,7 @@ Protected Module DrawSVG
 		  Dim strokeWidth As Double
 		  
 		  style = buildStyleItem(node)
-		  matrix = buildTransformMatrix(style.Lookup("transform", ""))
+		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
 		  
 		  x = style.LookupDouble("x")
 		  y = style.LookupDouble("y")
@@ -674,7 +674,7 @@ Protected Module DrawSVG
 		  Dim i As Integer
 		  
 		  style = buildStyleItem(node)
-		  matrix = buildTransformMatrix(style.Lookup("transform", ""))
+		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
 		  
 		  i = 0
 		  while i < node.ChildCount
@@ -699,7 +699,7 @@ Protected Module DrawSVG
 		  Dim fill As String
 		  
 		  style = buildStyleItem(node)
-		  matrix = buildTransformMatrix(style.Lookup("transform", ""))
+		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
 		  
 		  x = style.LookupDouble("x")
 		  y = style.LookupDouble("y")
