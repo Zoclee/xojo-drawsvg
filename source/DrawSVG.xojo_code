@@ -548,6 +548,8 @@ Protected Module DrawSVG
 		  
 		  Dim style As JSONItem
 		  Dim matrix As JSONItem
+		  Dim element As Picture
+		  Dim eg As Graphics
 		  Dim fill As String
 		  Dim stroke As String
 		  Dim strokeWidth As Double
@@ -555,9 +557,19 @@ Protected Module DrawSVG
 		  Dim tmpArr() As String
 		  Dim coord() As String
 		  Dim i As Integer
+		  Dim minX As Integer
+		  Dim maxX As Integer
+		  Dim minY As Integer
+		  Dim maxY As Integer
+		  Dim width As Integer
+		  Dim height As Integer
 		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
+		  
+		  fill = style.LookupString("fill", "#000000")
+		  stroke = style.LookupString("stroke", "")
+		  strokeWidth = style.LookupDouble("stroke-width", 1)
 		  
 		  points.Append 1 // sentinal value
 		  
@@ -566,31 +578,68 @@ Protected Module DrawSVG
 		  while i <= tmpArr.Ubound
 		    coord = tmpArr(i).Split(",")
 		    if coord.Ubound = 1 then
-		      points.Append Val(coord(0)) + xOffset
-		      points.Append Val(coord(1)) + yOffset
+		      
+		      points.Append Val(coord(0))
+		      points.Append Val(coord(1))
+		      
+		      if i = 0 then
+		        minX = Val(coord(0))
+		        maxX = Val(coord(0))
+		        minY = Val(coord(1))
+		        maxY = Val(coord(1))
+		      else
+		        if Val(coord(0)) < minX then
+		          minX = Val(coord(0))
+		        end if
+		        if Val(coord(0)) > maxX then
+		          maxX = Val(coord(0))
+		        end if
+		        if Val(coord(1)) < minY then
+		          minY = Val(coord(1))
+		        end if
+		        if Val(coord(1)) > maxY then
+		          maxY = Val(coord(1))
+		        end if
+		      end if
+		      
 		    end if
 		    i = i + 1
 		  wend
 		  
-		  fill = style.LookupString("fill", "#000000")
-		  stroke = style.LookupString("stroke", "")
-		  strokeWidth = style.LookupDouble("stroke-width", 1)
+		  width = maxX - minX + 1
+		  height = maxY - minY + 1
 		  
-		  // fill polygon
+		  // adjust polygon values for seperate layer rendering
+		  
+		  i = 1
+		  while i < points.Ubound
+		    points(i) = points(i) - minX + strokeWidth * 2
+		    points(i + 1) = points(i + 1) - minY + strokeWidth * 2 
+		    i = i + 2
+		  wend
+		  
+		  element = new Picture(width + strokeWidth * 4, height + strokeWidth * 4)
+		  eg = element.Graphics
+		  
+		  // fill
 		  
 		  if fill <> "none" then
-		    g.ForeColor = determineColor(fill)
-		    g.FillPolygon points
+		    eg.ForeColor = determineColor(fill)
+		    eg.FillPolygon points
 		  end if
 		  
-		  // stroke polygon
+		  // stroke
 		  
-		  if (stroke <> "none") and (stroke <> "") then
-		    g.ForeColor = determineColor(stroke)
-		    g.PenWidth = strokeWidth
-		    g.PenHeight = g.PenWidth
-		    g.DrawPolygon points
+		  if (stroke <> "none") and (stroke <> "") and (strokeWidth > 0) then
+		    eg.ForeColor = determineColor(stroke)
+		    eg.PenWidth = strokeWidth
+		    eg.PenHeight = eg.PenWidth
+		    
+		    eg.DrawPolygon points
 		  end if
+		  
+		  g.DrawPicture element, xOffset + minX - strokeWidth * 2, yOffset + minY - strokeWidth * 2
+		  
 		  
 		  
 		End Sub
@@ -668,8 +717,8 @@ Protected Module DrawSVG
 		  
 		  i = 1
 		  while i < points.Ubound
-		    points(i) = points(i) - minX + strokeWidth
-		    points(i + 1) = points(i + 1) - minY + strokeWidth
+		    points(i) = points(i) - minX + strokeWidth * 2
+		    points(i + 1) = points(i + 1) - minY + strokeWidth * 2
 		    i = i + 2
 		  wend
 		  
@@ -680,7 +729,7 @@ Protected Module DrawSVG
 		    points.Append points(i+1)
 		  next i
 		  
-		  element = new Picture(width + strokeWidth * 2, height + strokeWidth * 2)
+		  element = new Picture(width + strokeWidth * 4, height + strokeWidth * 4)
 		  eg = element.Graphics
 		  
 		  // fill
@@ -700,7 +749,7 @@ Protected Module DrawSVG
 		    eg.DrawPolygon points
 		  end if
 		  
-		  g.DrawPicture element, xOffset + minX - strokeWidth, yOffset + minY - strokeWidth
+		  g.DrawPicture element, xOffset + minX - strokeWidth * 2, yOffset + minY - strokeWidth * 2
 		  
 		  
 		  
