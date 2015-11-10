@@ -339,6 +339,7 @@ Protected Module DrawSVG
 		  Dim fill As String
 		  Dim stroke As String
 		  Dim strokeWidth As Double
+		  Dim strokeStep As Integer
 		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
@@ -353,32 +354,35 @@ Protected Module DrawSVG
 		    stroke = style.LookupString("stroke", "")
 		    strokeWidth = style.LookupDouble("stroke-width", 1)
 		    
-		    element = new Picture(r * 2 + strokeWidth, r * 2 + strokeWidth)
+		    strokeStep = Floor(strokeWidth \ 2)
+		    
+		    element = new Picture(r * 2 + strokeWidth * 2, r * 2 + strokeWidth * 2)
+		    
 		    eg = element.Graphics
 		    
 		    // fill
 		    
 		    if fill <> "none" then
 		      eg.ForeColor = determineColor(fill)
-		      eg.FillOval strokeWidth / 2, _
-		      strokeWidth / 2, _
+		      eg.FillOval strokeStep, _
+		      strokeStep, _
 		      r * 2, _
 		      r * 2
 		    end if
 		    
 		    // stroke
 		    
-		    if (stroke <> "none") and (stroke <> "") then
+		    if (stroke <> "none") and (stroke <> "") and (strokeWidth > 0) then
 		      eg.ForeColor = determineColor(stroke)
 		      eg.PenWidth = strokeWidth
 		      eg.PenHeight = eg.PenWidth
-		      eg.DrawOval strokeWidth / 2, _
-		      strokeWidth / 2, _
+		      eg.DrawOval strokeStep, _
+		      strokeStep, _
 		      r * 2, _
 		      r * 2
 		    end if
 		    
-		    g.DrawPicture element, xOffset + cx - r, yOffset + cy - r
+		    g.DrawPicture element, xOffset + cx - r - strokeStep, yOffset + cy - r - strokeStep
 		    
 		  end if
 		  
@@ -640,6 +644,7 @@ Protected Module DrawSVG
 		  Dim fill As String
 		  Dim stroke As String
 		  Dim strokeWidth As Double
+		  Dim strokeStep As Integer
 		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
@@ -654,32 +659,34 @@ Protected Module DrawSVG
 		  
 		  if (width > 0) and (height > 0) then
 		    
-		    element = new Picture(width + strokeWidth, height + strokeWidth)
+		    strokeStep = Floor(strokeWidth \ 2)
+		    
+		    element = new Picture(width + strokeWidth * 2, height + strokeWidth * 2)
 		    eg = element.Graphics
 		    
 		    // fill
 		    
 		    if fill <> "none" then
 		      eg.ForeColor = determineColor(fill)
-		      eg.FillRect strokeWidth / 2, _
-		      strokeWidth / 2, _
-		      width, _
-		      height
+		      eg.FillRect strokeStep, _
+		      strokeStep, _
+		      width + strokeStep, _
+		      height + strokeStep
 		    end if
 		    
 		    // stroke
 		    
-		    if (stroke <> "none") and (stroke <> "") then
+		    if (stroke <> "none") and (stroke <> "") and (strokeWidth > 0) then
 		      eg.ForeColor = determineColor(stroke)
 		      eg.PenWidth = strokeWidth
 		      eg.PenHeight = eg.PenWidth
-		      eg.DrawRect strokeWidth / 2, _
-		      strokeWidth / 2, _
-		      width, _
-		      height
+		      eg.DrawRect strokeStep, _
+		      strokeStep, _
+		      width + strokeStep, _
+		      height + strokeStep
 		    end if
 		    
-		    g.DrawPicture element, xOffset + x, yOffset + y
+		    g.DrawPicture element, xOffset + x - strokeStep, yOffset + y - strokeStep
 		    
 		  end if
 		End Sub
