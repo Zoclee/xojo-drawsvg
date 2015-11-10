@@ -88,6 +88,7 @@ Protected Module DrawSVG
 		        parms = Mid(transform, openBracket + 1, closeBracket - openBracket - 1)
 		        
 		        select case functionName
+		          
 		        case "matrix"
 		          strArr = parms.Split(",")
 		          if strArr.Ubound = 5 then
@@ -102,6 +103,23 @@ Protected Module DrawSVG
 		            tmpMatrix.Value(8) = 1
 		            result = matrixMultiply(result, tmpMatrix)
 		          end if
+		          
+		        case "translate"
+		          strArr = parms.Split(",")
+		          tmpMatrix.Value(0) = 1
+		          tmpMatrix.Value(1) = 0
+		          tmpMatrix.Value(2) = val(strArr(0)) ' tx
+		          tmpMatrix.Value(3) = 0
+		          tmpMatrix.Value(4) = 1
+		          if strArr.Ubound >= 1 then
+		            tmpMatrix.Value(5) = val(strArr(1)) ' ty
+		          else
+		            tmpMatrix.Value(5) = 0
+		          end if
+		          tmpMatrix.Value(6) = 0
+		          tmpMatrix.Value(7) = 0
+		          tmpMatrix.Value(8) = 1
+		          result = matrixMultiply(result, tmpMatrix)
 		          
 		        end select
 		        
