@@ -105,19 +105,11 @@ Protected Module DrawSVG
 		          end if
 		          
 		        case "scale"
-		          mulMatrix.Value(0) = val(strArr(0)) ' sx
-		          mulMatrix.Value(1) = 0
-		          mulMatrix.Value(2) = 0
-		          mulMatrix.Value(3) = 0
 		          if strArr.Ubound >= 1 then
-		            mulMatrix.Value(4) = val(strArr(1)) ' sy
+		            mulMatrix = initScaleMatrix(val(strArr(0)), val(strArr(1)))
 		          else
-		            mulMatrix.Value(4) = val(strArr(0)) ' sy = sx
+		            mulMatrix = initScaleMatrix(val(strArr(0)), val(strArr(0)))
 		          end if
-		          mulMatrix.Value(5) = 0
-		          mulMatrix.Value(6) = 0
-		          mulMatrix.Value(7) = 0
-		          mulMatrix.Value(8) = 1
 		          result = matrixMultiply(result, mulMatrix)
 		          
 		        case "translate"
@@ -252,6 +244,21 @@ Protected Module DrawSVG
 		  end if
 		  
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function initScaleMatrix(sx As Double, sy As Double) As JSONItem
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
+		  Dim result as new JSONItem("[1,0,0,0,1,0,0,0,1]")
+		  
+		  result.Value(0) = sx
+		  result.Value(4) = sy
+		  
+		  return result
+		  
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
