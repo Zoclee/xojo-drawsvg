@@ -702,13 +702,22 @@ Protected Module DrawSVG
 		  Dim style As JSONItem
 		  Dim matrix As JSONItem
 		  Dim i As Integer
+		  Dim width As Integer
+		  Dim height As Integer
+		  Dim drawG As Graphics
 		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
 		  
+		  if (node.GetAttribute("width") <> "") and (node.GetAttribute("height") <> "") then
+		    drawG = g.Clip(x, y, Val(node.GetAttribute("width")), Val(node.GetAttribute("height")))
+		  else
+		    drawG = g.Clip(x, y, g.Width - x, g.Height - y)
+		  end if
+		  
 		  i = 0
 		  while i < node.ChildCount
-		    renderNode node.Child(i), g, x, y
+		    renderNode node.Child(i), drawG, 0, 0
 		    i = i + 1
 		  wend
 		  
