@@ -104,6 +104,23 @@ Protected Module DrawSVG
 		            result = matrixMultiply(result, tmpMatrix)
 		          end if
 		          
+		        case "scale"
+		          strArr = parms.Split(",")
+		          tmpMatrix.Value(0) = val(strArr(0)) ' sx
+		          tmpMatrix.Value(1) = 0
+		          tmpMatrix.Value(2) = 0
+		          tmpMatrix.Value(3) = 0
+		          if strArr.Ubound >= 1 then
+		            tmpMatrix.Value(4) = val(strArr(1)) ' sy
+		          else
+		            tmpMatrix.Value(4) = val(strArr(0)) ' sy = sx
+		          end if
+		          tmpMatrix.Value(5) = 0
+		          tmpMatrix.Value(6) = 0
+		          tmpMatrix.Value(7) = 0
+		          tmpMatrix.Value(8) = 1
+		          result = matrixMultiply(result, tmpMatrix)
+		          
 		        case "translate"
 		          strArr = parms.Split(",")
 		          tmpMatrix.Value(0) = 1
