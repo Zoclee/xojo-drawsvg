@@ -66,55 +66,61 @@ Protected Module DrawSVG
 		  ' www.zoclee.com
 		  
 		  Dim result as new JSONItem("[1,0,0,0,1,0,0,0,1]")
+		  Dim tmpMatrix as new JSONItem("[0,0,0,0,0,0,0,0,0]")
+		  Dim pos As Integer
+		  Dim openBracket As Integer
+		  Dim closeBracket As Integer
+		  Dim functionName As String
+		  Dim parms As String
+		  Dim strArr() As String
 		  
+		  pos = 0
+		  
+		  do
+		    pos = pos + 1
+		    openBracket = Instr(pos, transform, "(")
+		    if openBracket > 0 then
+		      
+		      closeBracket = Instr(openBracket, transform, ")")
+		      if closeBracket > 0 then
+		        
+		        functionName = Lowercase(Trim(Mid(transform, pos, openBracket - pos)))
+		        parms = Mid(transform, openBracket + 1, closeBracket - openBracket - 1)
+		        
+		        select case functionName
+		        case "matrix"
+		          strArr = parms.Split(",")
+		          if strArr.Ubound = 5 then
+		            tmpMatrix.Value(0) = val(strArr(0)) ' a
+		            tmpMatrix.Value(1) = val(strArr(2)) ' c
+		            tmpMatrix.Value(2) = val(strArr(4)) ' e
+		            tmpMatrix.Value(3) = val(strArr(1)) ' b
+		            tmpMatrix.Value(4) = val(strArr(3)) ' d
+		            tmpMatrix.Value(5) = val(strArr(5)) ' f
+		            tmpMatrix.Value(6) = 0
+		            tmpMatrix.Value(7) = 0
+		            tmpMatrix.Value(8) = 1
+		            result = matrixMultiply(result, tmpMatrix)
+		          end if
+		          
+		        end select
+		        
+		        pos = closeBracket
+		      else
+		        pos = 0
+		      end if
+		      
+		    else
+		      pos = 0
+		    end if
+		    
+		  loop until (pos >= Len(transform)) or (pos = 0)
 		  
 		  
 		  return result
 		  
-		  'Dim pos As Integer
-		  'Dim openBracket As Integer
-		  'Dim closeBracket As Integer
-		  'Dim functionName As String
-		  'Dim parms As String
-		  'Dim transItem As JSONItem
-		  'Dim strArr() As String
-		  '
-		  'pos = 0
-		  '
-		  'do
-		  'pos = pos + 1
-		  'openBracket = Instr(pos, transform, "(")
-		  'if openBracket > 0 then
-		  '
-		  'closeBracket = Instr(openBracket, transform, ")")
-		  'if closeBracket > 0 then
-		  '
-		  'functionName = Lowercase(Trim(Mid(transform, pos, openBracket - pos)))
-		  'parms = Mid(transform, openBracket + 1, closeBracket - openBracket - 1)
-		  '
-		  'select case functionName
-		  'case "translate"
-		  'transItem = new JSONItem("{}")
-		  'transItem.Value("function") = "translate"
-		  'strArr = parms.Split(",")
-		  'if strArr.Ubound = 1 then
-		  'transItem.Value("tx") = Val(strArr(0))
-		  'transItem.Value("ty") = Val(strArr(1))
-		  'result.Append transItem
-		  'end if
-		  '
-		  'end select
-		  '
-		  'pos = closeBracket
-		  'else
-		  'pos = 0
-		  'end if
-		  '
-		  'else
-		  'pos = 0
-		  'end if
-		  '
-		  'loop until (pos >= Len(transform)) or (pos = 0)
+		  
+		  
 		  
 		  'return resultMatrix
 		End Function
