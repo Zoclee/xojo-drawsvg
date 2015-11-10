@@ -350,6 +350,163 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub paintTransformedElement(g As Graphics, image as Picture, matrix As JSONItem)
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
+		  ' This routine is based on code written by Alain Bailleul.
+		  ' www.alwaysbusycorner.com
+		  
+		  Dim srcRGB as RGBSurface
+		  Dim tgtRGB as RGBSurface
+		  Dim srcX As Integer
+		  Dim srcY As Integer
+		  Dim tgtX As Integer
+		  Dim tgtY As Integer
+		  
+		  srcRGB = image.RGBSurface
+		  'tgtRGB = g.PixelRGBSurface
+		  
+		  srcY = 0
+		  while srcY < image.Height 
+		    srcX = 0
+		    while srcX < image.Width
+		      tgtX = srcX
+		      tgtY = srcY
+		      transformPoint(tgtX, tgtY, matrix)
+		      
+		      ' copy the pixel from the source to the target
+		      
+		      g.Pixel(tgtX, tgtY) = srcRGB.Pixel(srcX, srcY)
+		      
+		      srcX = srcX + 1
+		    wend
+		    srcY = srcY + 1
+		  wend
+		  
+		  'Dim srcWidth as integer = srcPic.Width
+		  'Dim srcHeight as integer = srcPic.Height
+		  '
+		  'Dim minXY as ABPoint
+		  'Dim maxXY as ABPoint
+		  '
+		  ''get bounding rectangle of the quadrilateral
+		  'GetBoundingRectangle destinationQuadrilateral, minXY, maxXY
+		  '
+		  'dim startX as integer = minXY.X
+		  'dim startY as integer = minXY.Y
+		  'dim stopX as integer = maxXY.X
+		  'dim stopY as integer = maxXY.Y
+		  '
+		  ''calculate tranformation matrix
+		  'dim srcRect(3) as ABPoint
+		  'srcRect(0) = new ABPoint(0,0)
+		  'srcRect(1) = new ABPoint(srcWidth -1 ,0)
+		  'srcRect(2) = new ABPoint(srcWidth - 1, srcHeight - 1)
+		  'srcRect(3) = new ABPoint(0, srcHeight - 1)
+		  'dim matrix(2,2) as Double = MapQuadToQuad(destinationQuadrilateral, srcRect)
+		  '
+		  ''dim matrix(2,2) as Double
+		  ''matrix(0, 0) = 1 ' col 0
+		  ''matrix(1, 0) = 0
+		  ''matrix(2, 0) = 0
+		  ''
+		  ''matrix(0, 1) = 0 ' col 1
+		  ''matrix(1, 1) = 1
+		  ''matrix(2, 1) = 0
+		  ''
+		  ''matrix(0, 2) = 0 ' col 2
+		  ''matrix(1, 2) = 0
+		  ''matrix(2, 2) = 1
+		  '
+		  'dim x,y as integer
+		  '
+		  'dim  factor, srcX, srcY as Double
+		  'dim tgtPic as Picture
+		  'tgtPic = NewPicture(srcWidth, srcHeight, 32)
+		  'tgtPic.Graphics.ForeColor = FillBackColor
+		  'tgtPic.Graphics.FillRect 0,0, srcWidth, srcHeight
+		  '
+		  'dim srcRGB, tgtRGB as RGBSurface
+		  'srcRGB = srcPic.RGBSurface
+		  'tgtRGB = tgtPic.RGBSurface
+		  '
+		  'if useInterpolation then
+		  'Dim srcWidthM1 as integer = srcWidth - 1
+		  'Dim srcHeightM1 as Integer = srcHeight - 1
+		  '
+		  ''coordinates of source points
+		  'dim dx1, dy1, dx2, dy2 as Double
+		  'dim sx1, sy1, sx2, sy2 as Integer
+		  '
+		  '' temporary pixels
+		  'dim p1,p2,p3, p4 as Color
+		  'dim r, g , b as integer
+		  '
+		  '' for each row
+		  'for y = startY to stopY
+		  ''for each pixel
+		  'for x = startX to stopX
+		  'factor = matrix(2, 0) * x + matrix(2, 1) * y + matrix(2, 2)
+		  'srcX = ( matrix(0, 0) * x + matrix(0, 1) * y + matrix(0, 2) ) / factor
+		  'srcY = ( matrix(1, 0) * x + matrix(1, 1) * y + matrix(1, 2) ) / factor
+		  'if srcX >= 0 and srcY >= 0 and srcX< srcWidth and srcY < srcHeight then
+		  'sx1 = srcX
+		  'if sx1 = srcWidthM1 then
+		  'sx2 = sx1
+		  'else
+		  'sx2 = sx1 + 1
+		  'end if
+		  'dx1 = srcX - sx1
+		  'dx2 = 1.0 - dx1
+		  '
+		  'sy1 = srcY
+		  'if sy1 = srcHeightM1 then
+		  'sy2 = sy1
+		  'else
+		  'sy2 = sy1 + 1
+		  'end if
+		  'dy1 = srcY - sy1
+		  'dy2 = 1.0 - dy1
+		  '
+		  '' copy the pixel from the source to the target using interpolation of 4 points
+		  'p1 = srcRGB.Pixel(sx1, sy1)
+		  'p2 = srcRGB.Pixel(sx2, sy1)
+		  'p3 = srcRGB.Pixel(sx1, sy2)
+		  'p4 = srcRGB.Pixel(sx2, sy2)
+		  '
+		  'r = dy2 * ( dx2 * ( p1.red ) + dx1 * ( p2.red ) ) + dy1 * ( dx2 * ( p3.red ) + dx1 * ( p4.red ) )
+		  'g = dy2 * ( dx2 * ( p1.green ) + dx1 * ( p2.green ) ) + dy1 * ( dx2 * ( p3.green ) + dx1 * ( p4.green ) )
+		  'b = dy2 * ( dx2 * ( p1.blue ) + dx1 * ( p2.blue ) ) + dy1 * ( dx2 * ( p3.blue ) + dx1 * ( p4.blue ) )
+		  'tgtRGB.Pixel(x,y) = RGB(r,g,b)
+		  'end if
+		  'next
+		  'next
+		  'else
+		  '' for each row
+		  'for y = startY to stopY
+		  ''for each pixel
+		  'for x = startX to stopX
+		  'factor = matrix(2, 0) * x + matrix(2, 1) * y + matrix(2, 2)
+		  'srcX = ( matrix(0, 0) * x + matrix(0, 1) * y + matrix(0, 2) ) / factor
+		  'srcY = ( matrix(1, 0) * x + matrix(1, 1) * y + matrix(1, 2) ) / factor
+		  'if srcX >= 0 and srcY >= 0 and srcX< srcWidth and srcY < srcHeight then
+		  '' copy the pixel from the source to the target
+		  'tgtRGB.Pixel(x,y) = srcRGB.Pixel(srcX, srcY)
+		  'end if
+		  'next
+		  'next
+		  'end if
+		  '
+		  'Return tgtPic
+		  
+		  
+		  
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub renderNode(node As XmlNode, g As Graphics, xOffset As Double, yOffset As Double)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
@@ -868,7 +1025,7 @@ Protected Module DrawSVG
 		  Dim stroke As String
 		  Dim strokeWidth As Double
 		  Dim strokeStep As Integer
-		  
+		  Dim transMatrix As JSONItem
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
 		  
@@ -910,6 +1067,10 @@ Protected Module DrawSVG
 		    end if
 		    
 		    g.DrawPicture element, xOffset + x - strokeStep, yOffset + y - strokeStep
+		    
+		    'transMatrix = initTranslationMatrix(xOffset + x - strokeStep, yOffset + y - strokeStep)
+		    'matrix = matrixMultiply(matrix, transMatrix)
+		    'paintTransformedElement g, element, matrix
 		    
 		  end if
 		End Sub
@@ -1013,6 +1174,37 @@ Protected Module DrawSVG
 		    end if
 		    
 		  end if
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub transformPoint(ByRef x As Integer, ByRef y As Integer, matrix As JSONItem)
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
+		  Dim cx As Double
+		  Dim cy As Double
+		  Dim cw As Double
+		  Dim m(8) As Double
+		  
+		  m(0) = matrix.Value(0)
+		  m(1) = matrix.Value(1)
+		  m(2) = matrix.Value(2)
+		  m(3) = matrix.Value(3)
+		  m(4) = matrix.Value(4)
+		  m(5) = matrix.Value(5)
+		  m(6) = matrix.Value(6)
+		  m(7) = matrix.Value(7)
+		  m(8) = matrix.Value(8)
+		  
+		  cx = m(0) * x + m(1) * y + m(2)
+		  cy = m(3) * x + m(4) * y + m(5)
+		  cw = m(6) * x + m(7) * y + m(8)
+		  
+		  x = (cx / cw)
+		  y = (cy / cw)
+		  
+		  
 		End Sub
 	#tag EndMethod
 
