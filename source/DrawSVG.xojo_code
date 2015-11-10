@@ -92,15 +92,12 @@ Protected Module DrawSVG
 		          
 		        case "matrix"
 		          if strArr.Ubound = 5 then
-		            mulMatrix.Value(0) = val(strArr(0)) ' a
-		            mulMatrix.Value(1) = val(strArr(2)) ' c
-		            mulMatrix.Value(2) = val(strArr(4)) ' e
-		            mulMatrix.Value(3) = val(strArr(1)) ' b
-		            mulMatrix.Value(4) = val(strArr(3)) ' d
-		            mulMatrix.Value(5) = val(strArr(5)) ' f
-		            mulMatrix.Value(6) = 0
-		            mulMatrix.Value(7) = 0
-		            mulMatrix.Value(8) = 1
+		            mulMatrix = initMatrix(val(strArr(0)), _ ' a
+		            val(strArr(1)), _ ' b
+		            val(strArr(2)), _ ' c
+		            val(strArr(3)), _ ' d
+		            val(strArr(4)), _ ' e
+		            val(strArr(5)) ) ' f
 		            result = matrixMultiply(result, mulMatrix)
 		          end if
 		          
@@ -244,6 +241,25 @@ Protected Module DrawSVG
 		  end if
 		  
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function initMatrix(a As Double, b As Double, c As Double, d As Double, e As Double, f As Double) As JSONItem
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
+		  Dim result as new JSONItem("[1,0,0,0,1,0,0,0,1]")
+		  
+		  result.Value(0) = a
+		  result.Value(1) = c
+		  result.Value(2) = e
+		  result.Value(3) = b
+		  result.Value(4) = d
+		  result.Value(5) = f
+		  
+		  return result
+		  
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
