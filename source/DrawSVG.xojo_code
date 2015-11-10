@@ -66,7 +66,7 @@ Protected Module DrawSVG
 		  ' www.zoclee.com
 		  
 		  Dim result as new JSONItem("[1,0,0,0,1,0,0,0,1]")
-		  Dim tmpMatrix as new JSONItem("[0,0,0,0,0,0,0,0,0]")
+		  Dim mulMatrix as new JSONItem("[0,0,0,0,0,0,0,0,0]")
 		  Dim pos As Integer
 		  Dim openBracket As Integer
 		  Dim closeBracket As Integer
@@ -92,51 +92,51 @@ Protected Module DrawSVG
 		        case "matrix"
 		          strArr = parms.Split(",")
 		          if strArr.Ubound = 5 then
-		            tmpMatrix.Value(0) = val(strArr(0)) ' a
-		            tmpMatrix.Value(1) = val(strArr(2)) ' c
-		            tmpMatrix.Value(2) = val(strArr(4)) ' e
-		            tmpMatrix.Value(3) = val(strArr(1)) ' b
-		            tmpMatrix.Value(4) = val(strArr(3)) ' d
-		            tmpMatrix.Value(5) = val(strArr(5)) ' f
-		            tmpMatrix.Value(6) = 0
-		            tmpMatrix.Value(7) = 0
-		            tmpMatrix.Value(8) = 1
-		            result = matrixMultiply(result, tmpMatrix)
+		            mulMatrix.Value(0) = val(strArr(0)) ' a
+		            mulMatrix.Value(1) = val(strArr(2)) ' c
+		            mulMatrix.Value(2) = val(strArr(4)) ' e
+		            mulMatrix.Value(3) = val(strArr(1)) ' b
+		            mulMatrix.Value(4) = val(strArr(3)) ' d
+		            mulMatrix.Value(5) = val(strArr(5)) ' f
+		            mulMatrix.Value(6) = 0
+		            mulMatrix.Value(7) = 0
+		            mulMatrix.Value(8) = 1
+		            result = matrixMultiply(result, mulMatrix)
 		          end if
 		          
 		        case "scale"
 		          strArr = parms.Split(",")
-		          tmpMatrix.Value(0) = val(strArr(0)) ' sx
-		          tmpMatrix.Value(1) = 0
-		          tmpMatrix.Value(2) = 0
-		          tmpMatrix.Value(3) = 0
+		          mulMatrix.Value(0) = val(strArr(0)) ' sx
+		          mulMatrix.Value(1) = 0
+		          mulMatrix.Value(2) = 0
+		          mulMatrix.Value(3) = 0
 		          if strArr.Ubound >= 1 then
-		            tmpMatrix.Value(4) = val(strArr(1)) ' sy
+		            mulMatrix.Value(4) = val(strArr(1)) ' sy
 		          else
-		            tmpMatrix.Value(4) = val(strArr(0)) ' sy = sx
+		            mulMatrix.Value(4) = val(strArr(0)) ' sy = sx
 		          end if
-		          tmpMatrix.Value(5) = 0
-		          tmpMatrix.Value(6) = 0
-		          tmpMatrix.Value(7) = 0
-		          tmpMatrix.Value(8) = 1
-		          result = matrixMultiply(result, tmpMatrix)
+		          mulMatrix.Value(5) = 0
+		          mulMatrix.Value(6) = 0
+		          mulMatrix.Value(7) = 0
+		          mulMatrix.Value(8) = 1
+		          result = matrixMultiply(result, mulMatrix)
 		          
 		        case "translate"
 		          strArr = parms.Split(",")
-		          tmpMatrix.Value(0) = 1
-		          tmpMatrix.Value(1) = 0
-		          tmpMatrix.Value(2) = val(strArr(0)) ' tx
-		          tmpMatrix.Value(3) = 0
-		          tmpMatrix.Value(4) = 1
+		          mulMatrix.Value(0) = 1
+		          mulMatrix.Value(1) = 0
+		          mulMatrix.Value(2) = val(strArr(0)) ' tx
+		          mulMatrix.Value(3) = 0
+		          mulMatrix.Value(4) = 1
 		          if strArr.Ubound >= 1 then
-		            tmpMatrix.Value(5) = val(strArr(1)) ' ty
+		            mulMatrix.Value(5) = val(strArr(1)) ' ty
 		          else
-		            tmpMatrix.Value(5) = 0
+		            mulMatrix.Value(5) = 0
 		          end if
-		          tmpMatrix.Value(6) = 0
-		          tmpMatrix.Value(7) = 0
-		          tmpMatrix.Value(8) = 1
-		          result = matrixMultiply(result, tmpMatrix)
+		          mulMatrix.Value(6) = 0
+		          mulMatrix.Value(7) = 0
+		          mulMatrix.Value(8) = 1
+		          result = matrixMultiply(result, mulMatrix)
 		          
 		        end select
 		        
