@@ -647,7 +647,7 @@ Protected Module DrawSVG
 		  
 		  // stroke polygon
 		  
-		  if (stroke <> "none") and (stroke <> "") then
+		  if (stroke <> "none") and (stroke <> "") and (strokeWidth > 0) then
 		    g.ForeColor = determineColor(stroke)
 		    g.PenWidth = strokeWidth
 		    g.PenHeight = g.PenWidth
