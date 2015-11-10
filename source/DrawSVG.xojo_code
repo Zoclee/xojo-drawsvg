@@ -357,7 +357,6 @@ Protected Module DrawSVG
 		    strokeStep = Floor(strokeWidth \ 2)
 		    
 		    element = new Picture(r * 2 + strokeWidth * 2, r * 2 + strokeWidth * 2)
-		    
 		    eg = element.Graphics
 		    
 		    // fill
@@ -405,6 +404,7 @@ Protected Module DrawSVG
 		  Dim fill As String
 		  Dim stroke As String
 		  Dim strokeWidth As Double
+		  Dim strokeStep As Integer
 		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
@@ -419,32 +419,34 @@ Protected Module DrawSVG
 		  
 		  if (rx > 0) and (ry > 0) then
 		    
-		    element = new Picture(rx * 2 + strokeWidth, ry * 2 + strokeWidth)
+		    strokeStep = Floor(strokeWidth \ 2)
+		    
+		    element = new Picture(rx * 2 + strokeWidth * 2, ry * 2 + strokeWidth * 2)
 		    eg = element.Graphics
 		    
 		    // fill
 		    
 		    if fill <> "none" then
 		      eg.ForeColor = determineColor(fill)
-		      eg.FillOval strokeWidth / 2, _
-		      strokeWidth / 2, _
+		      eg.FillOval strokeStep, _
+		      strokeStep, _
 		      rx * 2, _
 		      ry * 2
 		    end if
 		    
 		    // stroke
 		    
-		    if (stroke <> "none") and (stroke <> "") then
+		    if (stroke <> "none") and (stroke <> "") and (strokeWidth > 0) then
 		      eg.ForeColor = determineColor(stroke)
 		      eg.PenWidth = strokeWidth
 		      eg.PenHeight = eg.PenWidth
-		      eg.DrawOval strokeWidth / 2, _
-		      strokeWidth / 2, _
+		      eg.DrawOval strokeStep, _
+		      strokeStep, _
 		      rx * 2, _
 		      ry * 2
 		    end if
 		    
-		    g.DrawPicture element, xOffset + cx - rx, yOffset + cy - ry
+		    g.DrawPicture element, xOffset + cx - rx - strokeStep, yOffset + cy - ry - strokeStep
 		    
 		  end if
 		  
