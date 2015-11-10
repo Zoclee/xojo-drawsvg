@@ -65,7 +65,12 @@ Protected Module DrawSVG
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
-		  Dim result as new JSONItem("[1,0,0,1,0,0]")
+		  Dim result as new JSONItem("[1,0,0,0,1,0,0,0,1]")
+		  
+		  
+		  
+		  return result
+		  
 		  'Dim pos As Integer
 		  'Dim openBracket As Integer
 		  'Dim closeBracket As Integer
@@ -111,7 +116,7 @@ Protected Module DrawSVG
 		  '
 		  'loop until (pos >= Len(transform)) or (pos = 0)
 		  
-		  return result
+		  'return resultMatrix
 		End Function
 	#tag EndMethod
 
@@ -248,6 +253,27 @@ Protected Module DrawSVG
 		  else
 		    result = DefaultValue
 		  end if
+		  
+		  return result
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function matrixMultiply(m1 As JSONItem, m2 As JSONItem) As JSONItem
+		  Dim result as new JSONItem("[0,0,0,0,0,0,0,0,0]")
+		  
+		  result.Value(0) = m1.Value(0) * m2.Value(0) + m1.Value(1) * m2.Value(3) + m1.Value(2) * m2.Value(6)
+		  result.Value(1) = m1.Value(0) * m2.Value(1) + m1.Value(1) * m2.Value(4) + m1.Value(2) * m2.Value(7)
+		  result.Value(2) = m1.Value(0) * m2.Value(2) + m1.Value(1) * m2.Value(5) + m1.Value(2) * m2.Value(8)
+		  
+		  result.Value(3) = m1.Value(3) * m2.Value(0) + m1.Value(4) * m2.Value(3) + m1.Value(5) * m2.Value(6)
+		  result.Value(4) = m1.Value(3) * m2.Value(1) + m1.Value(4) * m2.Value(4) + m1.Value(5) * m2.Value(7)
+		  result.Value(5) = m1.Value(3) * m2.Value(2) + m1.Value(4) * m2.Value(5) + m1.Value(5) * m2.Value(8)
+		  
+		  result.Value(6) = m1.Value(6) * m2.Value(0) + m1.Value(7) * m2.Value(3) + m1.Value(8) * m2.Value(6)
+		  result.Value(7) = m1.Value(6) * m2.Value(1) + m1.Value(7) * m2.Value(4) + m1.Value(8) * m2.Value(7)
+		  result.Value(8) = m1.Value(6) * m2.Value(2) + m1.Value(7) * m2.Value(5) + m1.Value(8) * m2.Value(8)
 		  
 		  return result
 		  
