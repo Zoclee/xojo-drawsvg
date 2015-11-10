@@ -86,11 +86,11 @@ Protected Module DrawSVG
 		        
 		        functionName = Lowercase(Trim(Mid(transform, pos, openBracket - pos)))
 		        parms = Mid(transform, openBracket + 1, closeBracket - openBracket - 1)
+		        strArr = parms.Split(",")
 		        
 		        select case functionName
 		          
 		        case "matrix"
-		          strArr = parms.Split(",")
 		          if strArr.Ubound = 5 then
 		            mulMatrix.Value(0) = val(strArr(0)) ' a
 		            mulMatrix.Value(1) = val(strArr(2)) ' c
@@ -105,7 +105,6 @@ Protected Module DrawSVG
 		          end if
 		          
 		        case "scale"
-		          strArr = parms.Split(",")
 		          mulMatrix.Value(0) = val(strArr(0)) ' sx
 		          mulMatrix.Value(1) = 0
 		          mulMatrix.Value(2) = 0
@@ -122,20 +121,11 @@ Protected Module DrawSVG
 		          result = matrixMultiply(result, mulMatrix)
 		          
 		        case "translate"
-		          strArr = parms.Split(",")
-		          mulMatrix.Value(0) = 1
-		          mulMatrix.Value(1) = 0
-		          mulMatrix.Value(2) = val(strArr(0)) ' tx
-		          mulMatrix.Value(3) = 0
-		          mulMatrix.Value(4) = 1
 		          if strArr.Ubound >= 1 then
-		            mulMatrix.Value(5) = val(strArr(1)) ' ty
+		            mulMatrix = initTranslationMatrix(val(strArr(0)), val(strArr(1)))
 		          else
-		            mulMatrix.Value(5) = 0
+		            mulMatrix = initTranslationMatrix(val(strArr(0)), 0)
 		          end if
-		          mulMatrix.Value(6) = 0
-		          mulMatrix.Value(7) = 0
-		          mulMatrix.Value(8) = 1
 		          result = matrixMultiply(result, mulMatrix)
 		          
 		        end select
@@ -262,6 +252,21 @@ Protected Module DrawSVG
 		  end if
 		  
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function initTranslationMatrix(tx As Double, ty As Double) As JSONItem
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
+		  Dim result as new JSONItem("[1,0,0,0,1,0,0,0,1]")
+		  
+		  result.Value(2) = tx
+		  result.Value(5) = ty
+		  
+		  return result
+		  
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
