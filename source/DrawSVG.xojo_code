@@ -481,12 +481,19 @@ Protected Module DrawSVG
 		  
 		  Dim style As JSONItem
 		  Dim matrix As JSONItem
+		  Dim element As Picture
+		  Dim eg As Graphics
 		  Dim x1 As Double
 		  Dim y1 As Double
 		  Dim x2 As Double
 		  Dim y2 As Double
 		  Dim stroke As String
 		  Dim strokeWidth As Double
+		  Dim strokeStep As Integer
+		  Dim width As Integer
+		  Dim height As Integer
+		  Dim minX As Integer
+		  Dim minY As Integer
 		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
@@ -494,19 +501,41 @@ Protected Module DrawSVG
 		  stroke = style.LookupString("stroke", "")
 		  strokeWidth = style.LookupDouble("stroke-width", 1)
 		  
-		  x1 = style.LookupDouble("x1") - (strokeWidth / 2)
-		  y1 = style.LookupDouble("y1") - (strokeWidth / 2)
-		  x2 = style.LookupDouble("x2") - (strokeWidth / 2)
-		  y2 = style.LookupDouble("y2") - (strokeWidth / 2)
+		  strokeStep = (strokeWidth / 2)
 		  
-		  if (stroke <> "none") and (stroke <> "") then
-		    g.ForeColor = determineColor(stroke)
-		    g.PenWidth = strokeWidth
-		    g.PenHeight = g.PenWidth
-		    g.DrawLine xOffset + x1, _
-		    yOffset + y1, _
-		    xOffset + x2, _
-		    yOffset + y2
+		  x1 = style.LookupDouble("x1") - strokeStep
+		  y1 = style.LookupDouble("y1") - strokeStep
+		  x2 = style.LookupDouble("x2") - strokeStep
+		  y2 = style.LookupDouble("y2") - strokeStep
+		  
+		  if (stroke <> "none") and (stroke <> "") and (strokeWidth > 0) then
+		    
+		    width = Abs(x2- x1) + 1
+		    height = Abs(y2- y1) + 1
+		    if x2 < x1 then
+		      minX = x2
+		    else
+		      minX = x1
+		    end if
+		    if y2 < y1 then
+		      minY = y2
+		    else
+		      minY = y1
+		    end if
+		    
+		    element = new Picture(width + strokeWidth * 2, height + strokeWidth * 2)
+		    eg = element.Graphics
+		    
+		    eg.ForeColor = determineColor(stroke)
+		    eg.PenWidth = strokeWidth
+		    eg.PenHeight = eg.PenWidth
+		    eg.DrawLine x1 - minX + strokeWidth, _
+		    y1 - minY + strokeWidth, _
+		    x2 - minX + strokeWidth, _
+		    y2 - minY + strokeWidth
+		    
+		    g.DrawPicture element, xOffset + minX - strokeWidth, yOffset + minY - strokeWidth
+		    
 		  end if
 		  
 		End Sub
@@ -702,8 +731,6 @@ Protected Module DrawSVG
 		  Dim style As JSONItem
 		  Dim matrix As JSONItem
 		  Dim i As Integer
-		  Dim width As Integer
-		  Dim height As Integer
 		  Dim drawG As Graphics
 		  
 		  style = buildStyleItem(node)
