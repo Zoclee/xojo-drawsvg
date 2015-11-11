@@ -880,21 +880,15 @@ Protected Module DrawSVG
 		  
 		  Dim style As JSONItem
 		  Dim matrix() As Double
-		  Dim element As Picture
-		  Dim eg As Graphics
+		  Dim i As Integer
+		  Dim tmpX As Integer
+		  Dim tmpY As Integer
 		  Dim fill As String
 		  Dim stroke As String
 		  Dim strokeWidth As Double
 		  Dim points() As Integer
 		  Dim tmpArr() As String
 		  Dim coord() As String
-		  Dim i As Integer
-		  Dim minX As Integer
-		  Dim maxX As Integer
-		  Dim minY As Integer
-		  Dim maxY As Integer
-		  Dim width As Integer
-		  Dim height As Integer
 		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
@@ -903,6 +897,8 @@ Protected Module DrawSVG
 		  stroke = style.LookupString("stroke", "")
 		  strokeWidth = style.LookupDouble("stroke-width", 1)
 		  
+		  // build polygon
+		  
 		  points.Append 1 // sentinal value
 		  
 		  tmpArr = style.LookupString("points", "").Split(" ")
@@ -910,43 +906,21 @@ Protected Module DrawSVG
 		  while i <= tmpArr.Ubound
 		    coord = tmpArr(i).Split(",")
 		    if coord.Ubound = 1 then
-		      
 		      points.Append Val(coord(0))
 		      points.Append Val(coord(1))
-		      
-		      if i = 0 then
-		        minX = Val(coord(0))
-		        maxX = Val(coord(0))
-		        minY = Val(coord(1))
-		        maxY = Val(coord(1))
-		      else
-		        if Val(coord(0)) < minX then
-		          minX = Val(coord(0))
-		        end if
-		        if Val(coord(0)) > maxX then
-		          maxX = Val(coord(0))
-		        end if
-		        if Val(coord(1)) < minY then
-		          minY = Val(coord(1))
-		        end if
-		        if Val(coord(1)) > maxY then
-		          maxY = Val(coord(1))
-		        end if
-		      end if
-		      
 		    end if
 		    i = i + 1
 		  wend
 		  
-		  width = maxX - minX + 1
-		  height = maxY - minY + 1
-		  
-		  // adjust polygon values for seperate layer rendering
+		  // transform polygon
 		  
 		  i = 1
 		  while i < points.Ubound
-		    points(i) = points(i) - minX + strokeWidth * 2
-		    points(i + 1) = points(i + 1) - minY + strokeWidth * 2
+		    tmpX = points(i)
+		    tmpY = points(i + 1)
+		    transformPoint tmpX, tmpY, matrix
+		    points(i) = tmpX
+		    points(i + 1) = tmpY
 		    i = i + 2
 		  wend
 		  
@@ -957,29 +931,21 @@ Protected Module DrawSVG
 		    points.Append points(i+1)
 		  next i
 		  
-		  element = new Picture(width + strokeWidth * 4, height + strokeWidth * 4)
-		  eg = element.Graphics
-		  
 		  // fill
 		  
 		  if fill <> "none" then
-		    eg.ForeColor = determineColor(fill)
-		    eg.FillPolygon points
+		    g.ForeColor = determineColor(fill)
+		    g.FillPolygon points
 		  end if
 		  
 		  // stroke
 		  
 		  if (stroke <> "none") and (stroke <> "") and (strokeWidth > 0) then
-		    eg.ForeColor = determineColor(stroke)
-		    eg.PenWidth = strokeWidth
-		    eg.PenHeight = eg.PenWidth
-		    
-		    eg.DrawPolygon points
+		    g.ForeColor = determineColor(stroke)
+		    g.PenWidth = strokeWidth
+		    g.PenHeight = strokeWidth
+		    g.DrawPolygon points
 		  end if
-		  
-		  g.DrawPicture element, minX - strokeWidth * 2, minY - strokeWidth * 2
-		  
-		  
 		  
 		End Sub
 	#tag EndMethod
