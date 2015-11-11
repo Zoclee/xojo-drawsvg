@@ -61,12 +61,18 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function buildTransformationMatrix(transform As String) As JSONItem
+		Private Function buildTransformationMatrix(transform As String) As Double()
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
-		  Dim result as new JSONItem("[1,0,0,0,1,0,0,0,1]")
-		  Dim mulMatrix as new JSONItem("[0,0,0,0,0,0,0,0,0]")
+		  Dim result() As Double = Array( _
+		  1.0, 0.0, 0.0, _
+		  0.0, 1.0, 0.0, _
+		  0.0, 0.0, 1.0)
+		  Dim mulMatrix() As Double = Array( _
+		  0.0, 0.0, 0.0, _
+		  0.0, 0.0, 0.0, _
+		  0.0, 0.0, 0.0)
 		  Dim pos As Integer
 		  Dim openBracket As Integer
 		  Dim closeBracket As Integer
@@ -244,18 +250,14 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function initMatrix(a As Double, b As Double, c As Double, d As Double, e As Double, f As Double) As JSONItem
+		Private Function initMatrix(a As Double, b As Double, c As Double, d As Double, e As Double, f As Double) As Double()
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
-		  Dim result as new JSONItem("[1,0,0,0,1,0,0,0,1]")
-		  
-		  result.Value(0) = a
-		  result.Value(1) = c
-		  result.Value(2) = e
-		  result.Value(3) = b
-		  result.Value(4) = d
-		  result.Value(5) = f
+		  Dim result() As Double = Array( _
+		  a, c, e, _
+		  b, d, f, _
+		  0.0, 0.0, 1.0)
 		  
 		  return result
 		  
@@ -263,14 +265,14 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function initScaleMatrix(sx As Double, sy As Double) As JSONItem
+		Private Function initScaleMatrix(sx As Double, sy As Double) As Double()
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
-		  Dim result as new JSONItem("[1,0,0,0,1,0,0,0,1]")
-		  
-		  result.Value(0) = sx
-		  result.Value(4) = sy
+		  Dim result() As Double = Array( _
+		  sx, 0.0, 0.0, _
+		  0.0, sy, 0.0, _
+		  0.0, 0.0, 1.0)
 		  
 		  return result
 		  
@@ -278,14 +280,14 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function initTranslationMatrix(tx As Double, ty As Double) As JSONItem
+		Private Function initTranslationMatrix(tx As Double, ty As Double) As Double()
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
-		  Dim result as new JSONItem("[1,0,0,0,1,0,0,0,1]")
-		  
-		  result.Value(2) = tx
-		  result.Value(5) = ty
+		  Dim result() As Double = Array( _
+		  1.0, 0.0, tx, _
+		  0.0, 1.0, ty, _
+		  0.0, 0.0, 1.0)
 		  
 		  return result
 		  
@@ -329,20 +331,23 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function matrixMultiply(m1 As JSONItem, m2 As JSONItem) As JSONItem
-		  Dim result as new JSONItem("[0,0,0,0,0,0,0,0,0]")
+		Private Function matrixMultiply(m1() As Double, m2() As Double) As Double()
+		  Dim result() As Double = Array( _
+		  0.0, 0.0, 0.0, _
+		  0.0, 0.0, 0.0, _
+		  0.0, 0.0, 0.0)
 		  
-		  result.Value(0) = m1.Value(0) * m2.Value(0) + m1.Value(1) * m2.Value(3) + m1.Value(2) * m2.Value(6)
-		  result.Value(1) = m1.Value(0) * m2.Value(1) + m1.Value(1) * m2.Value(4) + m1.Value(2) * m2.Value(7)
-		  result.Value(2) = m1.Value(0) * m2.Value(2) + m1.Value(1) * m2.Value(5) + m1.Value(2) * m2.Value(8)
+		  result(0) = m1(0) * m2(0) + m1(1) * m2(3) + m1(2) * m2(6)
+		  result(1) = m1(0) * m2(1) + m1(1) * m2(4) + m1(2) * m2(7)
+		  result(2) = m1(0) * m2(2) + m1(1) * m2(5) + m1(2) * m2(8)
 		  
-		  result.Value(3) = m1.Value(3) * m2.Value(0) + m1.Value(4) * m2.Value(3) + m1.Value(5) * m2.Value(6)
-		  result.Value(4) = m1.Value(3) * m2.Value(1) + m1.Value(4) * m2.Value(4) + m1.Value(5) * m2.Value(7)
-		  result.Value(5) = m1.Value(3) * m2.Value(2) + m1.Value(4) * m2.Value(5) + m1.Value(5) * m2.Value(8)
+		  result(3) = m1(3) * m2(0) + m1(4) * m2(3) + m1(5) * m2(6)
+		  result(4) = m1(3) * m2(1) + m1(4) * m2(4) + m1(5) * m2(7)
+		  result(5) = m1(3) * m2(2) + m1(4) * m2(5) + m1(5) * m2(8)
 		  
-		  result.Value(6) = m1.Value(6) * m2.Value(0) + m1.Value(7) * m2.Value(3) + m1.Value(8) * m2.Value(6)
-		  result.Value(7) = m1.Value(6) * m2.Value(1) + m1.Value(7) * m2.Value(4) + m1.Value(8) * m2.Value(7)
-		  result.Value(8) = m1.Value(6) * m2.Value(2) + m1.Value(7) * m2.Value(5) + m1.Value(8) * m2.Value(8)
+		  result(6) = m1(6) * m2(0) + m1(7) * m2(3) + m1(8) * m2(6)
+		  result(7) = m1(6) * m2(1) + m1(7) * m2(4) + m1(8) * m2(7)
+		  result(8) = m1(6) * m2(2) + m1(7) * m2(5) + m1(8) * m2(8)
 		  
 		  return result
 		  
@@ -350,7 +355,7 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub paintTransformedElement(g As Graphics, image as Picture, matrix As JSONItem)
+		Private Sub paintTransformedElement(g As Graphics, image as Picture, matrix() As Double)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
@@ -364,25 +369,25 @@ Protected Module DrawSVG
 		  Dim tgtX As Integer
 		  Dim tgtY As Integer
 		  
-		  srcRGB = image.RGBSurface
-		  'tgtRGB = g.PixelRGBSurface
-		  
-		  srcY = 0
-		  while srcY < image.Height 
-		    srcX = 0
-		    while srcX < image.Width
-		      tgtX = srcX
-		      tgtY = srcY
-		      transformPoint(tgtX, tgtY, matrix)
-		      
-		      ' copy the pixel from the source to the target
-		      
-		      g.Pixel(tgtX, tgtY) = srcRGB.Pixel(srcX, srcY)
-		      
-		      srcX = srcX + 1
-		    wend
-		    srcY = srcY + 1
-		  wend
+		  'srcRGB = image.RGBSurface
+		  ''tgtRGB = g.PixelRGBSurface
+		  '
+		  'srcY = 0
+		  'while srcY < image.Height 
+		  'srcX = 0
+		  'while srcX < image.Width
+		  'tgtX = srcX
+		  'tgtY = srcY
+		  'transformPoint(tgtX, tgtY, matrix)
+		  '
+		  '' copy the pixel from the source to the target
+		  '
+		  'g.Pixel(tgtX, tgtY) = srcRGB.Pixel(srcX, srcY)
+		  '
+		  'srcX = srcX + 1
+		  'wend
+		  'srcY = srcY + 1
+		  'wend
 		  
 		  'Dim srcWidth as integer = srcPic.Width
 		  'Dim srcHeight as integer = srcPic.Height
@@ -582,7 +587,7 @@ Protected Module DrawSVG
 		  ' www.zoclee.com
 		  
 		  Dim style As JSONItem
-		  Dim matrix As JSONItem
+		  Dim matrix() As Double
 		  Dim element As Picture
 		  Dim eg As Graphics
 		  Dim cx As Double
@@ -646,7 +651,7 @@ Protected Module DrawSVG
 		  ' www.zoclee.com
 		  
 		  Dim style As JSONItem
-		  Dim matrix As JSONItem
+		  Dim matrix() As Double
 		  Dim element As Picture
 		  Dim eg As Graphics
 		  Dim cx As Double
@@ -711,7 +716,7 @@ Protected Module DrawSVG
 		  ' www.zoclee.com
 		  
 		  Dim style As JSONItem
-		  Dim matrix As JSONItem
+		  Dim matrix() As Double
 		  Dim i As Integer
 		  
 		  style = buildStyleItem(node)
@@ -732,7 +737,7 @@ Protected Module DrawSVG
 		  ' www.zoclee.com
 		  
 		  Dim style As JSONItem
-		  Dim matrix As JSONItem
+		  Dim matrix() As Double
 		  Dim element As Picture
 		  Dim eg As Graphics
 		  Dim x1 As Double
@@ -799,7 +804,7 @@ Protected Module DrawSVG
 		  ' www.zoclee.com
 		  
 		  Dim style As JSONItem
-		  Dim matrix As JSONItem
+		  Dim matrix() As Double
 		  Dim element As Picture
 		  Dim eg As Graphics
 		  Dim fill As String
@@ -903,7 +908,7 @@ Protected Module DrawSVG
 		  ' www.zoclee.com
 		  
 		  Dim style As JSONItem
-		  Dim matrix As JSONItem
+		  Dim matrix() As Double
 		  Dim element As Picture
 		  Dim eg As Graphics
 		  Dim fill As String
@@ -1014,7 +1019,7 @@ Protected Module DrawSVG
 		  ' www.zoclee.com
 		  
 		  Dim style As JSONItem
-		  Dim matrix As JSONItem
+		  Dim matrix() As Double
 		  Dim element As Picture
 		  Dim eg As Graphics
 		  Dim x As Double
@@ -1082,7 +1087,7 @@ Protected Module DrawSVG
 		  ' www.zoclee.com
 		  
 		  Dim style As JSONItem
-		  Dim matrix As JSONItem
+		  Dim matrix() As Double
 		  Dim i As Integer
 		  Dim drawG As Graphics
 		  
@@ -1110,7 +1115,7 @@ Protected Module DrawSVG
 		  ' www.zoclee.com
 		  
 		  Dim style As JSONItem
-		  Dim matrix As JSONItem
+		  Dim matrix() As Double
 		  Dim element As Picture
 		  Dim eg As Graphics
 		  Dim tspanStyle As JSONItem
@@ -1178,28 +1183,17 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub transformPoint(ByRef x As Integer, ByRef y As Integer, matrix As JSONItem)
+		Private Sub transformPoint(ByRef x As Integer, ByRef y As Integer, matrix() As Double)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
 		  Dim cx As Double
 		  Dim cy As Double
 		  Dim cw As Double
-		  Dim m(8) As Double
 		  
-		  m(0) = matrix.Value(0)
-		  m(1) = matrix.Value(1)
-		  m(2) = matrix.Value(2)
-		  m(3) = matrix.Value(3)
-		  m(4) = matrix.Value(4)
-		  m(5) = matrix.Value(5)
-		  m(6) = matrix.Value(6)
-		  m(7) = matrix.Value(7)
-		  m(8) = matrix.Value(8)
-		  
-		  cx = m(0) * x + m(1) * y + m(2)
-		  cy = m(3) * x + m(4) * y + m(5)
-		  cw = m(6) * x + m(7) * y + m(8)
+		  cx = matrix(0) * x + matrix(1) * y + matrix(2)
+		  cy = matrix(3) * x + matrix(4) * y + matrix(5)
+		  cw = matrix(6) * x + matrix(7) * y + matrix(8)
 		  
 		  x = (cx / cw)
 		  y = (cy / cw)
