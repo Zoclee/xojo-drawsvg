@@ -225,6 +225,7 @@ Protected Module DrawSVG
 		  Dim xdoc As XmlDocument
 		  Dim i As Integer
 		  Dim matrix() As Double
+		  Dim drawG As Graphics
 		  
 		  if Len(svg) > 0 then
 		    
@@ -232,11 +233,14 @@ Protected Module DrawSVG
 		      
 		      xdoc = new XmlDocument(svg)
 		      
-		      matrix = initTranslationMatrix(x, y)
+		      drawG = g.Clip(x, y, g.Width - x, g.Height - y)
+		      
+		      matrix = initTranslationMatrix(0, 0)
+		      
 		      i = 0
 		      while (i < xdoc.ChildCount) 
 		        if xdoc.Child(i).Name = "svg" then
-		          renderNode(xdoc.Child(i), g, matrix)
+		          renderNode(xdoc.Child(i), drawG, matrix)
 		        end if
 		        i = i + 1
 		      wend
@@ -726,10 +730,11 @@ Protected Module DrawSVG
 		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
+		  matrix = matrixMultiply(matrix, parentMatrix)
 		  
 		  i = 0
 		  while i < node.ChildCount
-		    renderNode node.Child(i), g, parentMatrix
+		    renderNode node.Child(i), g, matrix
 		    i = i + 1
 		  wend
 		  
@@ -756,6 +761,7 @@ Protected Module DrawSVG
 		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
+		  matrix = matrixMultiply(matrix, parentMatrix)
 		  
 		  x1 = style.LookupDouble("x1")
 		  y1 = style.LookupDouble("y1")
@@ -815,6 +821,7 @@ Protected Module DrawSVG
 		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
+		  matrix = matrixMultiply(matrix, parentMatrix)
 		  
 		  fill = style.LookupString("fill", "#000000")
 		  stroke = style.LookupString("stroke", "")
@@ -885,6 +892,7 @@ Protected Module DrawSVG
 		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
+		  matrix = matrixMultiply(matrix, parentMatrix)
 		  
 		  fill = style.LookupString("fill", "#000000")
 		  stroke = style.LookupString("stroke", "")
@@ -964,6 +972,7 @@ Protected Module DrawSVG
 		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
+		  matrix = matrixMultiply(matrix, parentMatrix)
 		  
 		  x = style.LookupDouble("x")
 		  y = style.LookupDouble("y")
@@ -1032,6 +1041,7 @@ Protected Module DrawSVG
 		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
+		  matrix = matrixMultiply(matrix, parentMatrix)
 		  
 		  if (node.GetAttribute("width") <> "") and (node.GetAttribute("height") <> "") then
 		    drawG = g.Clip(0, 0, Val(node.GetAttribute("width")), Val(node.GetAttribute("height")))
@@ -1041,7 +1051,7 @@ Protected Module DrawSVG
 		  
 		  i = 0
 		  while i < node.ChildCount
-		    renderNode node.Child(i), drawG, parentMatrix
+		    renderNode node.Child(i), drawG, matrix
 		    i = i + 1
 		  wend
 		  
@@ -1066,6 +1076,7 @@ Protected Module DrawSVG
 		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
+		  matrix = matrixMultiply(matrix, parentMatrix)
 		  
 		  x = style.LookupDouble("x")
 		  y = style.LookupDouble("y")
