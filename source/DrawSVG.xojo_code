@@ -743,61 +743,54 @@ Protected Module DrawSVG
 		  
 		  Dim style As JSONItem
 		  Dim matrix() As Double
-		  Dim element As Picture
-		  Dim eg As Graphics
+		  Dim points() As Integer
+		  Dim i As Integer
+		  Dim tmpX As Integer
+		  Dim tmpY As Integer
 		  Dim x1 As Double
 		  Dim y1 As Double
 		  Dim x2 As Double
 		  Dim y2 As Double
 		  Dim stroke As String
 		  Dim strokeWidth As Double
-		  Dim strokeStep As Integer
-		  Dim width As Integer
-		  Dim height As Integer
-		  Dim minX As Integer
-		  Dim minY As Integer
 		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
 		  
+		  x1 = style.LookupDouble("x1")
+		  y1 = style.LookupDouble("y1")
+		  x2 = style.LookupDouble("x2")
+		  y2 = style.LookupDouble("y2")
 		  stroke = style.LookupString("stroke", "")
 		  strokeWidth = style.LookupDouble("stroke-width", 1)
 		  
-		  strokeStep = (strokeWidth / 2)
+		  // build polygon
 		  
-		  x1 = style.LookupDouble("x1") - strokeStep
-		  y1 = style.LookupDouble("y1") - strokeStep
-		  x2 = style.LookupDouble("x2") - strokeStep
-		  y2 = style.LookupDouble("y2") - strokeStep
+		  points.Append 0
+		  points.Append x1
+		  points.Append y1
+		  points.Append x2
+		  points.Append y2
+		  
+		  // transform polygon
+		  
+		  i = 1
+		  while i < points.Ubound
+		    tmpX = points(i)
+		    tmpY = points(i + 1)
+		    transformPoint tmpX, tmpY, matrix
+		    points(i) = tmpX
+		    points(i + 1) = tmpY
+		    i = i + 2
+		  wend
+		  
+		  // stroke
 		  
 		  if (stroke <> "none") and (stroke <> "") and (strokeWidth > 0) then
-		    
-		    width = Abs(x2- x1) + 1
-		    height = Abs(y2- y1) + 1
-		    if x2 < x1 then
-		      minX = x2
-		    else
-		      minX = x1
-		    end if
-		    if y2 < y1 then
-		      minY = y2
-		    else
-		      minY = y1
-		    end if
-		    
-		    element = new Picture(width + strokeWidth * 2, height + strokeWidth * 2)
-		    eg = element.Graphics
-		    
-		    eg.ForeColor = determineColor(stroke)
-		    eg.PenWidth = strokeWidth
-		    eg.PenHeight = eg.PenWidth
-		    eg.DrawLine x1 - minX + strokeWidth, _
-		    y1 - minY + strokeWidth, _
-		    x2 - minX + strokeWidth, _
-		    y2 - minY + strokeWidth
-		    
-		    g.DrawPicture element, minX - strokeWidth, minY - strokeWidth
-		    
+		    g.ForeColor = determineColor(stroke)
+		    g.PenWidth = strokeWidth
+		    g.PenHeight = strokeWidth
+		    g.DrawPolygon points
 		  end if
 		  
 		End Sub
