@@ -235,7 +235,7 @@ Protected Module DrawSVG
 		      
 		      drawG = g.Clip(x, y, g.Width - x, g.Height - y)
 		      
-		      matrix = initTranslationMatrix(0, 0)
+		      matrix = initIdentityMatrix()
 		      
 		      i = 0
 		      while (i < xdoc.ChildCount) 
@@ -253,6 +253,21 @@ Protected Module DrawSVG
 		  end if
 		  
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function initIdentityMatrix() As Double()
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
+		  Dim result() As Double = Array( _
+		  1.0, 0.0, 0.0, _
+		  0.0, 1.0, 0.0, _
+		  0.0, 0.0, 1.0)
+		  
+		  return result
+		  
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21

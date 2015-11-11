@@ -113,7 +113,7 @@ End
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
-		  g.DrawSVG SvgXML, 200, 200
+		  g.DrawSVG SvgXML, 0, 0
 		  
 		End Sub
 	#tag EndEvent
