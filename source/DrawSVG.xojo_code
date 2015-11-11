@@ -701,8 +701,11 @@ Protected Module DrawSVG
 		  
 		  Dim style As JSONItem
 		  Dim matrix() As Double
-		  Dim element As Picture
-		  Dim eg As Graphics
+		  Dim points() As Integer
+		  Dim pointsDbl() As Double
+		  Dim i As Integer
+		  Dim tmpX As Double
+		  Dim tmpY As Double
 		  Dim cx As Double
 		  Dim cy As Double
 		  Dim rx As Double
@@ -710,49 +713,72 @@ Protected Module DrawSVG
 		  Dim fill As String
 		  Dim stroke As String
 		  Dim strokeWidth As Double
-		  Dim strokeStep As Integer
+		  Dim pointCount As Integer
+		  Dim theta As Double
 		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
+		  matrix = matrixMultiply(matrix, parentMatrix)
 		  
 		  cx = style.LookupDouble("cx")
 		  cy = style.LookupDouble("cy")
-		  rx = style.LookupDouble("rx")
-		  ry = style.LookupDouble("ry")
 		  fill = style.LookupString("fill", "#000000")
 		  stroke = style.LookupString("stroke", "")
 		  strokeWidth = style.LookupDouble("stroke-width", 1)
+		  rx = style.LookupDouble("rx")
+		  ry = style.LookupDouble("ry")
 		  
 		  if (rx > 0) and (ry > 0) then
 		    
-		    strokeStep = Floor(strokeWidth \ 2)
+		    // build polygon
 		    
-		    element = new Picture(rx * 2 + strokeWidth * 2, ry * 2 + strokeWidth * 2)
-		    eg = element.Graphics
+		    pointsDbl.Append 0
+		    
+		    pointCount = 128
+		    i = 0
+		    while i <= pointCount 
+		      theta = Pi * (i / (pointCount / 2))
+		      pointsDbl.Append cx + rx * cos(theta) // center a + radius x * cos(theta)
+		      pointsDbl.Append cy + ry * sin(theta) // center b + radius y * sin(theta)
+		      i = i + 1
+		    wend
+		    
+		    // transform polygon
+		    
+		    i = 1
+		    while i < pointsDbl.Ubound
+		      tmpX = pointsDbl(i)
+		      tmpY = pointsDbl(i + 1)
+		      transformPoint tmpX, tmpY, matrix
+		      pointsDbl(i) = tmpX
+		      pointsDbl(i + 1) = tmpY
+		      i = i + 2
+		    wend
+		    
+		    // convert circle points to integers
+		    
+		    Redim points(-1)
+		    i = 0
+		    while i <= pointsDbl.Ubound
+		      points.Append Round(pointsDbl(i))
+		      i = i + 1
+		    wend
 		    
 		    // fill
 		    
 		    if fill <> "none" then
-		      eg.ForeColor = determineColor(fill)
-		      eg.FillOval strokeStep, _
-		      strokeStep, _
-		      rx * 2, _
-		      ry * 2
+		      g.ForeColor = determineColor(fill)
+		      g.FillPolygon points
 		    end if
 		    
 		    // stroke
 		    
 		    if (stroke <> "none") and (stroke <> "") and (strokeWidth > 0) then
-		      eg.ForeColor = determineColor(stroke)
-		      eg.PenWidth = strokeWidth
-		      eg.PenHeight = eg.PenWidth
-		      eg.DrawOval strokeStep, _
-		      strokeStep, _
-		      rx * 2, _
-		      ry * 2
+		      g.ForeColor = determineColor(stroke)
+		      g.PenWidth = strokeWidth
+		      g.PenHeight = strokeWidth
+		      g.DrawPolygon points
 		    end if
-		    
-		    g.DrawPicture element, cx - rx - strokeStep, cy - ry - strokeStep
 		    
 		  end if
 		  
