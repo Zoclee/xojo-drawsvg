@@ -362,12 +362,12 @@ Protected Module DrawSVG
 		  ' This routine is based on code written by Alain Bailleul.
 		  ' www.alwaysbusycorner.com
 		  
-		  Dim srcRGB as RGBSurface
-		  Dim tgtRGB as RGBSurface
-		  Dim srcX As Integer
-		  Dim srcY As Integer
-		  Dim tgtX As Integer
-		  Dim tgtY As Integer
+		  'Dim srcRGB as RGBSurface
+		  'Dim tgtRGB as RGBSurface
+		  'Dim srcX As Integer
+		  'Dim srcY As Integer
+		  'Dim tgtX As Integer
+		  'Dim tgtY As Integer
 		  
 		  'srcRGB = image.RGBSurface
 		  ''tgtRGB = g.PixelRGBSurface
@@ -1020,8 +1020,10 @@ Protected Module DrawSVG
 		  
 		  Dim style As JSONItem
 		  Dim matrix() As Double
-		  Dim element As Picture
-		  Dim eg As Graphics
+		  Dim points() As Integer
+		  Dim i As Integer
+		  Dim tmpX As Integer
+		  Dim tmpY As Integer
 		  Dim x As Double
 		  Dim y As Double
 		  Dim width As Double
@@ -1029,8 +1031,7 @@ Protected Module DrawSVG
 		  Dim fill As String
 		  Dim stroke As String
 		  Dim strokeWidth As Double
-		  Dim strokeStep As Integer
-		  Dim transMatrix As JSONItem
+		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
 		  
@@ -1044,40 +1045,48 @@ Protected Module DrawSVG
 		  
 		  if (width > 0) and (height > 0) then
 		    
-		    strokeStep = Floor(strokeWidth \ 2)
+		    // build polygon
 		    
-		    element = new Picture(width + strokeWidth * 2, height + strokeWidth * 2)
-		    eg = element.Graphics
+		    points.Append 0
+		    points.Append x
+		    points.Append y
+		    points.Append x
+		    points.Append y + height - 1
+		    points.Append x + width - 1
+		    points.Append y + height - 1
+		    points.Append x + width - 1
+		    points.Append y
+		    
+		    // transform polygon
+		    
+		    i = 1
+		    while i < points.Ubound
+		      tmpX = points(i)
+		      tmpY = points(i + 1)
+		      transformPoint tmpX, tmpY, matrix
+		      points(i) = tmpX
+		      points(i + 1) = tmpY
+		      i = i + 2
+		    wend
 		    
 		    // fill
 		    
 		    if fill <> "none" then
-		      eg.ForeColor = determineColor(fill)
-		      eg.FillRect strokeStep, _
-		      strokeStep, _
-		      width + strokeStep, _
-		      height + strokeStep
+		      g.ForeColor = determineColor(fill)
+		      g.FillPolygon points
 		    end if
 		    
 		    // stroke
 		    
 		    if (stroke <> "none") and (stroke <> "") and (strokeWidth > 0) then
-		      eg.ForeColor = determineColor(stroke)
-		      eg.PenWidth = strokeWidth
-		      eg.PenHeight = eg.PenWidth
-		      eg.DrawRect strokeStep, _
-		      strokeStep, _
-		      width + strokeStep, _
-		      height + strokeStep
+		      g.ForeColor = determineColor(stroke)
+		      g.PenWidth = strokeWidth
+		      g.PenHeight = g.PenWidth
+		      g.DrawPolygon points
 		    end if
 		    
-		    g.DrawPicture element, xOffset + x - strokeStep, yOffset + y - strokeStep
-		    
-		    'transMatrix = initTranslationMatrix(xOffset + x - strokeStep, yOffset + y - strokeStep)
-		    'matrix = matrixMultiply(matrix, transMatrix)
-		    'paintTransformedElement g, element, matrix
-		    
 		  end if
+		  
 		End Sub
 	#tag EndMethod
 
