@@ -107,6 +107,19 @@ Protected Module DrawSVG
 		            result = matrixMultiply(result, mulMatrix)
 		          end if
 		          
+		        case "rotate"
+		          if strArr.Ubound = 0 then // around origin
+		            mulMatrix = initRotateMatrix(val(strArr(0)))
+		            result = matrixMultiply(result, mulMatrix)
+		          elseif strArr.Ubound = 2 then // around point
+		            mulMatrix = initTranslationMatrix(val(strArr(1)), val(strArr(2)))
+		            result = matrixMultiply(result, mulMatrix)
+		            mulMatrix = initRotateMatrix(val(strArr(0)))
+		            result = matrixMultiply(result, mulMatrix)
+		            mulMatrix = initTranslationMatrix(-val(strArr(1)), -val(strArr(2)))
+		            result = matrixMultiply(result, mulMatrix)
+		          end if
+		          
 		        case "scale"
 		          if strArr.Ubound >= 1 then
 		            mulMatrix = initScaleMatrix(val(strArr(0)), val(strArr(1)))
@@ -278,6 +291,21 @@ Protected Module DrawSVG
 		  Dim result() As Double = Array( _
 		  a, c, e, _
 		  b, d, f, _
+		  0.0, 0.0, 1.0)
+		  
+		  return result
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function initRotateMatrix(angle As Double) As Double()
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
+		  Dim result() As Double = Array( _
+		  cos(angle * DegToRad), -sin(angle * DegToRad), 0.0, _
+		  sin(angle * DegToRad), cos(angle * DegToRad), 0.0, _
 		  0.0, 0.0, 1.0)
 		  
 		  return result
@@ -1238,6 +1266,9 @@ Protected Module DrawSVG
 		End Sub
 	#tag EndMethod
 
+
+	#tag Constant, Name = DegToRad, Type = Double, Dynamic = False, Default = \"0.0174533", Scope = Private
+	#tag EndConstant
 
 	#tag Constant, Name = Pi, Type = Double, Dynamic = False, Default = \"3.1415927", Scope = Private
 	#tag EndConstant
