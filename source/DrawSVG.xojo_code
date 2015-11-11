@@ -224,6 +224,7 @@ Protected Module DrawSVG
 		  
 		  Dim xdoc As XmlDocument
 		  Dim i As Integer
+		  Dim matrix() As Double
 		  
 		  if Len(svg) > 0 then
 		    
@@ -231,10 +232,11 @@ Protected Module DrawSVG
 		      
 		      xdoc = new XmlDocument(svg)
 		      
+		      matrix = initTranslationMatrix(x, y)
 		      i = 0
 		      while (i < xdoc.ChildCount) 
 		        if xdoc.Child(i).Name = "svg" then
-		          renderNode(xdoc.Child(i), g, x, y)
+		          renderNode(xdoc.Child(i), g, matrix)
 		        end if
 		        i = i + 1
 		      wend
@@ -512,7 +514,7 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub renderNode(node As XmlNode, g As Graphics, xOffset As Double, yOffset As Double)
+		Private Sub renderNode(node As XmlNode, g As Graphics, parentMatrix() As Double)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
@@ -531,7 +533,7 @@ Protected Module DrawSVG
 		      // we ignore xml comments
 		      
 		    case "circle"
-		      render_circle(node, g, xOffset, yOffset)
+		      render_circle(node, g, parentMatrix)
 		      
 		    case "defs"
 		      // we ignore these tags
@@ -540,31 +542,31 @@ Protected Module DrawSVG
 		      // we ignore these tags
 		      
 		    case "ellipse"
-		      render_ellipse(node, g, xOffset, yOffset)
+		      render_ellipse(node, g, parentMatrix)
 		      
 		    case "g"
-		      render_g(node, g, xOffset, yOffset)
+		      render_g(node, g, parentMatrix)
 		      
 		    case "line"
-		      render_line(node, g, xOffset, yOffset)
+		      render_line(node, g, parentMatrix)
 		      
 		    case "metadata"
 		      // we ignore these tags
 		      
 		    case "polygon"
-		      render_polygon(node, g, xOffset, yOffset)
+		      render_polygon(node, g, parentMatrix)
 		      
 		    case "polyline"
-		      render_polyline(node, g, xOffset, yOffset)
+		      render_polyline(node, g, parentMatrix)
 		      
 		    case "rect"
-		      render_rect(node, g, xOffset, yOffset)
+		      render_rect(node, g, parentMatrix)
 		      
 		    case "svg"
-		      render_svg(node, g, xOffset, yOffset)
+		      render_svg(node, g, parentMatrix)
 		      
 		    case "text"
-		      render_text(node, g, xOffset, yOffset)
+		      render_text(node, g, parentMatrix)
 		      
 		    case else
 		      foundNode = false
@@ -585,7 +587,7 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub render_circle(node As XmlNode, g As Graphics, xOffset As Double, yOffset As Double)
+		Private Sub render_circle(node As XmlNode, g As Graphics, parentMatrix() As Double)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
@@ -641,7 +643,7 @@ Protected Module DrawSVG
 		      r * 2
 		    end if
 		    
-		    g.DrawPicture element, xOffset + cx - r - strokeStep, yOffset + cy - r - strokeStep
+		    g.DrawPicture element, cx - r - strokeStep, cy - r - strokeStep
 		    
 		  end if
 		  
@@ -649,7 +651,7 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub render_ellipse(node As XmlNode, g As Graphics, xOffset As Double, yOffset As Double)
+		Private Sub render_ellipse(node As XmlNode, g As Graphics, parentMatrix() As Double)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
@@ -706,7 +708,7 @@ Protected Module DrawSVG
 		      ry * 2
 		    end if
 		    
-		    g.DrawPicture element, xOffset + cx - rx - strokeStep, yOffset + cy - ry - strokeStep
+		    g.DrawPicture element, cx - rx - strokeStep, cy - ry - strokeStep
 		    
 		  end if
 		  
@@ -714,7 +716,7 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub render_g(node As XmlNode, g As Graphics, xOffset As Double, yOffset As Double)
+		Private Sub render_g(node As XmlNode, g As Graphics, parentMatrix() As Double)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
@@ -727,7 +729,7 @@ Protected Module DrawSVG
 		  
 		  i = 0
 		  while i < node.ChildCount
-		    renderNode node.Child(i), g, xOffset, yOffset
+		    renderNode node.Child(i), g, parentMatrix
 		    i = i + 1
 		  wend
 		  
@@ -735,7 +737,7 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub render_line(node As XmlNode, g As Graphics, xOffset As Double, yOffset As Double)
+		Private Sub render_line(node As XmlNode, g As Graphics, parentMatrix() As Double)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
@@ -794,7 +796,7 @@ Protected Module DrawSVG
 		    x2 - minX + strokeWidth, _
 		    y2 - minY + strokeWidth
 		    
-		    g.DrawPicture element, xOffset + minX - strokeWidth, yOffset + minY - strokeWidth
+		    g.DrawPicture element, minX - strokeWidth, minY - strokeWidth
 		    
 		  end if
 		  
@@ -802,7 +804,7 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub render_polygon(node As XmlNode, g As Graphics, xOffset As Double, yOffset As Double)
+		Private Sub render_polygon(node As XmlNode, g As Graphics, parentMatrix() As Double)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
@@ -898,7 +900,7 @@ Protected Module DrawSVG
 		    eg.DrawPolygon points
 		  end if
 		  
-		  g.DrawPicture element, xOffset + minX - strokeWidth * 2, yOffset + minY - strokeWidth * 2
+		  g.DrawPicture element, minX - strokeWidth * 2, minY - strokeWidth * 2
 		  
 		  
 		  
@@ -906,7 +908,7 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub render_polyline(node As XmlNode, g As Graphics, xOffset As Double, yOffset As Double)
+		Private Sub render_polyline(node As XmlNode, g As Graphics, parentMatrix() As Double)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
@@ -1009,7 +1011,7 @@ Protected Module DrawSVG
 		    eg.DrawPolygon points
 		  end if
 		  
-		  g.DrawPicture element, xOffset + minX - strokeWidth * 2, yOffset + minY - strokeWidth * 2
+		  g.DrawPicture element, minX - strokeWidth * 2, minY - strokeWidth * 2
 		  
 		  
 		  
@@ -1017,7 +1019,7 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub render_rect(node As XmlNode, g As Graphics, xOffset As Double, yOffset As Double)
+		Private Sub render_rect(node As XmlNode, g As Graphics, parentMatrix() As Double)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
@@ -1094,7 +1096,7 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub render_svg(node As XmlNode, g As Graphics, x As Double, y As Double)
+		Private Sub render_svg(node As XmlNode, g As Graphics, parentMatrix() As Double)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
@@ -1107,14 +1109,14 @@ Protected Module DrawSVG
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
 		  
 		  if (node.GetAttribute("width") <> "") and (node.GetAttribute("height") <> "") then
-		    drawG = g.Clip(x, y, Val(node.GetAttribute("width")), Val(node.GetAttribute("height")))
+		    drawG = g.Clip(0, 0, Val(node.GetAttribute("width")), Val(node.GetAttribute("height")))
 		  else
-		    drawG = g.Clip(x, y, g.Width - x, g.Height - y)
+		    drawG = g.Clip(0, 0, g.Width, g.Height)
 		  end if
 		  
 		  i = 0
 		  while i < node.ChildCount
-		    renderNode node.Child(i), drawG, 0, 0
+		    renderNode node.Child(i), drawG, parentMatrix
 		    i = i + 1
 		  wend
 		  
@@ -1122,7 +1124,7 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub render_text(node As XmlNode, g As Graphics, xOffset As Double, yOffset As Double)
+		Private Sub render_text(node As XmlNode, g As Graphics, parentMatrix() As Double)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
@@ -1186,7 +1188,7 @@ Protected Module DrawSVG
 		      0, _
 		      0
 		      
-		      g.DrawPicture element, xOffset + x, yOffset + y - g.TextAscent
+		      g.DrawPicture element, x, y - g.TextAscent
 		      
 		    end if
 		    
