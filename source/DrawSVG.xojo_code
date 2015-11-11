@@ -613,9 +613,10 @@ Protected Module DrawSVG
 		  Dim style As JSONItem
 		  Dim matrix() As Double
 		  Dim points() As Integer
+		  Dim pointsDbl() As Double
 		  Dim i As Integer
-		  Dim tmpX As Integer
-		  Dim tmpY As Integer
+		  Dim tmpX As Double
+		  Dim tmpY As Double
 		  Dim cx As Double
 		  Dim cy As Double
 		  Dim r As Double
@@ -640,27 +641,36 @@ Protected Module DrawSVG
 		    
 		    // build polygon
 		    
-		    points.Append 0
+		    pointsDbl.Append 0
 		    
 		    pointCount = 128
 		    i = 0
 		    while i <= pointCount 
 		      theta = Pi * (i / (pointCount / 2))
-		      points.Append Round(cx + r * cos(theta)) // center a + radius x * cos(theta)
-		      points.Append Round(cy + r * sin(theta)) // center b + radius y * sin(theta)
+		      pointsDbl.Append cx + r * cos(theta) // center a + radius x * cos(theta)
+		      pointsDbl.Append cy + r * sin(theta) // center b + radius y * sin(theta)
 		      i = i + 1
 		    wend
 		    
 		    // transform polygon
 		    
 		    i = 1
-		    while i < points.Ubound
-		      tmpX = points(i)
-		      tmpY = points(i + 1)
+		    while i < pointsDbl.Ubound
+		      tmpX = pointsDbl(i)
+		      tmpY = pointsDbl(i + 1)
 		      transformPoint tmpX, tmpY, matrix
-		      points(i) = tmpX
-		      points(i + 1) = tmpY
+		      pointsDbl(i) = tmpX
+		      pointsDbl(i + 1) = tmpY
 		      i = i + 2
+		    wend
+		    
+		    // convert circle points to integers
+		    
+		    Redim points(-1)
+		    i = 0
+		    while i <= pointsDbl.Ubound
+		      points.Append Round(pointsDbl(i))
+		      i = i + 1
 		    wend
 		    
 		    // fill
@@ -1223,6 +1233,26 @@ Protected Module DrawSVG
 		    end if
 		    
 		  end if
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub transformPoint(ByRef x As Double, ByRef y As Double, matrix() As Double)
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
+		  Dim cx As Double
+		  Dim cy As Double
+		  Dim cw As Double
+		  
+		  cx = matrix(0) * x + matrix(1) * y + matrix(2)
+		  cy = matrix(3) * x + matrix(4) * y + matrix(5)
+		  cw = matrix(6) * x + matrix(7) * y + matrix(8)
+		  
+		  x = (cx / cw)
+		  y = (cy / cw)
+		  
+		  
 		End Sub
 	#tag EndMethod
 
