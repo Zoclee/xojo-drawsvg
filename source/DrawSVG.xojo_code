@@ -612,6 +612,85 @@ Protected Module DrawSVG
 		  
 		  Dim style As JSONItem
 		  Dim matrix() As Double
+		  Dim points() As Integer
+		  Dim i As Integer
+		  Dim tmpX As Integer
+		  Dim tmpY As Integer
+		  Dim cx As Double
+		  Dim cy As Double
+		  Dim r As Double
+		  Dim fill As String
+		  Dim stroke As String
+		  Dim strokeWidth As Double
+		  Dim pointCount As Integer
+		  Dim theta As Double
+		  
+		  style = buildStyleItem(node)
+		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
+		  matrix = matrixMultiply(matrix, parentMatrix)
+		  
+		  cx = style.LookupDouble("cx")
+		  cy = style.LookupDouble("cy")
+		  fill = style.LookupString("fill", "#000000")
+		  stroke = style.LookupString("stroke", "")
+		  strokeWidth = style.LookupDouble("stroke-width", 1)
+		  r = style.LookupDouble("r")
+		  
+		  if (r > 0) then
+		    
+		    // build polygon
+		    
+		    points.Append 0
+		    
+		    pointCount = 128
+		    i = 0
+		    while i <= pointCount 
+		      theta = Pi * (i / (pointCount / 2))
+		      points.Append Round(cx + r * cos(theta)) // center a + radius x * cos(theta)
+		      points.Append Round(cy + r * sin(theta)) // center b + radius y * sin(theta)
+		      i = i + 1
+		    wend
+		    
+		    // transform polygon
+		    
+		    i = 1
+		    while i < points.Ubound
+		      tmpX = points(i)
+		      tmpY = points(i + 1)
+		      transformPoint tmpX, tmpY, matrix
+		      points(i) = tmpX
+		      points(i + 1) = tmpY
+		      i = i + 2
+		    wend
+		    
+		    // fill
+		    
+		    if fill <> "none" then
+		      g.ForeColor = determineColor(fill)
+		      g.FillPolygon points
+		    end if
+		    
+		    // stroke
+		    
+		    if (stroke <> "none") and (stroke <> "") and (strokeWidth > 0) then
+		      g.ForeColor = determineColor(stroke)
+		      g.PenWidth = strokeWidth
+		      g.PenHeight = strokeWidth
+		      g.DrawPolygon points
+		    end if
+		    
+		  end if
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub render_circle2(node As XmlNode, g As Graphics, parentMatrix() As Double)
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
+		  Dim style As JSONItem
+		  Dim matrix() As Double
 		  Dim element As Picture
 		  Dim eg As Graphics
 		  Dim cx As Double
@@ -1166,6 +1245,10 @@ Protected Module DrawSVG
 		  
 		End Sub
 	#tag EndMethod
+
+
+	#tag Constant, Name = Pi, Type = Double, Dynamic = False, Default = \"3.1415927", Scope = Private
+	#tag EndConstant
 
 
 	#tag ViewBehavior
