@@ -1,6 +1,25 @@
 #tag Module
 Protected Module DrawSVG
 	#tag Method, Flags = &h21
+		Private Function AdjugateMatrix(a(,) as double) As double(,)
+		  ' Calculates adjugate 3x3 matrix
+		  dim b(2,2) as double
+		  b(0, 0) = Det2( a(1, 1), a(1, 2), a(2, 1), a(2, 2) )
+		  b(1, 0) = Det2( a(1, 2), a(1, 0), a(2, 2), a(2, 0) )
+		  b(2, 0) = Det2( a(1, 0), a(1, 1), a(2, 0), a(2, 1) )
+		  b(0, 1) = Det2( a(2, 1), a(2, 2), a(0, 1), a(0, 2) )
+		  b(1, 1) = Det2( a(2, 2), a(2, 0), a(0, 2), a(0, 0) )
+		  b(2, 1) = Det2( a(2, 0), a(2, 1), a(0, 0), a(0, 1) )
+		  b(0, 2) = Det2( a(0, 1), a(0, 2), a(1, 1), a(1, 2) )
+		  b(1, 2) = Det2( a(0, 2), a(0, 0), a(1, 2), a(1, 0) )
+		  b(2, 2) = Det2( a(0, 0), a(0, 1), a(1, 0), a(1, 1) )
+		  
+		  return b
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub ApplyValues(Extends Item As JSONItem, withItem As JSONItem)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
@@ -195,6 +214,13 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function Det2(a as double, b as double, c as double, d as double) As double
+		  ' Caclculates determinant of a 2x2 matrix
+		  return ( a * d - b * c )
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Function determineColor(s As String) As Color
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
@@ -277,6 +303,154 @@ Protected Module DrawSVG
 		    
 		  end if
 		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub drawTransformedPicture(g As Graphics, image As Picture, matrix2() As Double)
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
+		  ' This routine is based on code written by Alain Bailleul.
+		  ' www.alwaysbusycorner.com
+		  
+		  // srcPic as picture, destinationQuadrilateral() as ABPoint, useInterpolation  as boolean,FillBackColor as Color
+		  
+		  
+		  Dim srcWidth as integer = image.Width
+		  Dim srcHeight as integer = image.Height
+		  
+		  Dim destinationQuadrilateral() as ABPoint
+		  Dim tmpX As Integer
+		  Dim tmpY As Integer
+		  
+		  tmpX = 0
+		  tmpY = 0
+		  transformPoint(tmpX, tmpY, matrix2)
+		  destinationQuadrilateral.Append new ABPoint(tmpX, tmpY)
+		  
+		  tmpX = srcWidth -1
+		  tmpY = 0
+		  transformPoint(tmpX, tmpY, matrix2)
+		  destinationQuadrilateral.Append new ABPoint(tmpX, tmpY)
+		  
+		  tmpX = srcWidth -1
+		  tmpY = srcHeight - 1
+		  transformPoint(tmpX, tmpY, matrix2)
+		  destinationQuadrilateral.Append new ABPoint(tmpX, tmpY)
+		  
+		  tmpX = 0
+		  tmpY = srcHeight - 1
+		  transformPoint(tmpX, tmpY, matrix2)
+		  destinationQuadrilateral.Append new ABPoint(tmpX, tmpY)
+		  
+		  Dim minXY as ABPoint
+		  Dim maxXY as ABPoint
+		  
+		  'get bounding rectangle of the quadrilateral
+		  GetBoundingRectangle destinationQuadrilateral, minXY, maxXY
+		  
+		  dim startX as integer = minXY.X
+		  dim startY as integer = minXY.Y
+		  dim stopX as integer = maxXY.X
+		  dim stopY as integer = maxXY.Y
+		  
+		  'calculate tranformation matrix
+		  dim srcRect(3) as ABPoint
+		  srcRect(0) = new ABPoint(0,0)
+		  srcRect(1) = new ABPoint(srcWidth -1 ,0)
+		  srcRect(2) = new ABPoint(srcWidth - 1, srcHeight - 1)
+		  srcRect(3) = new ABPoint(0, srcHeight - 1)
+		  dim matrix(2,2) as Double = MapQuadToQuad(destinationQuadrilateral, srcRect)
+		  dim x,y as integer
+		  
+		  dim  factor, srcX, srcY as Double
+		  dim tgtPic as Picture
+		  tgtPic = new Picture(g.Width, g.Height)
+		  'tgtPic.Graphics.ForeColor = FillBackColor
+		  'tgtPic.Graphics.FillRect 0,0, srcWidth, srcHeight
+		  
+		  dim srcRGB, tgtRGB as RGBSurface
+		  srcRGB = image.RGBSurface
+		  tgtRGB = tgtPic.RGBSurface
+		  
+		  
+		  Dim srcWidthM1 as integer = srcWidth - 1
+		  Dim srcHeightM1 as Integer = srcHeight - 1
+		  
+		  'coordinates of source points
+		  dim dx1, dy1, dx2, dy2 as Double
+		  dim sx1, sy1, sx2, sy2 as Integer
+		  
+		  ' temporary pixels
+		  dim p1,p2,p3, p4 as Color
+		  dim r, gp , b, a as integer
+		  
+		  ' for each row
+		  for y = startY to stopY
+		    'for each pixel
+		    for x = startX to stopX
+		      factor = matrix(2, 0) * x + matrix(2, 1) * y + matrix(2, 2)
+		      srcX = ( matrix(0, 0) * x + matrix(0, 1) * y + matrix(0, 2) ) / factor
+		      srcY = ( matrix(1, 0) * x + matrix(1, 1) * y + matrix(1, 2) ) / factor
+		      if srcX >= 0 and srcY >= 0 and srcX< srcWidth and srcY < srcHeight then
+		        sx1 = srcX
+		        if sx1 = srcWidthM1 then
+		          sx2 = sx1
+		        else
+		          sx2 = sx1 + 1
+		        end if
+		        dx1 = srcX - sx1
+		        dx2 = 1.0 - dx1
+		        
+		        sy1 = srcY
+		        if sy1 = srcHeightM1 then
+		          sy2 = sy1
+		        else
+		          sy2 = sy1 + 1
+		        end if
+		        dy1 = srcY - sy1
+		        dy2 = 1.0 - dy1
+		        
+		        ' copy the pixel from the source to the target using interpolation of 4 points
+		        p1 = srcRGB.Pixel(sx1, sy1)
+		        p2 = srcRGB.Pixel(sx2, sy1)
+		        p3 = srcRGB.Pixel(sx1, sy2)
+		        p4 = srcRGB.Pixel(sx2, sy2)
+		        
+		        r = dy2 * ( dx2 * ( p1.red ) + dx1 * ( p2.red ) ) + dy1 * ( dx2 * ( p3.red ) + dx1 * ( p4.red ) )
+		        gp = dy2 * ( dx2 * ( p1.green ) + dx1 * ( p2.green ) ) + dy1 * ( dx2 * ( p3.green ) + dx1 * ( p4.green ) )
+		        b = dy2 * ( dx2 * ( p1.blue ) + dx1 * ( p2.blue ) ) + dy1 * ( dx2 * ( p3.blue ) + dx1 * ( p4.blue ) )
+		        a = dy2 * ( dx2 * ( p1.Alpha ) + dx1 * ( p2.Alpha ) ) + dy1 * ( dx2 * ( p3.Alpha ) + dx1 * ( p4.Alpha ) )
+		        
+		        tgtRGB.Pixel(x,y) = RGB(r,gp,b, a)
+		      end if
+		    next
+		  next
+		  
+		  g.DrawPicture tgtPic, 0, 0
+		  
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub GetBoundingRectangle(cloud() as ABPoint, byref minXY as ABPoint, byref maxXY as ABPoint)
+		  dim minX as integer = 10e6
+		  dim maxX as integer = -10e6
+		  dim minY as integer = 10e6
+		  dim maxY as integer = -10e6
+		  
+		  dim i as integer
+		  for i = 0 to UBound(cloud)
+		    if cloud(i).x < minX then minX = cloud(i).x
+		    if cloud(i).x > maxX then maxX = cloud(i).x
+		    if cloud(i).y < minY then minY = cloud(i).y
+		    if cloud(i).y > maxY then maxY = cloud(i).y
+		  next
+		  
+		  minXY = new ABPoint(minX, minY)
+		  maxXY = new ABPoint(maxX, maxY)
 		End Sub
 	#tag EndMethod
 
@@ -422,6 +596,70 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function MapQuadToQuad(Quad() as ABPoint) As double(,)
+		  dim sq(2,2) as double
+		  dim px, py as Double
+		  
+		  dim TOLERANCE as double = 1e-13
+		  
+		  px = quad(0).X - quad(1).X + quad(2).X - quad(3).X
+		  py = quad(0).Y - quad(1).Y + quad(2).Y - quad(3).Y
+		  
+		  if ( ( px < TOLERANCE ) And ( px > -TOLERANCE ) And ( py < TOLERANCE ) And ( py > -TOLERANCE ) ) then
+		    sq(0, 0) = quad(1).X - quad(0).X
+		    sq(0, 1) = quad(2).X - quad(1).X
+		    sq(0, 2) = quad(0).X
+		    
+		    sq(1, 0) = quad(1).Y - quad(0).Y
+		    sq(1, 1) = quad(2).Y - quad(1).Y
+		    sq(1, 2) = quad(0).Y
+		    
+		    sq(2, 0) = 0.0
+		    sq(2, 1) = 0.0
+		    sq(2, 2) = 1.0
+		  else
+		    
+		    dim dx1, dx2, dy1, dy2, del as Double
+		    
+		    dx1 = quad(1).X - quad(2).X
+		    dx2 = quad(3).X - quad(2).X
+		    dy1 = quad(1).Y - quad(2).Y
+		    dy2 = quad(3).Y - quad(2).Y
+		    
+		    del = Det2( dx1, dx2, dy1, dy2 )
+		    
+		    if ( del = 0 ) then
+		      return sq
+		    end if
+		    
+		    sq(2, 0) = Det2( px, dx2, py, dy2 ) / del
+		    sq(2, 1) = Det2( dx1, px, dy1, py ) / del
+		    sq(2, 2) = 1.0
+		    
+		    sq(0, 0) = quad(1).X - quad(0).X + sq(2, 0) * quad(1).X
+		    sq(0, 1) = quad(3).X - quad(0).X + sq(2, 1) * quad(3).X
+		    sq(0, 2) = quad(0).X
+		    
+		    sq(1, 0) = quad(1).Y - quad(0).Y + sq(2, 0) * quad(1).Y
+		    sq(1, 1) = quad(3).Y - quad(0).Y + sq(2, 1) * quad(3).Y
+		    sq(1, 2) = quad(0).Y
+		  end if
+		  
+		  return sq
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function MapQuadToQuad(input() as ABPoint, output() as ABPoint) As double(,)
+		  Dim squareToInput(2,2) as Double = MapQuadToQuad(input)
+		  dim squareToOutput(2,2) as Double = MapQuadToQuad(output)
+		  
+		  Return MultiplyMatrix(squareToOutput, AdjugateMatrix(squareToInput))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Function matrixMultiply(m1() As Double, m2() As Double) As Double()
 		  Dim result() As Double = Array( _
 		  0.0, 0.0, 0.0, _
@@ -441,6 +679,27 @@ Protected Module DrawSVG
 		  result(8) = m1(6) * m2(2) + m1(7) * m2(5) + m1(8) * m2(8)
 		  
 		  return result
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function MultiplyMatrix(a(,) as double, b(,) as double) As double(,)
+		  ' Multiply two 3x3 matrices
+		  dim c (2,2) as Double
+		  
+		  c(0, 0) = a(0, 0) * b(0, 0) + a(0, 1) * b(1, 0) + a(0, 2) * b(2, 0)
+		  c(0, 1) = a(0, 0) * b(0, 1) + a(0, 1) * b(1, 1) + a(0, 2) * b(2, 1)
+		  c(0, 2) = a(0, 0) * b(0, 2) + a(0, 1) * b(1, 2) + a(0, 2) * b(2, 2)
+		  c(1, 0) = a(1, 0) * b(0, 0) + a(1, 1) * b(1, 0) + a(1, 2) * b(2, 0)
+		  c(1, 1) = a(1, 0) * b(0, 1) + a(1, 1) * b(1, 1) + a(1, 2) * b(2, 1)
+		  c(1, 2) = a(1, 0) * b(0, 2) + a(1, 1) * b(1, 2) + a(1, 2) * b(2, 2)
+		  c(2, 0) = a(2, 0) * b(0, 0) + a(2, 1) * b(1, 0) + a(2, 2) * b(2, 0)
+		  c(2, 1) = a(2, 0) * b(0, 1) + a(2, 1) * b(1, 1) + a(2, 2) * b(2, 1)
+		  c(2, 2) = a(2, 0) * b(0, 2) + a(2, 1) * b(1, 2) + a(2, 2) * b(2, 2)
+		  
+		  return c
+		  
 		  
 		End Function
 	#tag EndMethod
@@ -1044,6 +1303,7 @@ Protected Module DrawSVG
 		  
 		  Dim style As JSONItem
 		  Dim matrix() As Double
+		  Dim mulMatrix() As Double
 		  Dim element As Picture
 		  Dim eg As Graphics
 		  Dim tspanStyle As JSONItem
@@ -1103,8 +1363,10 @@ Protected Module DrawSVG
 		      0, _
 		      0
 		      
-		      'drawTransformedPicture g, element, matrix
-		      g.DrawPicture element, x, y - g.TextAscent
+		      mulMatrix = initTranslationMatrix(x, y - g.TextAscent)
+		      matrix = matrixMultiply(matrix, mulMatrix)
+		      
+		      drawTransformedPicture g, element, matrix
 		      
 		    end if
 		    
