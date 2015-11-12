@@ -290,16 +290,16 @@ Protected Module DrawSVG
 		  
 		  Dim srcWidth as Integer
 		  Dim srcHeight as Integer 
-		  Dim destinationQuadrilateral() as PointXY
+		  Dim destinationQuadrilateral() as REALbasic.Point
 		  Dim tmpX As Integer
 		  Dim tmpY As Integer
 		  Dim startX As Integer
 		  Dim startY As Integer
 		  Dim stopX As Integer
 		  Dim stopY As Integer
-		  Dim minXY as PointXY
-		  Dim maxXY as PointXY
-		  Dim srcRect(3) as PointXY
+		  Dim minXY as REALbasic.Point
+		  Dim maxXY as REALbasic.Point
+		  Dim srcRect(3) as REALbasic.Point
 		  Dim transMatrix(8) As Double
 		  Dim x As Integer
 		  Dim y As Integer
@@ -322,22 +322,22 @@ Protected Module DrawSVG
 		  tmpX = 0
 		  tmpY = 0
 		  transformPoint(tmpX, tmpY, matrix)
-		  destinationQuadrilateral.Append new PointXY(tmpX, tmpY)
+		  destinationQuadrilateral.Append new REALbasic.Point(tmpX, tmpY)
 		  
 		  tmpX = srcWidth -1
 		  tmpY = 0
 		  transformPoint(tmpX, tmpY, matrix)
-		  destinationQuadrilateral.Append new PointXY(tmpX, tmpY)
+		  destinationQuadrilateral.Append new REALbasic.Point(tmpX, tmpY)
 		  
 		  tmpX = srcWidth -1
 		  tmpY = srcHeight - 1
 		  transformPoint(tmpX, tmpY, matrix)
-		  destinationQuadrilateral.Append new PointXY(tmpX, tmpY)
+		  destinationQuadrilateral.Append new REALbasic.Point(tmpX, tmpY)
 		  
 		  tmpX = 0
 		  tmpY = srcHeight - 1
 		  transformPoint(tmpX, tmpY, matrix)
-		  destinationQuadrilateral.Append new PointXY(tmpX, tmpY)
+		  destinationQuadrilateral.Append new REALbasic.Point(tmpX, tmpY)
 		  
 		  'get bounding rectangle of the quadrilateral
 		  
@@ -350,10 +350,10 @@ Protected Module DrawSVG
 		  
 		  'calculate tranformation matrix
 		  
-		  srcRect(0) = new PointXY(0,0)
-		  srcRect(1) = new PointXY(srcWidth -1 ,0)
-		  srcRect(2) = new PointXY(srcWidth - 1, srcHeight - 1)
-		  srcRect(3) = new PointXY(0, srcHeight - 1)
+		  srcRect(0) = new REALbasic.Point(0,0)
+		  srcRect(1) = new REALbasic.Point(srcWidth -1 ,0)
+		  srcRect(2) = new REALbasic.Point(srcWidth - 1, srcHeight - 1)
+		  srcRect(3) = new REALbasic.Point(0, srcHeight - 1)
 		  transMatrix = MapQuadToQuad(destinationQuadrilateral, srcRect)
 		  
 		  tgtPic = new Picture(g.Width, g.Height)
@@ -412,7 +412,7 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub getBoundingRectangle(cloud() as PointXY, byref minXY as PointXY, byref maxXY as PointXY)
+		Private Sub getBoundingRectangle(cloud() as REALbasic.Point, byref minXY as REALbasic.Point, byref maxXY as REALbasic.Point)
 		  ' This routine is based on code written by Alain Bailleul.
 		  ' www.alwaysbusycorner.com
 		  
@@ -429,8 +429,8 @@ Protected Module DrawSVG
 		    if cloud(i).y > maxY then maxY = cloud(i).y
 		  next
 		  
-		  minXY = new PointXY(minX, minY)
-		  maxXY = new PointXY(maxX, maxY)
+		  minXY = new REALbasic.Point(minX, minY)
+		  maxXY = new REALbasic.Point(maxX, maxY)
 		End Sub
 	#tag EndMethod
 
@@ -588,7 +588,7 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function mapQuadToQuad(Quad() as PointXY) As Double()
+		Private Function mapQuadToQuad(Quad() as REALbasic.Point) As Double()
 		  ' This routine is based on code written by Alain Bailleul.
 		  ' www.alwaysbusycorner.com
 		  
@@ -646,7 +646,7 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function mapQuadToQuad(input() as PointXY, output() as PointXY) As Double()
+		Private Function mapQuadToQuad(input() as REALbasic.Point, output() as REALbasic.Point) As Double()
 		  ' This routine is based on code written by Alain Bailleul.
 		  ' www.alwaysbusycorner.com
 		  
