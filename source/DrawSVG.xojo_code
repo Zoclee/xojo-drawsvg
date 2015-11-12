@@ -746,6 +746,9 @@ Protected Module DrawSVG
 		    case "metadata"
 		      // we ignore these tags
 		      
+		    case "path"
+		      render_path(node, g, parentMatrix)
+		      
 		    case "polygon"
 		      render_polygon(node, g, parentMatrix)
 		      
@@ -760,6 +763,9 @@ Protected Module DrawSVG
 		      
 		    case "text"
 		      render_text(node, g, parentMatrix)
+		      
+		    case "title"
+		      // we ignore these tags
 		      
 		    case else
 		      foundNode = false
@@ -1038,6 +1044,144 @@ Protected Module DrawSVG
 		    g.PenHeight = strokeWidth
 		    g.DrawPolygon points
 		  end if
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub render_path(node As XmlNode, g As Graphics, parentMatrix() As Double)
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
+		  ' This routine is based on code written by Dr Brian R Gaines .
+		  
+		  Dim style As JSONItem
+		  Dim matrix() As Double
+		  Dim i As Integer
+		  Dim fill As String
+		  Dim stroke As String
+		  Dim strokeWidth As Double
+		  Dim fs as new FigureShape
+		  Dim cs As CurveShape
+		  Dim d As String
+		  Dim penX As Double
+		  Dim penY As Double
+		  Dim path() As String
+		  
+		  style = buildStyleItem(node)
+		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
+		  matrix = matrixMultiply(matrix, parentMatrix)
+		  
+		  fill = style.LookupString("fill", "#000000")
+		  stroke = style.LookupString("stroke", "")
+		  strokeWidth = style.LookupDouble("stroke-width", 1)
+		  
+		  // build figure shape
+		  
+		  penX = 0
+		  penY = 0
+		  
+		  d = Trim(style.LookupString("d", ""))
+		  path = Split(d.ReplaceAll(","," ")," ")
+		  i = 0
+		  while i <= path.Ubound
+		    
+		    if StrComp(path(i), "A", 0) = 0 then // absolute elliptical arc
+		      break
+		      
+		    elseif StrComp(path(i), "a", 0) = 0 then // relative elliptical arc
+		      break
+		      
+		    elseif StrComp(path(i), "C", 0) = 0 then // absolute curveto
+		      break
+		      
+		    elseif StrComp(path(i), "c", 0) = 0 then // relative curveto
+		      break
+		      
+		    elseif StrComp(path(i), "H", 0) = 0 then // absolute horizontal lineto
+		      break
+		      
+		    elseif StrComp(path(i), "h", 0) = 0 then // relative horizontal lineto
+		      break
+		      
+		    elseif StrComp(path(i), "Q", 0) = 0 then // absolute quadratic Bézier curveto
+		      break
+		      
+		    elseif StrComp(path(i), "q", 0) = 0 then // relative quadratic Bézier curveto
+		      break
+		      
+		    elseif StrComp(path(i), "L", 0) = 0 then // absolute lineto
+		      cs =new CurveShape
+		      fs.Append cs
+		      cs.X = penX
+		      cs.Y = penY
+		      i = i + 1
+		      cs.X2 = Val(path(i))
+		      i = i + 1
+		      cs.Y2 = Val(path(i))
+		      penX = cs.X2
+		      penY = cs.Y2
+		      //n = n + 1
+		      
+		    elseif StrComp(path(i), "l", 0) = 0 then // relative lineto
+		      break
+		      
+		    elseif StrComp(path(i), "M", 0) = 0 then // absolute move
+		      i = i + 1
+		      penX = Val(path(i))
+		      i = i + 1
+		      penY = Val(path(i))
+		      
+		    elseif StrComp(path(i), "m", 0) = 0 then // relative move
+		      break
+		      
+		    elseif StrComp(path(i), "S", 0) = 0 then // absolute smooth curveto
+		      break
+		      
+		    elseif StrComp(path(i), "s", 0) = 0 then // relative smooth curveto
+		      break
+		      
+		    elseif StrComp(path(i), "T", 0) = 0 then // absolute smooth quadratic Bézier curveto
+		      break
+		      
+		    elseif StrComp(path(i), "t", 0) = 0 then // relative smooth quadratic Bézier curveto
+		      break
+		      
+		    elseif StrComp(path(i), "V", 0) = 0 then // absolute vertical lineto
+		      break
+		      
+		    elseif StrComp(path(i), "v", 0) = 0 then // relative vertical lineto
+		      break
+		      
+		    elseif path(i) = "z" then // close path
+		      // do nothing
+		      
+		    else
+		      break
+		      
+		    end if
+		    
+		    i = i + 1
+		  wend
+		  
+		  // fill
+		  
+		  if fill <> "none" then
+		    fs.FillColor = determineColor(fill)
+		  end if
+		  
+		  // stroke
+		  
+		  if (stroke <> "none") and (stroke <> "") and (strokeWidth > 0) then
+		    fs.Border = 100
+		    fs.BorderColor = determineColor(stroke)
+		    fs.BorderWidth = strokeWidth
+		  end if
+		  
+		  if fs.Count > 0 then
+		    g.DrawObject fs
+		  end if
+		  
 		  
 		End Sub
 	#tag EndMethod
