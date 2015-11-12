@@ -307,15 +307,12 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub drawTransformedPicture(g As Graphics, image As Picture, matrix2() As Double)
+		Private Sub DrawTransformedPicture(Extends g As Graphics, image As Picture, matrix2() As Double)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
 		  ' This routine is based on code written by Alain Bailleul.
 		  ' www.alwaysbusycorner.com
-		  
-		  // srcPic as picture, destinationQuadrilateral() as ABPoint, useInterpolation  as boolean,FillBackColor as Color
-		  
 		  
 		  Dim srcWidth as integer = image.Width
 		  Dim srcHeight as integer = image.Height
@@ -1366,7 +1363,7 @@ Protected Module DrawSVG
 		      mulMatrix = initTranslationMatrix(x, y - g.TextAscent)
 		      matrix = matrixMultiply(matrix, mulMatrix)
 		      
-		      drawTransformedPicture g, element, matrix
+		      g.DrawTransformedPicture element, matrix
 		      
 		    end if
 		    
