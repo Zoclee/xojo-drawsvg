@@ -540,6 +540,18 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function isTranslationMatrix(matrix() As Double) As Boolean
+		  Dim result As Boolean
+		  
+		  result = (matrix(0) = 1) and (matrix(1) = 0) and (matrix(3) = 0) and (matrix(4) = 1) and _
+		  (matrix(6) = 0) and (matrix(7) = 0) and (matrix(8) = 1)
+		  
+		  return result
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Function LookupDouble(Extends Item As JSONItem, Name As String, DefaultValue As Double = 0) As Double
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
@@ -1338,8 +1350,8 @@ Protected Module DrawSVG
 		    
 		    if textStr <> "" then
 		      
-		      element = new Picture(g.StringWidth(textStr), g.TextHeight)
-		      eg = element.Graphics
+		      mulMatrix = initTranslationMatrix(x, y - g.TextAscent)
+		      matrix = matrixMultiply(matrix, mulMatrix)
 		      
 		      strShape.FillColor = determineColor(fill)
 		      strShape.TextFont = g.TextFont
@@ -1349,14 +1361,20 @@ Protected Module DrawSVG
 		      strShape.VerticalAlignment = StringShape.Alignment.Top
 		      strShape.Text = textStr
 		      
-		      eg.DrawObject strShape, _
-		      0, _
-		      0
+		      // to speed up rendering, we only use DrawTransformedPicture when needed
 		      
-		      mulMatrix = initTranslationMatrix(x, y - g.TextAscent)
-		      matrix = matrixMultiply(matrix, mulMatrix)
-		      
-		      g.DrawTransformedPicture element, matrix
+		      if isTranslationMatrix(matrix) then
+		        g.DrawObject strShape, matrix(2), matrix(5)
+		      else
+		        element = new Picture(g.StringWidth(textStr), g.TextHeight)
+		        eg = element.Graphics
+		        
+		        eg.DrawObject strShape, _
+		        0, _
+		        0
+		        
+		        g.DrawTransformedPicture element, matrix
+		      end if
 		      
 		    end if
 		    
