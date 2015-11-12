@@ -1133,7 +1133,10 @@ Protected Module DrawSVG
 		      penY = Val(path(i))
 		      
 		    elseif StrComp(path(i), "m", 0) = 0 then // relative move
-		      break
+		      i = i + 1
+		      penX = penX + Val(path(i))
+		      i = i + 1
+		      penY = penX + Val(path(i))
 		      
 		    elseif StrComp(path(i), "S", 0) = 0 then // absolute smooth curveto
 		      break
