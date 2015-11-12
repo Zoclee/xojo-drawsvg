@@ -243,14 +243,17 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub DrawSVG(Extends g As Graphics, svg As String, x As Integer, y As Integer)
+		Sub DrawSVG(Extends g As Graphics, svg As String, x As Integer, y As Integer, w1 As Integer = -10000, h1 As Integer = -10000)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
 		  Dim xdoc As XmlDocument
 		  Dim i As Integer
 		  Dim matrix() As Double
+		  Dim mulMatrix() As Double
 		  Dim drawG As Graphics
+		  Dim w As Integer
+		  Dim h As Integer
 		  
 		  if Len(svg) > 0 then
 		    
@@ -258,13 +261,23 @@ Protected Module DrawSVG
 		      
 		      xdoc = new XmlDocument(svg)
 		      
-		      drawG = g.Clip(x, y, g.Width - x, g.Height - y)
-		      
 		      matrix = initIdentityMatrix()
 		      
 		      i = 0
 		      while (i < xdoc.ChildCount) 
 		        if xdoc.Child(i).Name = "svg" then
+		          
+		          w = Val(xdoc.Child(i).GetAttribute("width"))
+		          h = Val(xdoc.Child(i).GetAttribute("height"))
+		          
+		          if (w1 > 0) and (h1 > 0) then
+		            mulMatrix = initScaleMatrix(w1 / w, h1 / h)
+		            matrix = matrixMultiply(matrix, mulMatrix)
+		            drawG = g.Clip(x, y, w1, h1)
+		          else
+		            drawG = g.Clip(x, y, w, h)
+		          end if
+		          
 		          renderNode(xdoc.Child(i), drawG, matrix)
 		        end if
 		        i = i + 1
@@ -1590,15 +1603,15 @@ Protected Module DrawSVG
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
 		  matrix = matrixMultiply(matrix, parentMatrix)
 		  
-		  if (node.GetAttribute("width") <> "") and (node.GetAttribute("height") <> "") then
-		    drawG = g.Clip(0, 0, Val(node.GetAttribute("width")), Val(node.GetAttribute("height")))
-		  else
-		    drawG = g.Clip(0, 0, g.Width, g.Height)
-		  end if
+		  'if (node.GetAttribute("width") <> "") and (node.GetAttribute("height") <> "") then
+		  'drawG = g.Clip(0, 0, Val(node.GetAttribute("width")), Val(node.GetAttribute("height")))
+		  'else
+		  'drawG = g.Clip(0, 0, g.Width, g.Height)
+		  'end if
 		  
 		  i = 0
 		  while i < node.ChildCount
-		    renderNode node.Child(i), drawG, matrix
+		    renderNode node.Child(i), g, matrix
 		    i = i + 1
 		  wend
 		  
