@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 48 48" enable-background="new 0 0 48 48" xml:space="preserve">
+<g id="Alert">
+	<path id="Grip" d="M26.9,7c0-1.6-1.4-3-3-3c-1.6,0-3,1.4-3,3c0,0.6,0,3.8,0,3.8l6,5.2C26.9,16,26.9,7.6,26.9,7z"/>
+	<path id="Ball" d="M23.9,44c2.2,0,4-1.8,4-4h-8C19.9,42.2,21.7,44,23.9,44z"/>
+	
+		<rect id="Strike" x="21.9" y="-2.2" transform="matrix(-0.7071 0.7071 -0.7071 -0.7071 57.7202 24.1135)" width="4" height="52.5"/>
+	<g id="Body">
+		<path id="BodyTop" d="M37.9,29.6c0-3.8,0-6.8,0-7.6c0-7.8-6.2-14-14-14c-2.2,0-4.2,0.6-6.2,1.4L37.9,29.6z"/>
+		<path id="BodyBottom" d="M14.5,11.8C11.7,14.4,9.8,18,9.8,22c0,0.8,0,4.6,0,9l-4,4.6V38h34.8L14.5,11.8z"/>
+	</g>
+</g>
+</svg>
