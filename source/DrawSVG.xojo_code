@@ -1191,9 +1191,35 @@ Protected Module DrawSVG
 		      i = i + 1
 		      tmpY = Val(path(i))
 		      
-		      'transformPoint tmpX, tmpY, matrix
 		      penX = tmpX
 		      penY = tmpY
+		      
+		      // apply  implicit lineto commands
+		      
+		      do
+		        continueLineto = false
+		        if i < (path.Ubound - 1) then
+		          if IsNumeric(path(i)) then
+		            cs =new CurveShape
+		            fs.Append cs
+		            tmpX = penX
+		            tmpY = penY
+		            transformPoint tmpX, tmpY, matrix
+		            cs.X = tmpX
+		            cs.Y = tmpY
+		            i = i + 1
+		            tmpX = Val(path(i))
+		            i = i + 1
+		            tmpY = Val(path(i))
+		            penX = tmpX
+		            penY = tmpY
+		            transformPoint tmpX, tmpY, matrix
+		            cs.X2 = tmpX
+		            cs.Y2 = tmpY
+		            continueLineto = true
+		          end if
+		        end if
+		      loop until (i > path.Ubound) or not continueLineto
 		      
 		    elseif StrComp(path(i), "m", 0) = 0 then // relative move
 		      i = i + 1
@@ -1201,7 +1227,6 @@ Protected Module DrawSVG
 		      i = i + 1
 		      tmpY = Val(path(i))
 		      
-		      'transformPoint tmpX, tmpY, matrix
 		      penX = penX + tmpX
 		      penY = penY + tmpY
 		      
