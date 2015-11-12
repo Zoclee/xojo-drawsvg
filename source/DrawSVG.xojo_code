@@ -307,89 +307,95 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub DrawTransformedPicture(Extends g As Graphics, image As Picture, matrix2() As Double)
+		Private Sub DrawTransformedPicture(Extends g As Graphics, image As Picture, matrix() As Double)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
 		  ' This routine is based on code written by Alain Bailleul.
 		  ' www.alwaysbusycorner.com
 		  
-		  Dim srcWidth as integer = image.Width
-		  Dim srcHeight as integer = image.Height
-		  
+		  Dim srcWidth as Integer
+		  Dim srcHeight as Integer 
 		  Dim destinationQuadrilateral() as ABPoint
 		  Dim tmpX As Integer
 		  Dim tmpY As Integer
-		  
-		  tmpX = 0
-		  tmpY = 0
-		  transformPoint(tmpX, tmpY, matrix2)
-		  destinationQuadrilateral.Append new ABPoint(tmpX, tmpY)
-		  
-		  tmpX = srcWidth -1
-		  tmpY = 0
-		  transformPoint(tmpX, tmpY, matrix2)
-		  destinationQuadrilateral.Append new ABPoint(tmpX, tmpY)
-		  
-		  tmpX = srcWidth -1
-		  tmpY = srcHeight - 1
-		  transformPoint(tmpX, tmpY, matrix2)
-		  destinationQuadrilateral.Append new ABPoint(tmpX, tmpY)
-		  
-		  tmpX = 0
-		  tmpY = srcHeight - 1
-		  transformPoint(tmpX, tmpY, matrix2)
-		  destinationQuadrilateral.Append new ABPoint(tmpX, tmpY)
-		  
+		  Dim startX As Integer
+		  Dim startY As Integer
+		  Dim stopX As Integer
+		  Dim stopY As Integer
 		  Dim minXY as ABPoint
 		  Dim maxXY as ABPoint
+		  Dim srcRect(3) as ABPoint
+		  Dim transMatrix(2,2) as Double
+		  Dim x As Integer
+		  Dim y As Integer
+		  Dim  factor, srcX, srcY as Double
+		  Dim tgtPic as Picture
+		  Dim srcRGB as RGBSurface
+		  Dim tgtRGB as RGBSurface
+		  Dim srcWidthM1 As Integer
+		  Dim srcHeightM1 As Integer
+		  Dim dx1, dy1, dx2, dy2 as Double 'coordinates of source points
+		  Dim sx1, sy1, sx2, sy2 as Integer
+		  Dim p1,p2,p3, p4 as Color ' temporary pixels
+		  Dim r, gp , b, a as Integer
+		  
+		  srcWidth = image.Width
+		  srcHeight = image.Height
+		  
+		  // determine destination quadrilateral using transformation matrix
+		  
+		  tmpX = 0
+		  tmpY = 0
+		  transformPoint(tmpX, tmpY, matrix)
+		  destinationQuadrilateral.Append new ABPoint(tmpX, tmpY)
+		  
+		  tmpX = srcWidth -1
+		  tmpY = 0
+		  transformPoint(tmpX, tmpY, matrix)
+		  destinationQuadrilateral.Append new ABPoint(tmpX, tmpY)
+		  
+		  tmpX = srcWidth -1
+		  tmpY = srcHeight - 1
+		  transformPoint(tmpX, tmpY, matrix)
+		  destinationQuadrilateral.Append new ABPoint(tmpX, tmpY)
+		  
+		  tmpX = 0
+		  tmpY = srcHeight - 1
+		  transformPoint(tmpX, tmpY, matrix)
+		  destinationQuadrilateral.Append new ABPoint(tmpX, tmpY)
 		  
 		  'get bounding rectangle of the quadrilateral
+		  
 		  GetBoundingRectangle destinationQuadrilateral, minXY, maxXY
 		  
-		  dim startX as integer = minXY.X
-		  dim startY as integer = minXY.Y
-		  dim stopX as integer = maxXY.X
-		  dim stopY as integer = maxXY.Y
+		  startX = minXY.X
+		  startY = minXY.Y
+		  stopX = maxXY.X
+		  stopY = maxXY.Y
 		  
 		  'calculate tranformation matrix
-		  dim srcRect(3) as ABPoint
+		  
 		  srcRect(0) = new ABPoint(0,0)
 		  srcRect(1) = new ABPoint(srcWidth -1 ,0)
 		  srcRect(2) = new ABPoint(srcWidth - 1, srcHeight - 1)
 		  srcRect(3) = new ABPoint(0, srcHeight - 1)
-		  dim matrix(2,2) as Double = MapQuadToQuad(destinationQuadrilateral, srcRect)
-		  dim x,y as integer
+		  transMatrix = MapQuadToQuad(destinationQuadrilateral, srcRect)
 		  
-		  dim  factor, srcX, srcY as Double
-		  dim tgtPic as Picture
 		  tgtPic = new Picture(g.Width, g.Height)
-		  'tgtPic.Graphics.ForeColor = FillBackColor
-		  'tgtPic.Graphics.FillRect 0,0, srcWidth, srcHeight
-		  
-		  dim srcRGB, tgtRGB as RGBSurface
 		  srcRGB = image.RGBSurface
 		  tgtRGB = tgtPic.RGBSurface
 		  
-		  
-		  Dim srcWidthM1 as integer = srcWidth - 1
-		  Dim srcHeightM1 as Integer = srcHeight - 1
-		  
-		  'coordinates of source points
-		  dim dx1, dy1, dx2, dy2 as Double
-		  dim sx1, sy1, sx2, sy2 as Integer
-		  
-		  ' temporary pixels
-		  dim p1,p2,p3, p4 as Color
-		  dim r, gp , b, a as integer
+		  srcWidthM1 = srcWidth - 1
+		  srcHeightM1 = srcHeight - 1
 		  
 		  ' for each row
 		  for y = startY to stopY
 		    'for each pixel
 		    for x = startX to stopX
-		      factor = matrix(2, 0) * x + matrix(2, 1) * y + matrix(2, 2)
-		      srcX = ( matrix(0, 0) * x + matrix(0, 1) * y + matrix(0, 2) ) / factor
-		      srcY = ( matrix(1, 0) * x + matrix(1, 1) * y + matrix(1, 2) ) / factor
+		      factor = transMatrix(2, 0) * x + transMatrix(2, 1) * y + transMatrix(2, 2)
+		      srcX = ( transMatrix(0, 0) * x + transMatrix(0, 1) * y + transMatrix(0, 2) ) / factor
+		      srcY = ( transMatrix(1, 0) * x + transMatrix(1, 1) * y + transMatrix(1, 2) ) / factor
 		      if srcX >= 0 and srcY >= 0 and srcX< srcWidth and srcY < srcHeight then
 		        sx1 = srcX
 		        if sx1 = srcWidthM1 then
