@@ -7,37 +7,12 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
    width="200"
    height="200"
-   id="svg2"
-   version="1.1"
-   inkscape:version="0.48.4 r9939"
-   sodipodi:docname="test_00017.svg"
-   inkscape:export-filename="test_00017.png"
-   inkscape:export-xdpi="89.691925"
-   inkscape:export-ydpi="89.691925">
+   id="svg2">
   <defs
      id="defs4" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="0.7"
-     inkscape:cx="49.167314"
-     inkscape:cy="30.991965"
-     inkscape:document-units="px"
-     inkscape:current-layer="layer1"
-     showgrid="false"
-     inkscape:window-width="1280"
-     inkscape:window-height="962"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
-     inkscape:window-maximized="1" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -51,19 +26,12 @@
     </rdf:RDF>
   </metadata>
   <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1"
-     transform="translate(0,-852.36218)">
+     transform="translate(0,-852.36218)"
+     id="layer1">
     <path
-       sodipodi:type="arc"
-       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:3.83540463;stroke-miterlimit:4;stroke-dasharray:none"
-       id="path4371"
-       sodipodi:cx="249.28572"
-       sodipodi:cy="100"
-       sodipodi:rx="82.14286"
-       sodipodi:ry="88.571426"
        d="m 331.42858,100 a 82.14286,88.571426 0 1 1 -164.28572,0 82.14286,88.571426 0 1 1 164.28572,0 z"
-       transform="matrix(1.0829558,0,0,1.0043542,-169.25113,850.49819)" />
+       transform="matrix(1.0829558,0,0,1.0043542,-169.25113,850.49819)"
+       id="path4371"
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:3.83540463;stroke-miterlimit:4;stroke-dasharray:none" />
   </g>
 </svg>
