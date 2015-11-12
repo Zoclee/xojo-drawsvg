@@ -134,6 +134,12 @@ Protected Module DrawSVG
 		            result = matrixMultiply(result, mulMatrix)
 		          end if
 		          
+		        case "skewy"
+		          if strArr.Ubound >= 0 then
+		            mulMatrix = initSkewYMatrix(val(strArr(0)))
+		            result = matrixMultiply(result, mulMatrix)
+		          end if
+		          
 		        case "translate"
 		          if strArr.Ubound >= 1 then
 		            mulMatrix = initTranslationMatrix(val(strArr(0)), val(strArr(1)))
@@ -342,6 +348,21 @@ Protected Module DrawSVG
 		  Dim result() As Double = Array( _
 		  1.0, tan(angle * DegToRad), 0.0, _
 		  0.0, 1.0, 0.0, _
+		  0.0, 0.0, 1.0)
+		  
+		  return result
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function initSkewYMatrix(angle As Double) As Double()
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
+		  Dim result() As Double = Array( _
+		  1.0, 0.0, 0.0, _
+		  tan(angle * DegToRad), 1.0, 0.0, _
 		  0.0, 0.0, 1.0)
 		  
 		  return result
