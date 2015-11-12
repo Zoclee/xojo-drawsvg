@@ -300,7 +300,7 @@ Protected Module DrawSVG
 		  Dim minXY as PointXY
 		  Dim maxXY as PointXY
 		  Dim srcRect(3) as PointXY
-		  Dim transMatrix(2,2) as Double
+		  Dim transMatrix(8) As Double
 		  Dim x As Integer
 		  Dim y As Integer
 		  Dim  factor, srcX, srcY as Double
@@ -367,9 +367,9 @@ Protected Module DrawSVG
 		  for y = startY to stopY
 		    'for each pixel
 		    for x = startX to stopX
-		      factor = transMatrix(2, 0) * x + transMatrix(2, 1) * y + transMatrix(2, 2)
-		      srcX = ( transMatrix(0, 0) * x + transMatrix(0, 1) * y + transMatrix(0, 2) ) / factor
-		      srcY = ( transMatrix(1, 0) * x + transMatrix(1, 1) * y + transMatrix(1, 2) ) / factor
+		      factor = transMatrix(2) * x + transMatrix(5) * y + transMatrix(8)
+		      srcX = ( transMatrix(0) * x + transMatrix(3) * y + transMatrix(6) ) / factor
+		      srcY = ( transMatrix(1) * x + transMatrix(4) * y + transMatrix(7) ) / factor
 		      if srcX >= 0 and srcY >= 0 and srcX< srcWidth and srcY < srcHeight then
 		        sx1 = srcX
 		        if sx1 = srcWidthM1 then
@@ -576,11 +576,11 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function mapQuadToQuad(Quad() as PointXY) As double(,)
+		Private Function mapQuadToQuad(Quad() as PointXY) As Double()
 		  ' This routine is based on code written by Alain Bailleul.
 		  ' www.alwaysbusycorner.com
 		  
-		  dim sq(2,2) as double
+		  dim sq(8) as Double
 		  dim px, py as Double
 		  
 		  dim TOLERANCE as double = 1e-13
@@ -589,17 +589,17 @@ Protected Module DrawSVG
 		  py = quad(0).Y - quad(1).Y + quad(2).Y - quad(3).Y
 		  
 		  if ( ( px < TOLERANCE ) And ( px > -TOLERANCE ) And ( py < TOLERANCE ) And ( py > -TOLERANCE ) ) then
-		    sq(0, 0) = quad(1).X - quad(0).X
-		    sq(0, 1) = quad(2).X - quad(1).X
-		    sq(0, 2) = quad(0).X
+		    sq(0) = quad(1).X - quad(0).X
+		    sq(3) = quad(2).X - quad(1).X
+		    sq(6) = quad(0).X
 		    
-		    sq(1, 0) = quad(1).Y - quad(0).Y
-		    sq(1, 1) = quad(2).Y - quad(1).Y
-		    sq(1, 2) = quad(0).Y
+		    sq(1) = quad(1).Y - quad(0).Y
+		    sq(4) = quad(2).Y - quad(1).Y
+		    sq(7) = quad(0).Y
 		    
-		    sq(2, 0) = 0.0
-		    sq(2, 1) = 0.0
-		    sq(2, 2) = 1.0
+		    sq(2) = 0.0
+		    sq(5) = 0.0
+		    sq(8) = 1.0
 		  else
 		    
 		    dim dx1, dx2, dy1, dy2, del as Double
@@ -615,17 +615,17 @@ Protected Module DrawSVG
 		      return sq
 		    end if
 		    
-		    sq(2, 0) = matrixDeterminant2x2( px, dx2, py, dy2 ) / del
-		    sq(2, 1) = matrixDeterminant2x2( dx1, px, dy1, py ) / del
-		    sq(2, 2) = 1.0
+		    sq(2) = matrixDeterminant2x2( px, dx2, py, dy2 ) / del
+		    sq(5) = matrixDeterminant2x2( dx1, px, dy1, py ) / del
+		    sq(8) = 1.0
 		    
-		    sq(0, 0) = quad(1).X - quad(0).X + sq(2, 0) * quad(1).X
-		    sq(0, 1) = quad(3).X - quad(0).X + sq(2, 1) * quad(3).X
-		    sq(0, 2) = quad(0).X
+		    sq(0) = quad(1).X - quad(0).X + sq(2) * quad(1).X
+		    sq(3) = quad(3).X - quad(0).X + sq(5) * quad(3).X
+		    sq(6) = quad(0).X
 		    
-		    sq(1, 0) = quad(1).Y - quad(0).Y + sq(2, 0) * quad(1).Y
-		    sq(1, 1) = quad(3).Y - quad(0).Y + sq(2, 1) * quad(3).Y
-		    sq(1, 2) = quad(0).Y
+		    sq(1) = quad(1).Y - quad(0).Y + sq(2) * quad(1).Y
+		    sq(4) = quad(3).Y - quad(0).Y + sq(5) * quad(3).Y
+		    sq(7) = quad(0).Y
 		  end if
 		  
 		  return sq
@@ -634,32 +634,32 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function mapQuadToQuad(input() as PointXY, output() as PointXY) As double(,)
+		Private Function mapQuadToQuad(input() as PointXY, output() as PointXY) As Double()
 		  ' This routine is based on code written by Alain Bailleul.
 		  ' www.alwaysbusycorner.com
 		  
-		  Dim squareToInput(2,2) as Double = MapQuadToQuad(input)
-		  dim squareToOutput(2,2) as Double = MapQuadToQuad(output)
+		  Dim squareToInput(8) as Double = MapQuadToQuad(input)
+		  dim squareToOutput(8) as Double = MapQuadToQuad(output)
 		  
-		  Return MultiplyMatrix(squareToOutput, matrixAdjugate(squareToInput))
+		  Return matrixMultiply(matrixAdjugate(squareToInput), squareToOutput)
 		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function matrixAdjugate(a(,) as double) As double(,)
+		Private Function matrixAdjugate(a() as double) As double()
 		  ' Calculates adjugate 3x3 matrix
 		  
-		  Dim b(2,2) as double
+		  Dim b(8) as double
 		  
-		  b(0, 0) = matrixDeterminant2x2( a(1, 1), a(1, 2), a(2, 1), a(2, 2) )
-		  b(1, 0) = matrixDeterminant2x2( a(1, 2), a(1, 0), a(2, 2), a(2, 0) )
-		  b(2, 0) = matrixDeterminant2x2( a(1, 0), a(1, 1), a(2, 0), a(2, 1) )
-		  b(0, 1) = matrixDeterminant2x2( a(2, 1), a(2, 2), a(0, 1), a(0, 2) )
-		  b(1, 1) = matrixDeterminant2x2( a(2, 2), a(2, 0), a(0, 2), a(0, 0) )
-		  b(2, 1) = matrixDeterminant2x2( a(2, 0), a(2, 1), a(0, 0), a(0, 1) )
-		  b(0, 2) = matrixDeterminant2x2( a(0, 1), a(0, 2), a(1, 1), a(1, 2) )
-		  b(1, 2) = matrixDeterminant2x2( a(0, 2), a(0, 0), a(1, 2), a(1, 0) )
-		  b(2, 2) = matrixDeterminant2x2( a(0, 0), a(0, 1), a(1, 0), a(1, 1) )
+		  b(0) = matrixDeterminant2x2( a(4), a(7), a(5), a(8) )
+		  b(1) = matrixDeterminant2x2( a(7), a(1), a(8), a(2) )
+		  b(2) = matrixDeterminant2x2( a(1), a(4), a(2), a(5) )
+		  b(3) = matrixDeterminant2x2( a(5), a(8), a(3), a(6) )
+		  b(4) = matrixDeterminant2x2( a(8), a(2), a(6), a(0) )
+		  b(5) = matrixDeterminant2x2( a(2), a(5), a(0), a(3) )
+		  b(6) = matrixDeterminant2x2( a(3), a(6), a(4), a(7) )
+		  b(7) = matrixDeterminant2x2( a(6), a(0), a(7), a(1) )
+		  b(8) = matrixDeterminant2x2( a(0), a(3), a(1), a(4) )
 		  
 		  return b
 		  
@@ -675,10 +675,7 @@ Protected Module DrawSVG
 
 	#tag Method, Flags = &h21
 		Private Function matrixMultiply(m1() As Double, m2() As Double) As Double()
-		  Dim result() As Double = Array( _
-		  0.0, 0.0, 0.0, _
-		  0.0, 0.0, 0.0, _
-		  0.0, 0.0, 0.0)
+		  Dim result(8) As Double
 		  
 		  result(0) = m1(0) * m2(0) + m1(1) * m2(3) + m1(2) * m2(6)
 		  result(1) = m1(0) * m2(1) + m1(1) * m2(4) + m1(2) * m2(7)
@@ -693,27 +690,6 @@ Protected Module DrawSVG
 		  result(8) = m1(6) * m2(2) + m1(7) * m2(5) + m1(8) * m2(8)
 		  
 		  return result
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
-		Private Function MultiplyMatrix(a(,) as double, b(,) as double) As double(,)
-		  ' Multiply two 3x3 matrices
-		  dim c (2,2) as Double
-		  
-		  c(0, 0) = a(0, 0) * b(0, 0) + a(0, 1) * b(1, 0) + a(0, 2) * b(2, 0)
-		  c(0, 1) = a(0, 0) * b(0, 1) + a(0, 1) * b(1, 1) + a(0, 2) * b(2, 1)
-		  c(0, 2) = a(0, 0) * b(0, 2) + a(0, 1) * b(1, 2) + a(0, 2) * b(2, 2)
-		  c(1, 0) = a(1, 0) * b(0, 0) + a(1, 1) * b(1, 0) + a(1, 2) * b(2, 0)
-		  c(1, 1) = a(1, 0) * b(0, 1) + a(1, 1) * b(1, 1) + a(1, 2) * b(2, 1)
-		  c(1, 2) = a(1, 0) * b(0, 2) + a(1, 1) * b(1, 2) + a(1, 2) * b(2, 2)
-		  c(2, 0) = a(2, 0) * b(0, 0) + a(2, 1) * b(1, 0) + a(2, 2) * b(2, 0)
-		  c(2, 1) = a(2, 0) * b(0, 1) + a(2, 1) * b(1, 1) + a(2, 2) * b(2, 1)
-		  c(2, 2) = a(2, 0) * b(0, 2) + a(2, 1) * b(1, 2) + a(2, 2) * b(2, 2)
-		  
-		  return c
-		  
 		  
 		End Function
 	#tag EndMethod
