@@ -1119,19 +1119,28 @@ Protected Module DrawSVG
 		      cs.Y = penY
 		      cs.Order = 2
 		      i = i + 1
-		      cs.ControlX(0) = Val(path(i))
+		      tmpX = Val(path(i))
 		      i = i + 1
-		      cs.ControlY(0) = Val(path(i))
+		      tmpY = Val(path(i))
+		      transformPoint tmpX, tmpY, matrix
+		      cs.ControlX(0) = tmpX
+		      cs.ControlY(0) = tmpY
 		      i = i + 1
-		      cs.ControlX(1) = Val(path(i))
+		      tmpX = Val(path(i))
 		      i = i + 1
-		      cs.ControlY(1) = Val(path(i))
+		      tmpY = Val(path(i))
+		      transformPoint tmpX, tmpY, matrix
+		      cs.ControlX(1) = tmpX
+		      cs.ControlY(1) = tmpY
 		      i = i + 1
-		      cs.X2 = Val(path(i))
-		      i=i+1
-		      cs.Y2 = Val(path(i))
-		      penX = CS.X2
-		      penY = CS.Y2
+		      tmpX = Val(path(i))
+		      i = i + 1
+		      tmpY = Val(path(i))
+		      transformPoint tmpX, tmpY, matrix
+		      cs.X2 = tmpX
+		      cs.Y2 = tmpY
+		      penX = tmpX
+		      penY = tmpY
 		      
 		    elseif StrComp(path(i), "c", 0) = 0 then // relative curveto
 		      break
