@@ -1062,6 +1062,7 @@ Protected Module DrawSVG
 		  Dim stroke As String
 		  Dim strokeWidth As Double
 		  Dim fs as new FigureShape
+		  Dim arc As ArcShape
 		  Dim cs As CurveShape
 		  Dim d As String
 		  Dim penX As Double
@@ -1198,7 +1199,7 @@ Protected Module DrawSVG
 		      
 		      do
 		        continueLineto = false
-		        if i < (path.Ubound - 1) then
+		        if i < (path.Ubound - 2) then
 		          if IsNumeric(path(i + 1)) then
 		            i = i + 1
 		            cs =new CurveShape
@@ -1235,7 +1236,7 @@ Protected Module DrawSVG
 		      
 		      do
 		        continueLineto = false
-		        if i < (path.Ubound - 1) then
+		        if i < (path.Ubound - 2) then
 		          if IsNumeric(path(i + 1)) then
 		            i = i + 1
 		            cs =new CurveShape
