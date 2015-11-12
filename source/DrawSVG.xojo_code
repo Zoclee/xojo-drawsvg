@@ -1070,6 +1070,7 @@ Protected Module DrawSVG
 		  Dim tmpY As Double
 		  Dim path() As String
 		  Dim closePath As Boolean
+		  Dim continueLineto As Boolean
 		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
@@ -1117,8 +1118,11 @@ Protected Module DrawSVG
 		    elseif StrComp(path(i), "C", 0) = 0 then // absolute curveto
 		      cs = new CurveShape
 		      fs.Append cs
-		      cs.X = penX
-		      cs.Y = penY
+		      tmpX = penX
+		      tmpY = penY
+		      transformPoint tmpX, tmpY, matrix
+		      cs.X = tmpX
+		      cs.Y = tmpY
 		      cs.Order = 2
 		      i = i + 1
 		      tmpX = Val(path(i))
@@ -1138,11 +1142,12 @@ Protected Module DrawSVG
 		      tmpX = Val(path(i))
 		      i = i + 1
 		      tmpY = Val(path(i))
+		      penX = tmpX
+		      penY = tmpY
 		      transformPoint tmpX, tmpY, matrix
 		      cs.X2 = tmpX
 		      cs.Y2 = tmpY
-		      penX = tmpX
-		      penY = tmpY
+		      
 		      
 		    elseif StrComp(path(i), "c", 0) = 0 then // relative curveto
 		      break
@@ -1162,17 +1167,20 @@ Protected Module DrawSVG
 		    elseif StrComp(path(i), "L", 0) = 0 then // absolute lineto
 		      cs =new CurveShape
 		      fs.Append cs
-		      cs.X = penX
-		      cs.Y = penY
+		      tmpX = penX
+		      tmpY = penY
+		      transformPoint tmpX, tmpY, matrix
+		      cs.X = tmpX
+		      cs.Y = tmpY
 		      i = i + 1
 		      tmpX = Val(path(i))
 		      i = i + 1
 		      tmpY = Val(path(i))
+		      penX = tmpX
+		      penY = tmpY
 		      transformPoint tmpX, tmpY, matrix
 		      cs.X2 = tmpX
 		      cs.Y2 = tmpY
-		      penX = tmpX
-		      penY = tmpY
 		      
 		    elseif StrComp(path(i), "l", 0) = 0 then // relative lineto
 		      break
@@ -1183,7 +1191,7 @@ Protected Module DrawSVG
 		      i = i + 1
 		      tmpY = Val(path(i))
 		      
-		      transformPoint tmpX, tmpY, matrix
+		      'transformPoint tmpX, tmpY, matrix
 		      penX = tmpX
 		      penY = tmpY
 		      
@@ -1193,9 +1201,38 @@ Protected Module DrawSVG
 		      i = i + 1
 		      tmpY = Val(path(i))
 		      
-		      transformPoint tmpX, tmpY, matrix
+		      'transformPoint tmpX, tmpY, matrix
 		      penX = penX + tmpX
-		      penY = penX + tmpY
+		      penY = penY + tmpY
+		      
+		      // apply  implicit lineto commands
+		      
+		      do
+		        continueLineto = false
+		        if i < (path.Ubound - 1) then
+		          if IsNumeric(path(i)) then
+		            cs =new CurveShape
+		            fs.Append cs
+		            tmpX = penX
+		            tmpY = penY
+		            transformPoint tmpX, tmpY, matrix
+		            cs.X = tmpX
+		            cs.Y = tmpY
+		            i = i + 1
+		            tmpX = Val(path(i))
+		            i = i + 1
+		            tmpY = Val(path(i))
+		            penX = penX + tmpX
+		            penY = penY +tmpY
+		            tmpX = penX
+		            tmpY = penY
+		            transformPoint tmpX, tmpY, matrix
+		            cs.X2 = tmpX
+		            cs.Y2 = tmpY
+		            continueLineto = true
+		          end if
+		        end if
+		      loop until (i > path.Ubound) or not continueLineto
 		      
 		    elseif StrComp(path(i), "S", 0) = 0 then // absolute smooth curveto
 		      break
