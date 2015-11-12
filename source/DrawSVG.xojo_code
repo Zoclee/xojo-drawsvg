@@ -1,25 +1,6 @@
 #tag Module
 Protected Module DrawSVG
 	#tag Method, Flags = &h21
-		Private Function AdjugateMatrix(a(,) as double) As double(,)
-		  ' Calculates adjugate 3x3 matrix
-		  dim b(2,2) as double
-		  b(0, 0) = Det2( a(1, 1), a(1, 2), a(2, 1), a(2, 2) )
-		  b(1, 0) = Det2( a(1, 2), a(1, 0), a(2, 2), a(2, 0) )
-		  b(2, 0) = Det2( a(1, 0), a(1, 1), a(2, 0), a(2, 1) )
-		  b(0, 1) = Det2( a(2, 1), a(2, 2), a(0, 1), a(0, 2) )
-		  b(1, 1) = Det2( a(2, 2), a(2, 0), a(0, 2), a(0, 0) )
-		  b(2, 1) = Det2( a(2, 0), a(2, 1), a(0, 0), a(0, 1) )
-		  b(0, 2) = Det2( a(0, 1), a(0, 2), a(1, 1), a(1, 2) )
-		  b(1, 2) = Det2( a(0, 2), a(0, 0), a(1, 2), a(1, 0) )
-		  b(2, 2) = Det2( a(0, 0), a(0, 1), a(1, 0), a(1, 1) )
-		  
-		  return b
-		  
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Sub ApplyValues(Extends Item As JSONItem, withItem As JSONItem)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
@@ -214,13 +195,6 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function Det2(a as double, b as double, c as double, d as double) As double
-		  ' Caclculates determinant of a 2x2 matrix
-		  return ( a * d - b * c )
-		End Function
-	#tag EndMethod
-
-	#tag Method, Flags = &h21
 		Private Function determineColor(s As String) As Color
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
@@ -316,16 +290,16 @@ Protected Module DrawSVG
 		  
 		  Dim srcWidth as Integer
 		  Dim srcHeight as Integer 
-		  Dim destinationQuadrilateral() as ABPoint
+		  Dim destinationQuadrilateral() as PointXY
 		  Dim tmpX As Integer
 		  Dim tmpY As Integer
 		  Dim startX As Integer
 		  Dim startY As Integer
 		  Dim stopX As Integer
 		  Dim stopY As Integer
-		  Dim minXY as ABPoint
-		  Dim maxXY as ABPoint
-		  Dim srcRect(3) as ABPoint
+		  Dim minXY as PointXY
+		  Dim maxXY as PointXY
+		  Dim srcRect(3) as PointXY
 		  Dim transMatrix(2,2) as Double
 		  Dim x As Integer
 		  Dim y As Integer
@@ -348,22 +322,22 @@ Protected Module DrawSVG
 		  tmpX = 0
 		  tmpY = 0
 		  transformPoint(tmpX, tmpY, matrix)
-		  destinationQuadrilateral.Append new ABPoint(tmpX, tmpY)
+		  destinationQuadrilateral.Append new PointXY(tmpX, tmpY)
 		  
 		  tmpX = srcWidth -1
 		  tmpY = 0
 		  transformPoint(tmpX, tmpY, matrix)
-		  destinationQuadrilateral.Append new ABPoint(tmpX, tmpY)
+		  destinationQuadrilateral.Append new PointXY(tmpX, tmpY)
 		  
 		  tmpX = srcWidth -1
 		  tmpY = srcHeight - 1
 		  transformPoint(tmpX, tmpY, matrix)
-		  destinationQuadrilateral.Append new ABPoint(tmpX, tmpY)
+		  destinationQuadrilateral.Append new PointXY(tmpX, tmpY)
 		  
 		  tmpX = 0
 		  tmpY = srcHeight - 1
 		  transformPoint(tmpX, tmpY, matrix)
-		  destinationQuadrilateral.Append new ABPoint(tmpX, tmpY)
+		  destinationQuadrilateral.Append new PointXY(tmpX, tmpY)
 		  
 		  'get bounding rectangle of the quadrilateral
 		  
@@ -376,10 +350,10 @@ Protected Module DrawSVG
 		  
 		  'calculate tranformation matrix
 		  
-		  srcRect(0) = new ABPoint(0,0)
-		  srcRect(1) = new ABPoint(srcWidth -1 ,0)
-		  srcRect(2) = new ABPoint(srcWidth - 1, srcHeight - 1)
-		  srcRect(3) = new ABPoint(0, srcHeight - 1)
+		  srcRect(0) = new PointXY(0,0)
+		  srcRect(1) = new PointXY(srcWidth -1 ,0)
+		  srcRect(2) = new PointXY(srcWidth - 1, srcHeight - 1)
+		  srcRect(3) = new PointXY(0, srcHeight - 1)
 		  transMatrix = MapQuadToQuad(destinationQuadrilateral, srcRect)
 		  
 		  tgtPic = new Picture(g.Width, g.Height)
@@ -438,7 +412,10 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub GetBoundingRectangle(cloud() as ABPoint, byref minXY as ABPoint, byref maxXY as ABPoint)
+		Private Sub getBoundingRectangle(cloud() as PointXY, byref minXY as PointXY, byref maxXY as PointXY)
+		  ' This routine is based on code written by Alain Bailleul.
+		  ' www.alwaysbusycorner.com
+		  
 		  dim minX as integer = 10e6
 		  dim maxX as integer = -10e6
 		  dim minY as integer = 10e6
@@ -452,8 +429,8 @@ Protected Module DrawSVG
 		    if cloud(i).y > maxY then maxY = cloud(i).y
 		  next
 		  
-		  minXY = new ABPoint(minX, minY)
-		  maxXY = new ABPoint(maxX, maxY)
+		  minXY = new PointXY(minX, minY)
+		  maxXY = new PointXY(maxX, maxY)
 		End Sub
 	#tag EndMethod
 
@@ -599,7 +576,10 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function MapQuadToQuad(Quad() as ABPoint) As double(,)
+		Private Function mapQuadToQuad(Quad() as PointXY) As double(,)
+		  ' This routine is based on code written by Alain Bailleul.
+		  ' www.alwaysbusycorner.com
+		  
 		  dim sq(2,2) as double
 		  dim px, py as Double
 		  
@@ -629,14 +609,14 @@ Protected Module DrawSVG
 		    dy1 = quad(1).Y - quad(2).Y
 		    dy2 = quad(3).Y - quad(2).Y
 		    
-		    del = Det2( dx1, dx2, dy1, dy2 )
+		    del = matrixDeterminant2x2( dx1, dx2, dy1, dy2 )
 		    
 		    if ( del = 0 ) then
 		      return sq
 		    end if
 		    
-		    sq(2, 0) = Det2( px, dx2, py, dy2 ) / del
-		    sq(2, 1) = Det2( dx1, px, dy1, py ) / del
+		    sq(2, 0) = matrixDeterminant2x2( px, dx2, py, dy2 ) / del
+		    sq(2, 1) = matrixDeterminant2x2( dx1, px, dy1, py ) / del
 		    sq(2, 2) = 1.0
 		    
 		    sq(0, 0) = quad(1).X - quad(0).X + sq(2, 0) * quad(1).X
@@ -654,11 +634,42 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Function MapQuadToQuad(input() as ABPoint, output() as ABPoint) As double(,)
+		Private Function mapQuadToQuad(input() as PointXY, output() as PointXY) As double(,)
+		  ' This routine is based on code written by Alain Bailleul.
+		  ' www.alwaysbusycorner.com
+		  
 		  Dim squareToInput(2,2) as Double = MapQuadToQuad(input)
 		  dim squareToOutput(2,2) as Double = MapQuadToQuad(output)
 		  
-		  Return MultiplyMatrix(squareToOutput, AdjugateMatrix(squareToInput))
+		  Return MultiplyMatrix(squareToOutput, matrixAdjugate(squareToInput))
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function matrixAdjugate(a(,) as double) As double(,)
+		  ' Calculates adjugate 3x3 matrix
+		  
+		  Dim b(2,2) as double
+		  
+		  b(0, 0) = matrixDeterminant2x2( a(1, 1), a(1, 2), a(2, 1), a(2, 2) )
+		  b(1, 0) = matrixDeterminant2x2( a(1, 2), a(1, 0), a(2, 2), a(2, 0) )
+		  b(2, 0) = matrixDeterminant2x2( a(1, 0), a(1, 1), a(2, 0), a(2, 1) )
+		  b(0, 1) = matrixDeterminant2x2( a(2, 1), a(2, 2), a(0, 1), a(0, 2) )
+		  b(1, 1) = matrixDeterminant2x2( a(2, 2), a(2, 0), a(0, 2), a(0, 0) )
+		  b(2, 1) = matrixDeterminant2x2( a(2, 0), a(2, 1), a(0, 0), a(0, 1) )
+		  b(0, 2) = matrixDeterminant2x2( a(0, 1), a(0, 2), a(1, 1), a(1, 2) )
+		  b(1, 2) = matrixDeterminant2x2( a(0, 2), a(0, 0), a(1, 2), a(1, 0) )
+		  b(2, 2) = matrixDeterminant2x2( a(0, 0), a(0, 1), a(1, 0), a(1, 1) )
+		  
+		  return b
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function matrixDeterminant2x2(a as double, b as double, c as double, d as double) As double
+		  ' Caclculates determinant of a 2x2 matrix
+		  return ( a * d - b * c )
 		End Function
 	#tag EndMethod
 
