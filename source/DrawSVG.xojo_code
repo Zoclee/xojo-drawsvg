@@ -43,7 +43,7 @@ Protected Module DrawSVG
 		      while j <= styleArr.Ubound
 		        itemArr = styleArr(j).Split(":")
 		        if itemArr.Ubound = 1 then
-		          result.Value(itemArr(0).Lowercase) = itemArr(1)
+		          result.Value(itemArr(0).Trim.Lowercase) = itemArr(1)
 		        end if
 		        j = j + 1
 		      wend
@@ -1113,7 +1113,25 @@ Protected Module DrawSVG
 		      break
 		      
 		    elseif StrComp(path(i), "C", 0) = 0 then // absolute curveto
-		      break
+		      cs = new CurveShape
+		      fs.Append cs
+		      cs.X = penX
+		      cs.Y = penY
+		      cs.Order = 2
+		      i = i + 1
+		      cs.ControlX(0) = Val(path(i))
+		      i = i + 1
+		      cs.ControlY(0) = Val(path(i))
+		      i = i + 1
+		      cs.ControlX(1) = Val(path(i))
+		      i = i + 1
+		      cs.ControlY(1) = Val(path(i))
+		      i = i + 1
+		      cs.X2 = Val(path(i))
+		      i=i+1
+		      cs.Y2 = Val(path(i))
+		      penX = CS.X2
+		      penY = CS.Y2
 		      
 		    elseif StrComp(path(i), "c", 0) = 0 then // relative curveto
 		      break
@@ -1201,6 +1219,8 @@ Protected Module DrawSVG
 		  
 		  if fill <> "none" then
 		    fs.FillColor = determineColor(fill)
+		  else
+		    fs.Fill = 0
 		  end if
 		  
 		  // stroke
@@ -1209,6 +1229,8 @@ Protected Module DrawSVG
 		    fs.Border = 100
 		    fs.BorderColor = determineColor(stroke)
 		    fs.BorderWidth = strokeWidth
+		  else
+		    fs.Border = 0
 		  end if
 		  
 		  if fs.Count > 0 then
