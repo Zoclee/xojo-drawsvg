@@ -1085,6 +1085,24 @@ Protected Module DrawSVG
 		  
 		  d = Trim(style.LookupString("d", ""))
 		  path = Split(d.ReplaceAll(","," ")," ")
+		  
+		  // sanitize path elements
+		  
+		  i = 0
+		  while i <= path.Ubound
+		    path(i) = trim(path(i))
+		    if not IsNumeric(path(i)) and Len(path(i)) > 1 then
+		      path.Insert i + 1, Right(path(i), Len(path(i)) - 1)
+		      path(i) = Left(path(i), 1)
+		    elseif path(i) = "" then
+		      path.Remove(i)
+		    else
+		      i = i + 1
+		    end if
+		  wend
+		  
+		  // process path
+		  
 		  i = 0
 		  while i <= path.Ubound
 		    
@@ -1115,27 +1133,17 @@ Protected Module DrawSVG
 		    elseif StrComp(path(i), "L", 0) = 0 then // absolute lineto
 		      cs =new CurveShape
 		      fs.Append cs
-		      
-		      'tmpX = penX
-		      'tmpY = penY
-		      'transformPoint tmpX, tmpY, matrix
 		      cs.X = penX
 		      cs.Y = penY
-		      
 		      i = i + 1
 		      tmpX = Val(path(i))
-		      //cs.X2 = Val(path(i))
 		      i = i + 1
 		      tmpY = Val(path(i))
-		      //cs.Y2 = Val(path(i))
-		      
 		      transformPoint tmpX, tmpY, matrix
 		      cs.X2 = tmpX
 		      cs.Y2 = tmpY
-		      
 		      penX = tmpX
 		      penY = tmpY
-		      //n = n + 1
 		      
 		    elseif StrComp(path(i), "l", 0) = 0 then // relative lineto
 		      break
