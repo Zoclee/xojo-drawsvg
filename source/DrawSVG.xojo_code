@@ -261,6 +261,10 @@ Protected Module DrawSVG
 		      
 		      xdoc = new XmlDocument(svg)
 		      
+		      // clear classes
+		      
+		      mClasses = new JSONItem("{}")
+		      
 		      matrix = initIdentityMatrix()
 		      
 		      i = 0
@@ -565,6 +569,72 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub loadCSS(styleData As String)
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
+		  Dim className As String
+		  Dim i As Integer
+		  Dim ch As String
+		  Dim dataLen As Integer
+		  Dim state As Integer // 0 = next class, 1 = class name, 2 = property name, 3 = property value
+		  Dim classProperties As JSONItem
+		  Dim propName As String
+		  Dim propValue As String
+		  
+		  dataLen = len(styleData)
+		  state = 0 // next class
+		  i = 1
+		  while i <= dataLen
+		    ch = Mid(styleData, i, 1)
+		    
+		    if Asc(ch) <= 32 then
+		      // do nothing
+		      
+		    elseif ch = "{" then
+		      classProperties = new JSONItem("{}")
+		      propName = ""
+		      state = 2 // property name
+		      
+		    elseif ch = "}" then
+		      if propName <> "" then
+		        classProperties.Value(Lowercase(propName)) = propValue
+		      end if
+		      mClasses.Value(className) = classProperties
+		      state = 0 // next class
+		      
+		    elseif ch = "." then
+		      className = ""
+		      state = 1 // class name
+		      
+		    elseif ch = ";" then
+		      classProperties.Value(Lowercase(propName)) = propValue
+		      propName = ""
+		      propValue = ""
+		      state = 2 // property name
+		      
+		    elseif ch = ":" then
+		      propValue = ""
+		      state = 3 // property value
+		      
+		    else
+		      select case state
+		      case 1 // class name
+		        className = className + ch
+		      case 2 // property name
+		        propName = propName + ch
+		      case 3 // property value
+		        propValue = propValue + ch
+		      end select
+		    end if
+		    
+		    i = i + 1
+		  wend
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Function LookupDouble(Extends Item As JSONItem, Name As String, DefaultValue As Double = 0) As Double
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
@@ -720,6 +790,26 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub process_style(node As XmlNode)
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
+		  Dim styleData As String
+		  
+		  select case node.GetAttribute("type")
+		    
+		  case "text/css"
+		    styleData = node.FirstChild.Value
+		    loadCSS(styleData)
+		    
+		  case else
+		    break
+		    
+		  end select
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub renderNode(node As XmlNode, g As Graphics, parentMatrix() As Double)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
@@ -770,6 +860,9 @@ Protected Module DrawSVG
 		      
 		    case "rect"
 		      render_rect(node, g, parentMatrix)
+		      
+		    case "style"
+		      process_style(node)
 		      
 		    case "svg"
 		      render_svg(node, g, parentMatrix)
@@ -1769,6 +1862,11 @@ Protected Module DrawSVG
 		  
 		End Sub
 	#tag EndMethod
+
+
+	#tag Property, Flags = &h21
+		Private mClasses As JSONItem
+	#tag EndProperty
 
 
 	#tag Constant, Name = DegToRad, Type = Double, Dynamic = False, Default = \"0.0174533", Scope = Private
