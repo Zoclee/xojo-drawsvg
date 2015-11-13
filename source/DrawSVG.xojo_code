@@ -567,6 +567,18 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function isScaleMatrix(matrix() As Double) As Boolean
+		  Dim result As Boolean
+		  
+		  result = (matrix(1) = 0) and (matrix(2) = 0) and (matrix(3) = 0) and (matrix(5) = 0) and _
+		  (matrix(6) = 0) and (matrix(7) = 0) and (matrix(8) = 1)
+		  
+		  return result
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Function isTranslationMatrix(matrix() As Double) As Boolean
 		  Dim result As Boolean
 		  
@@ -1190,6 +1202,8 @@ Protected Module DrawSVG
 		  Dim path() As String
 		  Dim closePath As Boolean
 		  Dim continueLineto As Boolean
+		  Dim prevControlX As Double
+		  Dim prevControlY As Double
 		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
@@ -1284,6 +1298,8 @@ Protected Module DrawSVG
 		      transformPoint tmpX, tmpY, matrix
 		      cs.ControlX(1) = tmpX
 		      cs.ControlY(1) = tmpY
+		      prevControlX = tmpX
+		      prevControlY = tmpY
 		      i = i + 1
 		      tmpX = Val(path(i))
 		      i = i + 1
@@ -1407,7 +1423,32 @@ Protected Module DrawSVG
 		      loop until (i > path.Ubound) or not continueLineto
 		      
 		    elseif StrComp(path(i), "S", 0) = 0 then // absolute smooth curveto
-		      // todo
+		      cs = new CurveShape
+		      fs.Append cs
+		      tmpX = penX
+		      tmpY = penY
+		      transformPoint tmpX, tmpY, matrix
+		      cs.X = tmpX
+		      cs.Y = tmpY
+		      cs.Order = 2
+		      cs.ControlX(0) = (tmpX - prevControlX)  + tmpX
+		      cs.ControlY(0) = (tmpY - prevControlY)  + tmpY
+		      i = i + 1
+		      tmpX = Val(path(i))
+		      i = i + 1
+		      tmpY = Val(path(i))
+		      transformPoint tmpX, tmpY, matrix
+		      cs.ControlX(1) = tmpX
+		      cs.ControlY(1) = tmpY
+		      i = i + 1
+		      tmpX = Val(path(i))
+		      i = i + 1
+		      tmpY = Val(path(i))
+		      penX = tmpX
+		      penY = tmpY
+		      transformPoint tmpX, tmpY, matrix
+		      cs.X2 = tmpX
+		      cs.Y2 = tmpY
 		      
 		    elseif StrComp(path(i), "s", 0) = 0 then // relative smooth curveto
 		      // todo
