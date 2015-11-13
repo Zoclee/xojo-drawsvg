@@ -269,7 +269,12 @@ Protected Module DrawSVG
 		  Dim w As Integer
 		  Dim h As Integer
 		  Dim viewbox As String
-		  Dim viewboxArr() As Double
+		  Dim viewboxArr() As String
+		  Dim xScale As Double
+		  Dim yScale As Double
+		  Dim xOffset As Double
+		  Dim yOffset As Double
+		  Dim scale As Double
 		  
 		  if Len(svg) > 0 then
 		    
@@ -297,10 +302,33 @@ Protected Module DrawSVG
 		            h = g.Height
 		          end if
 		          
-		          'viewbox = Trim(xdoc.Child(i).GetCIAttribute("viewbox"))
-		          'if viewbox <> "" then
-		          'break
-		          'end if
+		          // apply viewbox if there is one
+		          
+		          viewbox = Trim(xdoc.Child(i).GetCIAttribute("viewbox"))
+		          if viewbox <> "" then
+		            while viewbox.InStr(0, "  ") > 0 
+		              viewbox = viewbox.ReplaceAll("  ", " ")
+		            wend
+		            viewboxArr = viewbox.Split(" ")
+		            if viewboxArr.Ubound = 3 then
+		              xScale = w / Val(viewboxArr(2)) 
+		              yScale = h / Val(viewboxArr(3)) 
+		              if xScale < yScale then
+		                scale = xScale
+		                xOffset = 0
+		                yOffset = (h - (Val(viewboxArr(3))  * scale)) / 2
+		              else
+		                scale = yScale
+		                xOffset = (w - (Val(viewboxArr(2))  * scale)) / 2
+		                yOffset = 0
+		              end if
+		              mulMatrix = initTranslationMatrix(xOffset, yOffset)
+		              matrix = matrixMultiply(matrix, mulMatrix)
+		              mulMatrix = initScaleMatrix(scale, scale)
+		              matrix = matrixMultiply(matrix, mulMatrix)
+		              
+		            end if
+		          end if
 		          
 		          if (w1 > 0) and (h1 > 0) then
 		            mulMatrix = initScaleMatrix(w1 / w, h1 / h)
