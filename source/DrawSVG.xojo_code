@@ -1359,9 +1359,8 @@ Protected Module DrawSVG
 		      
 		      do
 		        continueLineto = false
-		        if i < (path.Ubound - 2) then
+		        if i < (path.Ubound - 1) then
 		          if IsNumeric(path(i + 1)) then
-		            i = i + 1
 		            cs =new CurveShape
 		            fs.Append cs
 		            tmpX = penX
@@ -1396,9 +1395,8 @@ Protected Module DrawSVG
 		      
 		      do
 		        continueLineto = false
-		        if i < (path.Ubound - 2) then
+		        if i < (path.Ubound - 1) then
 		          if IsNumeric(path(i + 1)) then
-		            i = i + 1
 		            cs =new CurveShape
 		            fs.Append cs
 		            tmpX = penX
