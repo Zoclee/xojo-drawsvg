@@ -38,7 +38,7 @@ Protected Module DrawSVG
 		    
 		    if xAttr.Name = "class" then
 		      
-		      className = Trim(Lowercase(node.GetAttribute(xAttr.Name)))
+		      className = Trim(Lowercase(node.GetCIAttribute(xAttr.Name)))
 		      if mClasses.HasName(className) then
 		        classProperties = mClasses.Value(className)
 		        result.ApplyValues classProperties
@@ -48,7 +48,7 @@ Protected Module DrawSVG
 		      
 		      // process style attribute
 		      
-		      styleArr = node.GetAttribute(xAttr.Name).Split(";")
+		      styleArr = node.GetCIAttribute(xAttr.Name).Split(";")
 		      j = 0
 		      while j <= styleArr.Ubound
 		        itemArr = styleArr(j).Split(":")
@@ -59,7 +59,7 @@ Protected Module DrawSVG
 		      wend
 		      
 		    else
-		      result.Value(xAttr.Name.Lowercase) = node.GetAttribute(xAttr.Name)
+		      result.Value(xAttr.Name.Lowercase) = node.GetCIAttribute(xAttr.Name)
 		    end if
 		    
 		    i = i + 1
@@ -268,6 +268,8 @@ Protected Module DrawSVG
 		  Dim drawG As Graphics
 		  Dim w As Integer
 		  Dim h As Integer
+		  Dim viewbox As String
+		  Dim viewboxArr() As Double
 		  
 		  if Len(svg) > 0 then
 		    
@@ -285,8 +287,8 @@ Protected Module DrawSVG
 		      while (i < xdoc.ChildCount) 
 		        if xdoc.Child(i).Name = "svg" then
 		          
-		          w = Val(xdoc.Child(i).GetAttribute("width"))
-		          h = Val(xdoc.Child(i).GetAttribute("height"))
+		          w = Val(xdoc.Child(i).GetCIAttribute("width"))
+		          h = Val(xdoc.Child(i).GetCIAttribute("height"))
 		          
 		          if w = 0 then
 		            w = g.Width
@@ -294,6 +296,11 @@ Protected Module DrawSVG
 		          if h = 0 then
 		            h = g.Height
 		          end if
+		          
+		          'viewbox = Trim(xdoc.Child(i).GetCIAttribute("viewbox"))
+		          'if viewbox <> "" then
+		          'break
+		          'end if
 		          
 		          if (w1 > 0) and (h1 > 0) then
 		            mulMatrix = initScaleMatrix(w1 / w, h1 / h)
@@ -470,6 +477,33 @@ Protected Module DrawSVG
 		  minXY = new REALbasic.Point(minX, minY)
 		  maxXY = new REALbasic.Point(maxX, maxY)
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function GetCIAttribute(extends node As XmlNode, name As String) As String
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
+		  Dim i As Integer
+		  Dim foundAttr As Boolean
+		  Dim attr As XmlAttribute
+		  Dim result As String
+		  
+		  result = ""
+		  
+		  i = 0
+		  foundAttr = false
+		  while (i <node.AttributeCount) and not foundAttr
+		    attr = node.GetAttributeNode(i)
+		    if attr.name = name then
+		      result = attr.Value
+		      foundAttr = true
+		    end if
+		    i = i + 1
+		  wend
+		  
+		  return result
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
@@ -829,7 +863,7 @@ Protected Module DrawSVG
 		  
 		  Dim styleData As String
 		  
-		  select case node.GetAttribute("type")
+		  select case node.GetCIAttribute("type")
 		    
 		  case "text/css"
 		    styleData = node.FirstChild.Value
@@ -1882,12 +1916,6 @@ Protected Module DrawSVG
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
 		  matrix = matrixMultiply(matrix, parentMatrix)
-		  
-		  'if (node.GetAttribute("width") <> "") and (node.GetAttribute("height") <> "") then
-		  'drawG = g.Clip(0, 0, Val(node.GetAttribute("width")), Val(node.GetAttribute("height")))
-		  'else
-		  'drawG = g.Clip(0, 0, g.Width, g.Height)
-		  'end if
 		  
 		  i = 0
 		  while i < node.ChildCount
