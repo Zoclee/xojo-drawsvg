@@ -1353,10 +1353,36 @@ Protected Module DrawSVG
 		      cs.Y2 = tmpY
 		      
 		    elseif StrComp(path(i), "H", 0) = 0 then // absolute horizontal lineto
-		      // todo
+		      cs =new CurveShape
+		      fs.Append cs
+		      tmpX = penX
+		      tmpY = penY
+		      transformPoint tmpX, tmpY, matrix
+		      cs.X = tmpX
+		      cs.Y = tmpY
+		      i = i + 1
+		      tmpX = Val(path(i))
+		      penX = tmpX
+		      tmpY = penY
+		      transformPoint tmpX, tmpY, matrix
+		      cs.X2 = tmpX
+		      cs.Y2 = tmpY
 		      
 		    elseif StrComp(path(i), "h", 0) = 0 then // relative horizontal lineto
-		      // todo
+		      cs =new CurveShape
+		      fs.Append cs
+		      tmpX = penX
+		      tmpY = penY
+		      transformPoint tmpX, tmpY, matrix
+		      cs.X = tmpX
+		      cs.Y = tmpY
+		      i = i + 1
+		      tmpX = penX + Val(path(i))
+		      penX = tmpX
+		      tmpY = penY
+		      transformPoint tmpX, tmpY, matrix
+		      cs.X2 = tmpX
+		      cs.Y2 = tmpY
 		      
 		    elseif StrComp(path(i), "Q", 0) = 0 then // absolute quadratic Bézier curveto
 		      // todo
