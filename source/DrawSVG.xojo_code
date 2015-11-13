@@ -27,6 +27,8 @@ Protected Module DrawSVG
 		  Dim xAttr As XmlAttribute
 		  Dim styleArr() As String
 		  Dim itemArr() As String
+		  Dim className As String
+		  Dim classProperties As JSONItem
 		  
 		  result.EscapeSlashes = false
 		  
@@ -34,7 +36,15 @@ Protected Module DrawSVG
 		  while i < node.AttributeCount
 		    xAttr = node.GetAttributeNode(i)
 		    
-		    if xAttr.Name = "style" then
+		    if xAttr.Name = "class" then
+		      
+		      className = Trim(Lowercase(node.GetAttribute(xAttr.Name)))
+		      if mClasses.HasName(className) then
+		        classProperties = mClasses.Value(className)
+		        break
+		      end if
+		      
+		    elseif xAttr.Name = "style" then
 		      
 		      // process style attribute
 		      
@@ -600,7 +610,7 @@ Protected Module DrawSVG
 		      if propName <> "" then
 		        classProperties.Value(Lowercase(propName)) = propValue
 		      end if
-		      mClasses.Value(className) = classProperties
+		      mClasses.Value(Lowercase(Trim(className))) = classProperties
 		      state = 0 // next class
 		      
 		    elseif ch = "." then
