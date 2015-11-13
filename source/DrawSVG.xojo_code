@@ -102,7 +102,11 @@ Protected Module DrawSVG
 		        
 		        functionName = Lowercase(Trim(Mid(transform, pos, openBracket - pos)))
 		        parms = Mid(transform, openBracket + 1, closeBracket - openBracket - 1)
-		        strArr = parms.Split(",")
+		        parms = parms.ReplaceAll(",", " ")
+		        while parms.InStr(0, "  ") > 0 
+		          parms = parms.ReplaceAll("  ", " ")
+		        wend
+		        strArr = parms.Split(" ")
 		        
 		        select case functionName
 		          
