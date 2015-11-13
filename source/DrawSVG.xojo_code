@@ -41,7 +41,7 @@ Protected Module DrawSVG
 		      className = Trim(Lowercase(node.GetAttribute(xAttr.Name)))
 		      if mClasses.HasName(className) then
 		        classProperties = mClasses.Value(className)
-		        break
+		        result.ApplyValues classProperties
 		      end if
 		      
 		    elseif xAttr.Name = "style" then
@@ -1808,7 +1808,14 @@ Protected Module DrawSVG
 		      strShape.TextFont = g.TextFont
 		      strShape.TextUnit = g.TextUnit
 		      strShape.TextSize = g.TextSize
-		      strShape.HorizontalAlignment = StringShape.Alignment.Left
+		      select case style.Lookup("text-anchor", "start")
+		      case "end"
+		        strShape.HorizontalAlignment = StringShape.Alignment.Right
+		      case "middle"
+		        strShape.HorizontalAlignment = StringShape.Alignment.Center
+		      case else
+		        strShape.HorizontalAlignment = StringShape.Alignment.Left
+		      end select
 		      strShape.VerticalAlignment = StringShape.Alignment.Top
 		      strShape.Text = textStr
 		      
