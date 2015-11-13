@@ -284,6 +284,13 @@ Protected Module DrawSVG
 		          w = Val(xdoc.Child(i).GetAttribute("width"))
 		          h = Val(xdoc.Child(i).GetAttribute("height"))
 		          
+		          if w = 0 then
+		            w = g.Width
+		          end if
+		          if h = 0 then
+		            h = g.Height
+		          end if
+		          
 		          if (w1 > 0) and (h1 > 0) then
 		            mulMatrix = initScaleMatrix(w1 / w, h1 / h)
 		            matrix = matrixMultiply(matrix, mulMatrix)
@@ -1311,7 +1318,39 @@ Protected Module DrawSVG
 		      cs.Y2 = tmpY
 		      
 		    elseif StrComp(path(i), "c", 0) = 0 then // relative curveto
-		      // todo
+		      cs = new CurveShape
+		      fs.Append cs
+		      tmpX = penX
+		      tmpY = penY
+		      transformPoint tmpX, tmpY, matrix
+		      cs.X = tmpX
+		      cs.Y = tmpY
+		      cs.Order = 2
+		      i = i + 1
+		      tmpX = penX + Val(path(i))
+		      i = i + 1
+		      tmpY = penY + Val(path(i))
+		      transformPoint tmpX, tmpY, matrix
+		      cs.ControlX(0) = tmpX
+		      cs.ControlY(0) = tmpY
+		      i = i + 1
+		      tmpX = penX + Val(path(i))
+		      i = i + 1
+		      tmpY = penY + Val(path(i))
+		      transformPoint tmpX, tmpY, matrix
+		      cs.ControlX(1) = tmpX
+		      cs.ControlY(1) = tmpY
+		      prevControlX = tmpX
+		      prevControlY = tmpY
+		      i = i + 1
+		      tmpX = penX + Val(path(i))
+		      i = i + 1
+		      tmpY = penY + Val(path(i))
+		      penX = tmpX
+		      penY = tmpY
+		      transformPoint tmpX, tmpY, matrix
+		      cs.X2 = tmpX
+		      cs.Y2 = tmpY
 		      
 		    elseif StrComp(path(i), "H", 0) = 0 then // absolute horizontal lineto
 		      // todo
@@ -1480,6 +1519,7 @@ Protected Module DrawSVG
 		    
 		    if fill <> "none" then
 		      fs.FillColor = determineColor(fill)
+		      fs.Fill = 100
 		    else
 		      fs.Fill = 0
 		    end if
