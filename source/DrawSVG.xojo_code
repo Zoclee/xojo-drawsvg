@@ -1078,6 +1078,8 @@ Protected Module DrawSVG
 		  Dim arc As ArcShape
 		  Dim cs As CurveShape
 		  Dim d As String
+		  Dim dLen As Integer
+		  Dim ch As String
 		  Dim penX As Double
 		  Dim penY As Double
 		  Dim tmpX As Double
@@ -1101,22 +1103,49 @@ Protected Module DrawSVG
 		  closePath = false
 		  
 		  d = Trim(style.LookupString("d", ""))
-		  path = Split(d.ReplaceAll(","," ")," ")
+		  d = d.ReplaceAll(",", " ")
+		  dLen = Len(d)
 		  
-		  // sanitize path elements
-		  
-		  i = 0
-		  while i <= path.Ubound
-		    path(i) = trim(path(i))
-		    if not IsNumeric(path(i)) and Len(path(i)) > 1 then
-		      path.Insert i + 1, Right(path(i), Len(path(i)) - 1)
-		      path(i) = Left(path(i), 1)
-		    elseif path(i) = "" then
-		      path.Remove(i)
+		  Redim path(-1)
+		  path.Append ""
+		  i = 1
+		  while i <= dLen
+		    ch = Mid(d, i, 1)
+		    
+		    if ch = " " then
+		      
+		      if path(path.Ubound) <> "" then
+		        path.Append ""
+		      end if
+		      
+		    elseif ch = "-" then
+		      
+		      if path(path.Ubound) <> "" then
+		        path.Append "-"
+		      else
+		        path(path.Ubound) = ch
+		      end if
+		      
+		    elseif not IsNumeric(ch) and (ch <> ".") and (ch <> "-") then
+		      
+		      if path(path.Ubound) <> "" then
+		        path.Append ch
+		      else
+		        path(path.Ubound) = ch
+		      end if
+		      path.Append ""
+		      
 		    else
-		      i = i + 1
+		      
+		      path(path.Ubound) = path(path.Ubound) + ch
+		      
 		    end if
+		    i = i + 1
 		  wend
+		  
+		  if path(path.Ubound) = "" then
+		    path.Remove(path.Ubound)
+		  end if
 		  
 		  // process path
 		  
