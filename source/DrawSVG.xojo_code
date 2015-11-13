@@ -1629,13 +1629,64 @@ Protected Module DrawSVG
 		      // todo
 		      
 		    elseif StrComp(path(i), "V", 0) = 0 then // absolute vertical lineto
-		      // todo
+		      cs =new CurveShape
+		      fs.Append cs
+		      tmpX = penX
+		      tmpY = penY
+		      transformPoint tmpX, tmpY, matrix
+		      cs.X = tmpX
+		      cs.Y = tmpY
+		      tmpX = penX
+		      i = i + 1
+		      tmpY = Val(path(i))
+		      penY = tmpY
+		      transformPoint tmpX, tmpY, matrix
+		      cs.X2 = tmpX
+		      cs.Y2 = tmpY
 		      
 		    elseif StrComp(path(i), "v", 0) = 0 then // relative vertical lineto
-		      // todo
+		      cs =new CurveShape
+		      fs.Append cs
+		      tmpX = penX
+		      tmpY = penY
+		      transformPoint tmpX, tmpY, matrix
+		      cs.X = tmpX
+		      cs.Y = tmpY
+		      tmpX = penX
+		      i = i + 1
+		      tmpY = penY + Val(path(i))
+		      penY = tmpY
+		      transformPoint tmpX, tmpY, matrix
+		      cs.X2 = tmpX
+		      cs.Y2 = tmpY
 		      
 		    elseif path(i) = "z" then // close path
 		      closePath = True
+		      
+		      // fill
+		      
+		      if fill <> "none" then
+		        fs.FillColor = determineColor(fill)
+		        fs.Fill = 100
+		      else
+		        fs.Fill = 0
+		      end if
+		      
+		      // stroke
+		      
+		      if (stroke <> "none") and (stroke <> "") and (strokeWidth > 0) then
+		        fs.Border = 100
+		        fs.BorderColor = determineColor(stroke)
+		        fs.BorderWidth = strokeWidth
+		      else
+		        fs.Border = 0
+		      end if
+		      
+		      if fs.Count > 0 then
+		        g.DrawObject fs
+		      end if
+		      
+		      fs = new FigureShape()
 		      
 		    else
 		      // todo
@@ -1647,28 +1698,28 @@ Protected Module DrawSVG
 		  
 		  if closePath then
 		    
-		    // fill
-		    
-		    if fill <> "none" then
-		      fs.FillColor = determineColor(fill)
-		      fs.Fill = 100
-		    else
-		      fs.Fill = 0
-		    end if
-		    
-		    // stroke
-		    
-		    if (stroke <> "none") and (stroke <> "") and (strokeWidth > 0) then
-		      fs.Border = 100
-		      fs.BorderColor = determineColor(stroke)
-		      fs.BorderWidth = strokeWidth
-		    else
-		      fs.Border = 0
-		    end if
-		    
-		    if fs.Count > 0 then
-		      g.DrawObject fs
-		    end if
+		    '// fill
+		    '
+		    'if fill <> "none" then
+		    'fs.FillColor = determineColor(fill)
+		    'fs.Fill = 100
+		    'else
+		    'fs.Fill = 0
+		    'end if
+		    '
+		    '// stroke
+		    '
+		    'if (stroke <> "none") and (stroke <> "") and (strokeWidth > 0) then
+		    'fs.Border = 100
+		    'fs.BorderColor = determineColor(stroke)
+		    'fs.BorderWidth = strokeWidth
+		    'else
+		    'fs.Border = 0
+		    'end if
+		    '
+		    'if fs.Count > 0 then
+		    'g.DrawObject fs
+		    'end if
 		    
 		  else
 		    
