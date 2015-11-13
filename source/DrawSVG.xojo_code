@@ -1153,10 +1153,10 @@ Protected Module DrawSVG
 		  while i <= path.Ubound
 		    
 		    if StrComp(path(i), "A", 0) = 0 then // absolute elliptical arc
-		      break
+		      // todo
 		      
 		    elseif StrComp(path(i), "a", 0) = 0 then // relative elliptical arc
-		      break
+		      // todo
 		      
 		    elseif StrComp(path(i), "C", 0) = 0 then // absolute curveto
 		      cs = new CurveShape
@@ -1191,21 +1191,20 @@ Protected Module DrawSVG
 		      cs.X2 = tmpX
 		      cs.Y2 = tmpY
 		      
-		      
 		    elseif StrComp(path(i), "c", 0) = 0 then // relative curveto
-		      break
+		      // todo
 		      
 		    elseif StrComp(path(i), "H", 0) = 0 then // absolute horizontal lineto
-		      break
+		      // todo
 		      
 		    elseif StrComp(path(i), "h", 0) = 0 then // relative horizontal lineto
-		      break
+		      // todo
 		      
 		    elseif StrComp(path(i), "Q", 0) = 0 then // absolute quadratic Bézier curveto
-		      break
+		      // todo
 		      
 		    elseif StrComp(path(i), "q", 0) = 0 then // relative quadratic Bézier curveto
-		      break
+		      // todo
 		      
 		    elseif StrComp(path(i), "L", 0) = 0 then // absolute lineto
 		      cs =new CurveShape
@@ -1226,7 +1225,7 @@ Protected Module DrawSVG
 		      cs.Y2 = tmpY
 		      
 		    elseif StrComp(path(i), "l", 0) = 0 then // relative lineto
-		      break
+		      // todo
 		      
 		    elseif StrComp(path(i), "M", 0) = 0 then // absolute move
 		      i = i + 1
@@ -1305,28 +1304,28 @@ Protected Module DrawSVG
 		      loop until (i > path.Ubound) or not continueLineto
 		      
 		    elseif StrComp(path(i), "S", 0) = 0 then // absolute smooth curveto
-		      break
+		      // todo
 		      
 		    elseif StrComp(path(i), "s", 0) = 0 then // relative smooth curveto
-		      break
+		      // todo
 		      
 		    elseif StrComp(path(i), "T", 0) = 0 then // absolute smooth quadratic Bézier curveto
-		      break
+		      // todo
 		      
 		    elseif StrComp(path(i), "t", 0) = 0 then // relative smooth quadratic Bézier curveto
-		      break
+		      // todo
 		      
 		    elseif StrComp(path(i), "V", 0) = 0 then // absolute vertical lineto
-		      break
+		      // todo
 		      
 		    elseif StrComp(path(i), "v", 0) = 0 then // relative vertical lineto
-		      break
+		      // todo
 		      
 		    elseif path(i) = "z" then // close path
 		      closePath = True
 		      
 		    else
-		      break
+		      // todo
 		      
 		    end if
 		    
