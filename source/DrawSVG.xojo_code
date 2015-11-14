@@ -268,6 +268,8 @@ Protected Module DrawSVG
 		  Dim drawG As Graphics
 		  Dim w As Integer
 		  Dim h As Integer
+		  Dim wStr As String
+		  Dim hStr As String
 		  Dim viewbox As String
 		  Dim viewboxArr() As String
 		  Dim xScale As Double
@@ -292,8 +294,28 @@ Protected Module DrawSVG
 		      while (i < xdoc.ChildCount) 
 		        if xdoc.Child(i).Name = "svg" then
 		          
-		          w = Val(xdoc.Child(i).GetCIAttribute("width"))
-		          h = Val(xdoc.Child(i).GetCIAttribute("height"))
+		          // determine graphics context width and height
+		          
+		          w = 0
+		          h = 0
+		          
+		          wStr = Trim(xdoc.Child(i).GetCIAttribute("width"))
+		          if wStr <> "" then
+		            if IsNumeric(wStr) then
+		              w = Val(wStr)
+		            elseif Right(wStr, 1) = "%" then
+		              w = g.Width * (Val(Left(wStr, Len(wStr) - 1)) / 100)
+		            end if
+		          end if
+		          
+		          hStr = Trim(xdoc.Child(i).GetCIAttribute("height"))
+		          if hStr <> "" then
+		            if IsNumeric(hStr) then
+		              h = Val(hStr)
+		            elseif Right(hStr, 1) = "%" then
+		              h = g.Height * (Val(Left(hStr, Len(hStr) - 1)) / 100)
+		            end if
+		          end if
 		          
 		          if w = 0 then
 		            w = g.Width
