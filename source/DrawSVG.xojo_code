@@ -214,6 +214,12 @@ Protected Module DrawSVG
 		  ' www.zoclee.com
 		  
 		  Dim col As Color
+		  Dim colStr As String
+		  Dim startPos As Integer
+		  Dim endPos As Integer
+		  Dim tmpStr As String
+		  Dim tmpArr() As String
+		  
 		  Static ColorTable As new Dictionary("aliceblue" : &cf0f8ff, "antiquewhite" : &cfaebd7, "aqua" : &c00ffff, "azure" : &c0fffff,  _
 		  "beige": &cf5f5dc, "bisque" : &cffe4c4, "black" : &c000000, "blanchedalmond" : &cffebcd, "blue" : &c0000ff, _
 		  "blueviolet" : &c8a2be2, "brown" : &ca52a2a, "burlywood" : &cdeb887, "cadetblue" : &c5f9ea0, "chartreuse" : &c7fff00, _
@@ -245,10 +251,22 @@ Protected Module DrawSVG
 		  "thistle" : &cd8bfd8, "tomato" : &cff6347, "turquoise" : &c40e0d0, "violet" : &cee82ee, "wheat" : &cf5deb3, "white" : &cffffff, _
 		  "whitesmoke" : &cf5f5f5, "yellow" : &cffff00, "yellowgreen" : &c9acd32)
 		  
-		  if ColorTable.HasKey(Lowercase(Trim(s))) then
-		    col = ColorTable.Value(Lowercase(Trim(s)))
+		  colStr = Lowercase(Trim(s))
+		  
+		  if ColorTable.HasKey(colStr) then
+		    col = ColorTable.Value(colStr)
+		  elseif left(colStr, 3) = "rgb" then
+		    startPos = Instr(0, colStr, "(")
+		    endPos = Instr(startPos + 1, colStr, ")")
+		    if (startPos > 0) and (endPos > 0) then
+		      tmpStr = Mid(colStr, startPos + 1, endPos - startPos - 1)
+		      tmpArr = tmpStr.Split(",")
+		      if tmpArr.Ubound = 2 then
+		        col = RGB(Val(tmpArr(0)), Val(tmpArr(1)), Val(tmpArr(2)))
+		      end if
+		    end if
 		  else
-		    col = colorFromHex(s)
+		    col = colorFromHex(colStr)
 		  end if
 		  
 		  return col
