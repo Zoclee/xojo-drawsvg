@@ -1317,6 +1317,7 @@ Protected Module DrawSVG
 		  Dim continueLineto As Boolean
 		  Dim prevControlX As Double
 		  Dim prevControlY As Double
+		  Dim foundStart As Boolean
 		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
@@ -1701,7 +1702,7 @@ Protected Module DrawSVG
 		      cs.Y2 = tmpY
 		      
 		    elseif path(i) = "z" then // close path
-		      closePath = True
+		      closePath = true
 		      
 		    else
 		      // todo
@@ -1711,62 +1712,33 @@ Protected Module DrawSVG
 		    i = i + 1
 		  wend
 		  
-		  if closePath then
-		    
-		    // fill
-		    
-		    if fill <> "none" then
-		      fs.FillColor = determineColor(fill)
-		      fs.Fill = 100
-		    else
-		      fs.Fill = 0
-		    end if
-		    
-		    // stroke
-		    
-		    if (stroke <> "none") and (stroke <> "") and (strokeWidth > 0) then
-		      fs.Border = 100
-		      fs.BorderColor = determineColor(stroke)
-		      fs.BorderWidth = strokeWidth
-		    else
-		      fs.Border = 0
-		    end if
-		    
-		    if fs.Count > 0 then
-		      g.DrawObject fs
-		    end if
-		    
-		  else
-		    
-		    i = 0 
-		    while i < fs.Count
-		      
-		      cs = fs.Item(i)
-		      
-		      // fill
-		      
-		      if fill <> "none" then
-		        cs.FillColor = determineColor(fill)
-		      else
-		        cs.Fill = 0
-		      end if
-		      
-		      // stroke
-		      
-		      if (stroke <> "none") and (stroke <> "") and (strokeWidth > 0) then
-		        cs.Border = 100
-		        cs.BorderColor = determineColor(stroke)
-		        cs.BorderWidth = strokeWidth
-		      else
-		        cs.Border = 0
-		      end if
-		      
-		      g.DrawObject cs
-		      
-		      i = i + 1
-		    wend
-		    
+		  if not closePath then
+		    // TODO: Find a way to draw open paths with FigureShape 
 		  end if
+		  
+		  // fill
+		  
+		  if fill <> "none" then
+		    fs.Fill = 100
+		    fs.FillColor = determineColor(fill)
+		  else
+		    fs.Fill = 0
+		  end if
+		  
+		  // stroke
+		  
+		  if (stroke <> "none") and (stroke <> "") and (strokeWidth > 0) then
+		    fs.Border = 100
+		    fs.BorderColor = determineColor(stroke)
+		    fs.BorderWidth = strokeWidth
+		  else
+		    fs.Border = 0
+		  end if
+		  
+		  if fs.Count > 0 then
+		    g.DrawObject fs
+		  end if
+		  
 		End Sub
 	#tag EndMethod
 
