@@ -1321,6 +1321,9 @@ Protected Module DrawSVG
 		  Dim itemStroke As Double
 		  Dim itemStrokeColor As Color
 		  Dim prevClosed As Boolean
+		  Dim currentStart As Integer
+		  Dim currentCommand As String
+		  Dim additionalPath() As String
 		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
@@ -1399,7 +1402,44 @@ Protected Module DrawSVG
 		    path.Remove(path.Ubound)
 		  end if
 		  
-		  // process path
+		  // prep path to hide any possible artifacts created by multiple closed paths in a single path instruction
+		  
+		  i = 0
+		  currentCommand = ""
+		  while i <= path.Ubound
+		    select case path(i)
+		    case "M", "m"
+		      if currentCommand <> path(i) then
+		        additionalPath.Append path(i)
+		      end if
+		      additionalPath.Append path(i + 1)
+		      additionalPath.Append path(i + 2)
+		      currentCommand = path(i)
+		      while (i <= path.Ubound) and path(i) <> "z"
+		        i = i + 1
+		      wend
+		      if i <= path.Ubound then
+		        path.Insert i, "L"
+		        path.Insert i + 1, additionalPath(additionalPath.Ubound - 1)
+		        path.Insert i + 2, additionalPath(additionalPath.Ubound)
+		      end if
+		      i = i + 1
+		    case else 
+		      i = i + 1
+		    end select
+		    
+		  wend
+		  
+		  if additionalPath.Ubound > 3 then
+		    additionalPath.Append "z"
+		    i = 0
+		    while i <= additionalPath.Ubound
+		      path.Insert(i, additionalPath(i))
+		      i = i + 1
+		    wend
+		  end if
+		  
+		  // process (draw) path
 		  
 		  i = 0
 		  while i <= path.Ubound
