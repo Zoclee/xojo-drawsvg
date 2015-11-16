@@ -1759,7 +1759,7 @@ Protected Module DrawSVG
 		  
 		  if fs.Count > 0 then
 		    
-		    if itemFill = 100 then
+		    if (itemFill = 100) and (fs.Count > 1) then
 		      
 		      fs.Fill = itemFill
 		      fs.FillColor = itemFillColor
