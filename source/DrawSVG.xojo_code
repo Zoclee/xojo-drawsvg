@@ -1303,7 +1303,6 @@ Protected Module DrawSVG
 		  Dim stroke As String
 		  Dim strokeWidth As Double
 		  Dim fs as new FigureShape
-		  Dim arc As ArcShape
 		  Dim cs As CurveShape
 		  Dim d As String
 		  Dim dLen As Integer
@@ -1313,11 +1312,15 @@ Protected Module DrawSVG
 		  Dim tmpX As Double
 		  Dim tmpY As Double
 		  Dim path() As String
-		  Dim closePath As Boolean
 		  Dim continueLineto As Boolean
 		  Dim prevControlX As Double
 		  Dim prevControlY As Double
-		  Dim foundStart As Boolean
+		  Dim grp As Group2D
+		  Dim itemFill As Double
+		  Dim itemFillColor As Color
+		  Dim itemStroke As Double
+		  Dim itemStrokeColor As Color
+		  Dim prevClosed As Boolean
 		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
@@ -1327,11 +1330,29 @@ Protected Module DrawSVG
 		  stroke = style.LookupString("stroke", "")
 		  strokeWidth = style.LookupDouble("stroke-width", 1)
 		  
+		  // fill
+		  
+		  if fill <> "none" then
+		    itemFill = 100
+		    itemFillColor = determineColor(fill)
+		  else
+		    itemFill = 0
+		  end if
+		  
+		  // stroke
+		  
+		  if (stroke <> "none") and (stroke <> "") and (strokeWidth > 0) then
+		    itemStroke = 100
+		    itemStrokeColor = determineColor(stroke)
+		  else
+		    itemStroke = 0
+		  end if
+		  
 		  // build figure shape
 		  
 		  penX = 0
 		  penY = 0
-		  closePath = false
+		  prevClosed = false
 		  
 		  d = Trim(style.LookupString("d", ""))
 		  d = d.ReplaceAll(",", " ")
@@ -1534,6 +1555,15 @@ Protected Module DrawSVG
 		      cs.Y2 = tmpY
 		      
 		    elseif StrComp(path(i), "M", 0) = 0 then // absolute move
+		      if (fs.Count > 0) and not prevclosed then
+		        fs.Fill = itemFill
+		        fs.FillColor = itemFillColor
+		        fs.Border = itemStroke
+		        fs.BorderColor = itemStrokeColor
+		        fs.BorderWidth = strokeWidth
+		        g.DrawObject fs
+		        fs = new FigureShape()
+		      end if
 		      i = i + 1
 		      tmpX = Val(path(i))
 		      i = i + 1
@@ -1570,6 +1600,17 @@ Protected Module DrawSVG
 		      loop until (i > path.Ubound) or not continueLineto
 		      
 		    elseif StrComp(path(i), "m", 0) = 0 then // relative move
+		      
+		      if (fs.Count > 0) and not prevClosed then
+		        fs.Fill = itemFill
+		        fs.FillColor = itemFillColor
+		        fs.Border = itemStroke
+		        fs.BorderColor = itemStrokeColor
+		        fs.BorderWidth = strokeWidth
+		        g.DrawObject fs
+		        fs = new FigureShape()
+		      end if
+		      
 		      i = i + 1
 		      tmpX = Val(path(i))
 		      i = i + 1
@@ -1702,43 +1743,53 @@ Protected Module DrawSVG
 		      cs.Y2 = tmpY
 		      
 		    elseif path(i) = "z" then // close path
-		      closePath = true
+		      prevClosed = true
 		      
 		    else
 		      // todo
 		      
 		    end if
 		    
+		    if path(i) <> "z" then
+		      prevClosed = false
+		    end if
+		    
 		    i = i + 1
 		  wend
 		  
-		  if not closePath then
-		    // TODO: Find a way to draw open paths with FigureShape 
-		  end if
-		  
-		  // fill
-		  
-		  if fill <> "none" then
-		    fs.Fill = 100
-		    fs.FillColor = determineColor(fill)
-		  else
-		    fs.Fill = 0
-		  end if
-		  
-		  // stroke
-		  
-		  if (stroke <> "none") and (stroke <> "") and (strokeWidth > 0) then
-		    fs.Border = 100
-		    fs.BorderColor = determineColor(stroke)
-		    fs.BorderWidth = strokeWidth
-		  else
-		    fs.Border = 0
-		  end if
-		  
 		  if fs.Count > 0 then
-		    g.DrawObject fs
+		    
+		    if itemFill = 100 then
+		      
+		      fs.Fill = itemFill
+		      fs.FillColor = itemFillColor
+		      fs.Border = itemStroke
+		      fs.BorderColor = itemStrokeColor
+		      fs.BorderWidth = strokeWidth
+		      g.DrawObject fs
+		      
+		    else
+		      
+		      grp = new Group2D
+		      
+		      i = 0
+		      while i < fs.Count
+		        grp.Append fs.Item(i)
+		        
+		        grp.Item(i).Fill = itemFill
+		        grp.Item(i).FillColor = itemFillColor
+		        grp.Item(i).Border = itemStroke
+		        grp.Item(i).BorderColor = itemStrokeColor
+		        grp.Item(i).BorderWidth = strokeWidth
+		        
+		        i = i + 1
+		      wend
+		      
+		      g.DrawObject grp
+		      
+		    end if
+		    
 		  end if
-		  
 		End Sub
 	#tag EndMethod
 
@@ -1977,7 +2028,6 @@ Protected Module DrawSVG
 		  Dim style As JSONItem
 		  Dim matrix() As Double
 		  Dim i As Integer
-		  Dim drawG As Graphics
 		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
