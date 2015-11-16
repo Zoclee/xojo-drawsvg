@@ -1049,7 +1049,7 @@ Protected Module DrawSVG
 		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
-		  matrix = matrixMultiply(matrix, parentMatrix)
+		  matrix = matrixMultiply(parentMatrix, matrix)
 		  
 		  cx = style.LookupDouble("cx")
 		  cy = style.LookupDouble("cy")
@@ -1139,7 +1139,7 @@ Protected Module DrawSVG
 		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
-		  matrix = matrixMultiply(matrix, parentMatrix)
+		  matrix = matrixMultiply(parentMatrix, matrix)
 		  
 		  cx = style.LookupDouble("cx")
 		  cy = style.LookupDouble("cy")
@@ -1217,7 +1217,7 @@ Protected Module DrawSVG
 		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
-		  matrix = matrixMultiply(matrix, parentMatrix)
+		  matrix = matrixMultiply(parentMatrix, matrix)
 		  
 		  i = 0
 		  while i < node.ChildCount
@@ -1248,7 +1248,7 @@ Protected Module DrawSVG
 		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
-		  matrix = matrixMultiply(matrix, parentMatrix)
+		  matrix = matrixMultiply(parentMatrix, matrix)
 		  
 		  x1 = style.LookupDouble("x1")
 		  y1 = style.LookupDouble("y1")
@@ -1324,7 +1324,7 @@ Protected Module DrawSVG
 		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
-		  matrix = matrixMultiply(matrix, parentMatrix)
+		  matrix = matrixMultiply(parentMatrix, matrix)
 		  
 		  fill = style.LookupString("fill", "#000000")
 		  stroke = style.LookupString("stroke", "")
@@ -1812,7 +1812,7 @@ Protected Module DrawSVG
 		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
-		  matrix = matrixMultiply(matrix, parentMatrix)
+		  matrix = matrixMultiply(parentMatrix, matrix)
 		  
 		  fill = style.LookupString("fill", "#000000")
 		  stroke = style.LookupString("stroke", "")
@@ -1883,7 +1883,7 @@ Protected Module DrawSVG
 		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
-		  matrix = matrixMultiply(matrix, parentMatrix)
+		  matrix = matrixMultiply(parentMatrix, matrix)
 		  
 		  fill = style.LookupString("fill", "#000000")
 		  stroke = style.LookupString("stroke", "")
@@ -1963,7 +1963,7 @@ Protected Module DrawSVG
 		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
-		  matrix = matrixMultiply(matrix, parentMatrix)
+		  matrix = matrixMultiply(parentMatrix, matrix)
 		  
 		  x = style.LookupDouble("x")
 		  y = style.LookupDouble("y")
@@ -2031,7 +2031,7 @@ Protected Module DrawSVG
 		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
-		  matrix = matrixMultiply(matrix, parentMatrix)
+		  matrix = matrixMultiply(parentMatrix, matrix)
 		  
 		  i = 0
 		  while i < node.ChildCount
@@ -2061,7 +2061,7 @@ Protected Module DrawSVG
 		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
-		  matrix = matrixMultiply(matrix, parentMatrix)
+		  matrix = matrixMultiply(parentMatrix, matrix)
 		  
 		  x = style.LookupDouble("x")
 		  y = style.LookupDouble("y")
