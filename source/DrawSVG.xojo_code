@@ -1324,6 +1324,7 @@ Protected Module DrawSVG
 		  Dim currentStart As Integer
 		  Dim currentCommand As String
 		  Dim additionalPath() As String
+		  Dim e As DrawSVG.SVGException
 		  
 		  style = buildStyleItem(node)
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
@@ -1786,7 +1787,14 @@ Protected Module DrawSVG
 		      prevClosed = true
 		      
 		    else
-		      // todo
+		      if IsNumeric(path(i)) then
+		        e = new DrawSVG.SVGException()
+		        e.ErrorNumber = 1
+		        e.Message = "Expected path command: " + Str(path(i))
+		        Raise e
+		        i = path.Ubound
+		        fs = new FigureShape()
+		      end if
 		      
 		    end if
 		    
@@ -2212,6 +2220,13 @@ Protected Module DrawSVG
 		  
 		End Sub
 	#tag EndMethod
+
+
+	#tag Note, Name = Exceptions
+		1: Expected path command: value
+		
+		
+	#tag EndNote
 
 
 	#tag Property, Flags = &h21
