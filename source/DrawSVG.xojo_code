@@ -1446,7 +1446,11 @@ Protected Module DrawSVG
 		  while i <= path.Ubound
 		    
 		    if StrComp(path(i), "A", 0) = 0 then // absolute elliptical arc
-		      // todo
+		      e = new DrawSVG.SVGException()
+		      e.ErrorNumber = 2
+		      e.Message = "Feature not yet implemented: Absolute elliptical arc"
+		      Raise e
+		      i = path.Ubound
 		      
 		    elseif StrComp(path(i), "a", 0) = 0 then // relative elliptical arc
 		      // todo
@@ -1793,7 +1797,6 @@ Protected Module DrawSVG
 		        e.Message = "Expected path command: " + Str(path(i))
 		        Raise e
 		        i = path.Ubound
-		        fs = new FigureShape()
 		      end if
 		      
 		    end if
@@ -2224,7 +2227,7 @@ Protected Module DrawSVG
 
 	#tag Note, Name = Exceptions
 		1: Expected path command: value
-		
+		2: Feature not yet implemented: value
 		
 	#tag EndNote
 
