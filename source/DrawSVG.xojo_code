@@ -1322,7 +1322,7 @@ Protected Module DrawSVG
 		  Dim tmpX As Double
 		  Dim tmpY As Double
 		  Dim path() As String
-		  Dim continueLineto As Boolean
+		  Dim continueImplicit As Boolean
 		  Dim prevControlX As Double
 		  Dim prevControlY As Double
 		  Dim grp As Group2D
@@ -1505,39 +1505,47 @@ Protected Module DrawSVG
 		      cs.Y2 = tmpY
 		      
 		    elseif StrComp(path(i), "c", 0) = 0 then // relative curveto
-		      cs = new CurveShape
-		      fs.Append cs
-		      tmpX = penX
-		      tmpY = penY
-		      transformPoint tmpX, tmpY, matrix
-		      cs.X = tmpX
-		      cs.Y = tmpY
-		      cs.Order = 2
-		      i = i + 1
-		      tmpX = penX + Val(path(i))
-		      i = i + 1
-		      tmpY = penY + Val(path(i))
-		      transformPoint tmpX, tmpY, matrix
-		      cs.ControlX(0) = tmpX
-		      cs.ControlY(0) = tmpY
-		      i = i + 1
-		      tmpX = penX + Val(path(i))
-		      i = i + 1
-		      tmpY = penY + Val(path(i))
-		      transformPoint tmpX, tmpY, matrix
-		      cs.ControlX(1) = tmpX
-		      cs.ControlY(1) = tmpY
-		      prevControlX = tmpX
-		      prevControlY = tmpY
-		      i = i + 1
-		      tmpX = penX + Val(path(i))
-		      i = i + 1
-		      tmpY = penY + Val(path(i))
-		      penX = tmpX
-		      penY = tmpY
-		      transformPoint tmpX, tmpY, matrix
-		      cs.X2 = tmpX
-		      cs.Y2 = tmpY
+		      do
+		        cs = new CurveShape
+		        fs.Append cs
+		        tmpX = penX
+		        tmpY = penY
+		        transformPoint tmpX, tmpY, matrix
+		        cs.X = tmpX
+		        cs.Y = tmpY
+		        cs.Order = 2
+		        i = i + 1
+		        tmpX = penX + Val(path(i))
+		        i = i + 1
+		        tmpY = penY + Val(path(i))
+		        transformPoint tmpX, tmpY, matrix
+		        cs.ControlX(0) = tmpX
+		        cs.ControlY(0) = tmpY
+		        i = i + 1
+		        tmpX = penX + Val(path(i))
+		        i = i + 1
+		        tmpY = penY + Val(path(i))
+		        transformPoint tmpX, tmpY, matrix
+		        cs.ControlX(1) = tmpX
+		        cs.ControlY(1) = tmpY
+		        prevControlX = tmpX
+		        prevControlY = tmpY
+		        i = i + 1
+		        tmpX = penX + Val(path(i))
+		        i = i + 1
+		        tmpY = penY + Val(path(i))
+		        penX = tmpX
+		        penY = tmpY
+		        transformPoint tmpX, tmpY, matrix
+		        cs.X2 = tmpX
+		        cs.Y2 = tmpY
+		        continueImplicit = false
+		        if i < path.Ubound then
+		          if IsNumeric(path(i + 1)) then
+		            continueImplicit = true
+		          end if
+		        end if
+		      loop until not continueImplicit
 		      
 		    elseif StrComp(path(i), "H", 0) = 0 then // absolute horizontal lineto
 		      cs =new CurveShape
@@ -1642,7 +1650,7 @@ Protected Module DrawSVG
 		      // apply  implicit lineto commands
 		      
 		      do
-		        continueLineto = false
+		        continueImplicit = false
 		        if i < (path.Ubound - 1) then
 		          if IsNumeric(path(i + 1)) then
 		            cs =new CurveShape
@@ -1661,10 +1669,10 @@ Protected Module DrawSVG
 		            transformPoint tmpX, tmpY, matrix
 		            cs.X2 = tmpX
 		            cs.Y2 = tmpY
-		            continueLineto = true
+		            continueImplicit = true
 		          end if
 		        end if
-		      loop until (i > path.Ubound) or not continueLineto
+		      loop until (i > path.Ubound) or not continueImplicit
 		      
 		    elseif StrComp(path(i), "m", 0) = 0 then // relative move
 		      
@@ -1689,7 +1697,7 @@ Protected Module DrawSVG
 		      // apply  implicit lineto commands
 		      
 		      do
-		        continueLineto = false
+		        continueImplicit = false
 		        if i < (path.Ubound - 1) then
 		          if IsNumeric(path(i + 1)) then
 		            cs =new CurveShape
@@ -1710,10 +1718,10 @@ Protected Module DrawSVG
 		            transformPoint tmpX, tmpY, matrix
 		            cs.X2 = tmpX
 		            cs.Y2 = tmpY
-		            continueLineto = true
+		            continueImplicit = true
 		          end if
 		        end if
-		      loop until (i > path.Ubound) or not continueLineto
+		      loop until (i > path.Ubound) or not continueImplicit
 		      
 		    elseif StrComp(path(i), "S", 0) = 0 then // absolute smooth curveto
 		      cs = new CurveShape
