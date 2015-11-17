@@ -1863,12 +1863,37 @@ Protected Module DrawSVG
 		      loop until not continueImplicit
 		      
 		    elseif StrComp(path(i), "t", 0) = 0 then // relative smooth quadratic Bézier curveto
-		      // todo
-		      e = new DrawSVG.SVGException()
-		      e.ErrorNumber = 2
-		      e.Message = "Feature not yet implemented: Relative smooth quadratic Bézier curveto"
-		      Raise e
-		      i = path.Ubound
+		      do
+		        cs = new CurveShape
+		        fs.Append cs
+		        tmpX = penX
+		        tmpY = penY
+		        transformPoint tmpX, tmpY, matrix
+		        cs.X = tmpX
+		        cs.Y = tmpY
+		        cs.Order = 1
+		        cs.ControlX(0) = (tmpX - prevControlX)  + tmpX
+		        cs.ControlY(0) = (tmpY - prevControlY)  + tmpY
+		        prevControlX = tmpX
+		        prevControlY = tmpY
+		        i = i + 1
+		        tmpX = penX + Val(path(i))
+		        i = i + 1
+		        tmpY = penY + Val(path(i))
+		        penX = tmpX
+		        penY = tmpY
+		        transformPoint tmpX, tmpY, matrix
+		        cs.X2 = tmpX
+		        cs.Y2 = tmpY
+		        
+		        continueImplicit = false
+		        if i < path.Ubound then
+		          if IsNumeric(path(i + 1)) then
+		            continueImplicit = true
+		          end if
+		        end if
+		        
+		      loop until not continueImplicit
 		      
 		    elseif StrComp(path(i), "V", 0) = 0 then // absolute vertical lineto
 		      cs =new CurveShape
