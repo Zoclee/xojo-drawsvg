@@ -1453,7 +1453,11 @@ Protected Module DrawSVG
 		      i = path.Ubound
 		      
 		    elseif StrComp(path(i), "a", 0) = 0 then // relative elliptical arc
-		      // todo
+		      e = new DrawSVG.SVGException()
+		      e.ErrorNumber = 2
+		      e.Message = "Feature not yet implemented: Relative elliptical arc"
+		      Raise e
+		      i = path.Ubound
 		      
 		    elseif StrComp(path(i), "C", 0) = 0 then // absolute curveto
 		      cs = new CurveShape
