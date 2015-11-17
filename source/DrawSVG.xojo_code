@@ -295,6 +295,7 @@ Protected Module DrawSVG
 		  Dim xOffset As Double
 		  Dim yOffset As Double
 		  Dim scale As Double
+		  Dim e As DrawSVG.SVGException
 		  
 		  if Len(svg) > 0 then
 		    
@@ -383,8 +384,16 @@ Protected Module DrawSVG
 		        i = i + 1
 		      wend
 		      
-		    catch
-		      // invalid xml, so we won't be rendering anything
+		    catch xmlException As XmlException
+		      
+		      // invalid xml, so raise an exception
+		      
+		      e = new DrawSVG.SVGException()
+		      e.ErrorNumber = 3
+		      e.Message = "Malformed SVG XML."
+		      Raise e
+		      
+		      
 		      
 		    end try
 		    
@@ -2238,8 +2247,9 @@ Protected Module DrawSVG
 
 
 	#tag Note, Name = Exceptions
-		1: Expected path command: value
-		2: Feature not yet implemented: value
+		1: Expected path command: info
+		2: Feature not yet implemented: info
+		3: Malformed SVG XML.
 		
 	#tag EndNote
 
