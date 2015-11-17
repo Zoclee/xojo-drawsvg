@@ -1669,22 +1669,34 @@ Protected Module DrawSVG
 		      loop until not continueImplicit
 		      
 		    elseif StrComp(path(i), "L", 0) = 0 then // absolute lineto
-		      cs =new CurveShape
-		      fs.Append cs
-		      tmpX = penX
-		      tmpY = penY
-		      transformPoint tmpX, tmpY, matrix
-		      cs.X = tmpX
-		      cs.Y = tmpY
-		      i = i + 1
-		      tmpX = Val(path(i))
-		      i = i + 1
-		      tmpY = Val(path(i))
-		      penX = tmpX
-		      penY = tmpY
-		      transformPoint tmpX, tmpY, matrix
-		      cs.X2 = tmpX
-		      cs.Y2 = tmpY
+		      
+		      do
+		        
+		        cs =new CurveShape
+		        fs.Append cs
+		        tmpX = penX
+		        tmpY = penY
+		        transformPoint tmpX, tmpY, matrix
+		        cs.X = tmpX
+		        cs.Y = tmpY
+		        i = i + 1
+		        tmpX = Val(path(i))
+		        i = i + 1
+		        tmpY = Val(path(i))
+		        penX = tmpX
+		        penY = tmpY
+		        transformPoint tmpX, tmpY, matrix
+		        cs.X2 = tmpX
+		        cs.Y2 = tmpY
+		        
+		        continueImplicit = false
+		        if i < path.Ubound then
+		          if IsNumeric(path(i + 1)) then
+		            continueImplicit = true
+		          end if
+		        end if
+		        
+		      loop until not continueImplicit
 		      
 		    elseif StrComp(path(i), "l", 0) = 0 then // relative lineto
 		      cs =new CurveShape
