@@ -1456,6 +1456,7 @@ Protected Module DrawSVG
 		  while i <= path.Ubound
 		    
 		    if StrComp(path(i), "A", 0) = 0 then // absolute elliptical arc
+		      // todo
 		      e = new DrawSVG.SVGException()
 		      e.ErrorNumber = 2
 		      e.Message = "Feature not yet implemented: Absolute elliptical arc"
@@ -1463,6 +1464,7 @@ Protected Module DrawSVG
 		      i = path.Ubound
 		      
 		    elseif StrComp(path(i), "a", 0) = 0 then // relative elliptical arc
+		      // todo
 		      e = new DrawSVG.SVGException()
 		      e.ErrorNumber = 2
 		      e.Message = "Feature not yet implemented: Relative elliptical arc"
@@ -1592,13 +1594,45 @@ Protected Module DrawSVG
 		      cs.Y2 = tmpY
 		      
 		    elseif StrComp(path(i), "Q", 0) = 0 then // absolute quadratic Bézier curveto
-		      e = new DrawSVG.SVGException()
-		      e.ErrorNumber = 2
-		      e.Message = "Feature not yet implemented: Absolute quadratic Bézier curveto"
-		      Raise e
-		      i = path.Ubound
+		      do
+		        cs = new CurveShape
+		        fs.Append cs
+		        tmpX = penX
+		        tmpY = penY
+		        transformPoint tmpX, tmpY, matrix
+		        cs.X = tmpX
+		        cs.Y = tmpY
+		        cs.Order = 1
+		        i = i + 1
+		        tmpX = Val(path(i))
+		        i = i + 1
+		        tmpY = Val(path(i))
+		        transformPoint tmpX, tmpY, matrix
+		        cs.ControlX(0) = tmpX
+		        cs.ControlY(0) = tmpY
+		        prevControlX = tmpX
+		        prevControlY = tmpY
+		        i = i + 1
+		        tmpX = Val(path(i))
+		        i = i + 1
+		        tmpY = Val(path(i))
+		        penX = tmpX
+		        penY = tmpY
+		        transformPoint tmpX, tmpY, matrix
+		        cs.X2 = tmpX
+		        cs.Y2 = tmpY
+		        
+		        continueImplicit = false
+		        if i < path.Ubound then
+		          if IsNumeric(path(i + 1)) then
+		            continueImplicit = true
+		          end if
+		        end if
+		        
+		      loop until not continueImplicit
 		      
 		    elseif StrComp(path(i), "q", 0) = 0 then // relative quadratic Bézier curveto
+		      // todo
 		      e = new DrawSVG.SVGException()
 		      e.ErrorNumber = 2
 		      e.Message = "Feature not yet implemented: Relative quadratic Bézier curveto"
