@@ -379,7 +379,7 @@ Protected Module DrawSVG
 		            drawG = g.Clip(x, y, w, h)
 		          end if
 		          
-		          renderNode(xdoc.Child(i), drawG, matrix)
+		          renderNode(xdoc.Child(i), drawG, matrix, new JSONItem("{}"))
 		        end if
 		        i = i + 1
 		      wend
@@ -954,7 +954,7 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub renderNode(node As XmlNode, g As Graphics, parentMatrix() As Double)
+		Private Sub renderNode(node As XmlNode, g As Graphics, parentMatrix() As Double, parentStyle As JSONItem)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
@@ -971,7 +971,7 @@ Protected Module DrawSVG
 		      // we ignore xml comments
 		      
 		    case "circle"
-		      render_circle(node, g, parentMatrix)
+		      render_circle(node, g, parentMatrix, parentStyle)
 		      
 		    case "defs"
 		      // we ignore these tags
@@ -980,37 +980,37 @@ Protected Module DrawSVG
 		      // we ignore these tags
 		      
 		    case "ellipse"
-		      render_ellipse(node, g, parentMatrix)
+		      render_ellipse(node, g, parentMatrix, parentStyle)
 		      
 		    case "g"
-		      render_g(node, g, parentMatrix)
+		      render_g(node, g, parentMatrix, parentStyle)
 		      
 		    case "line"
-		      render_line(node, g, parentMatrix)
+		      render_line(node, g, parentMatrix, parentStyle)
 		      
 		    case "metadata"
 		      // we ignore these tags
 		      
 		    case "path"
-		      render_path(node, g, parentMatrix)
+		      render_path(node, g, parentMatrix, parentStyle)
 		      
 		    case "polygon"
-		      render_polygon(node, g, parentMatrix)
+		      render_polygon(node, g, parentMatrix, parentStyle)
 		      
 		    case "polyline"
-		      render_polyline(node, g, parentMatrix)
+		      render_polyline(node, g, parentMatrix, parentStyle)
 		      
 		    case "rect"
-		      render_rect(node, g, parentMatrix)
+		      render_rect(node, g, parentMatrix, parentStyle)
 		      
 		    case "style"
 		      process_style(node)
 		      
 		    case "svg"
-		      render_svg(node, g, parentMatrix)
+		      render_svg(node, g, parentMatrix, parentStyle)
 		      
 		    case "text"
-		      render_text(node, g, parentMatrix)
+		      render_text(node, g, parentMatrix, parentStyle)
 		      
 		    case "title"
 		      // we ignore these tags
@@ -1037,10 +1037,11 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub render_circle(node As XmlNode, g As Graphics, parentMatrix() As Double)
+		Private Sub render_circle(node As XmlNode, g As Graphics, parentMatrix() As Double, parentStyle As JSONItem)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
+		  Dim localStyle As JSONItem
 		  Dim style As JSONItem
 		  Dim matrix() As Double
 		  Dim points() As Integer
@@ -1057,7 +1058,9 @@ Protected Module DrawSVG
 		  Dim pointCount As Integer
 		  Dim theta As Double
 		  
-		  style = buildStyleItem(node)
+		  style = new JSONItem(parentStyle.ToString)
+		  localStyle = buildStyleItem(node)
+		  style.ApplyValues localStyle
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
 		  matrix = matrixMultiply(parentMatrix, matrix)
 		  
@@ -1126,10 +1129,11 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub render_ellipse(node As XmlNode, g As Graphics, parentMatrix() As Double)
+		Private Sub render_ellipse(node As XmlNode, g As Graphics, parentMatrix() As Double, parentStyle As JSONItem)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
+		  Dim localStyle As JSONItem
 		  Dim style As JSONItem
 		  Dim matrix() As Double
 		  Dim points() As Integer
@@ -1147,7 +1151,9 @@ Protected Module DrawSVG
 		  Dim pointCount As Integer
 		  Dim theta As Double
 		  
-		  style = buildStyleItem(node)
+		  style = new JSONItem(parentStyle.ToString)
+		  localStyle = buildStyleItem(node)
+		  style.ApplyValues localStyle
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
 		  matrix = matrixMultiply(parentMatrix, matrix)
 		  
@@ -1217,21 +1223,24 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub render_g(node As XmlNode, g As Graphics, parentMatrix() As Double)
+		Private Sub render_g(node As XmlNode, g As Graphics, parentMatrix() As Double, parentStyle As JSONItem)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
+		  Dim localStyle As JSONItem
 		  Dim style As JSONItem
 		  Dim matrix() As Double
 		  Dim i As Integer
 		  
-		  style = buildStyleItem(node)
+		  style = new JSONItem(parentStyle.ToString)
+		  localStyle = buildStyleItem(node)
+		  style.ApplyValues localStyle
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
 		  matrix = matrixMultiply(parentMatrix, matrix)
 		  
 		  i = 0
 		  while i < node.ChildCount
-		    renderNode node.Child(i), g, matrix
+		    renderNode node.Child(i), g, matrix, style
 		    i = i + 1
 		  wend
 		  
@@ -1239,10 +1248,11 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub render_line(node As XmlNode, g As Graphics, parentMatrix() As Double)
+		Private Sub render_line(node As XmlNode, g As Graphics, parentMatrix() As Double, parentStyle As JSONItem)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
+		  Dim localStyle As JSONItem
 		  Dim style As JSONItem
 		  Dim matrix() As Double
 		  Dim points() As Integer
@@ -1256,7 +1266,9 @@ Protected Module DrawSVG
 		  Dim stroke As String
 		  Dim strokeWidth As Double
 		  
-		  style = buildStyleItem(node)
+		  style = new JSONItem(parentStyle.ToString)
+		  localStyle = buildStyleItem(node)
+		  style.ApplyValues localStyle
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
 		  matrix = matrixMultiply(parentMatrix, matrix)
 		  
@@ -1300,12 +1312,13 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub render_path(node As XmlNode, g As Graphics, parentMatrix() As Double)
+		Private Sub render_path(node As XmlNode, g As Graphics, parentMatrix() As Double, parentStyle As JSONItem)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
 		  ' This routine is based on code written by Dr Brian R Gaines .
 		  
+		  Dim localStyle As JSONItem
 		  Dim style As JSONItem
 		  Dim matrix() As Double
 		  Dim i As Integer
@@ -1335,7 +1348,9 @@ Protected Module DrawSVG
 		  Dim additionalPath() As String
 		  Dim e As DrawSVG.SVGException
 		  
-		  style = buildStyleItem(node)
+		  style = new JSONItem(parentStyle.ToString)
+		  localStyle = buildStyleItem(node)
+		  style.ApplyValues localStyle
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
 		  matrix = matrixMultiply(parentMatrix, matrix)
 		  
@@ -2050,10 +2065,11 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub render_polygon(node As XmlNode, g As Graphics, parentMatrix() As Double)
+		Private Sub render_polygon(node As XmlNode, g As Graphics, parentMatrix() As Double, parentStyle As JSONItem)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
+		  Dim localStyle As JSONItem
 		  Dim style As JSONItem
 		  Dim matrix() As Double
 		  Dim i As Integer
@@ -2066,7 +2082,9 @@ Protected Module DrawSVG
 		  Dim tmpArr() As String
 		  Dim coord() As String
 		  
-		  style = buildStyleItem(node)
+		  style = new JSONItem(parentStyle.ToString)
+		  localStyle = buildStyleItem(node)
+		  style.ApplyValues localStyle
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
 		  matrix = matrixMultiply(parentMatrix, matrix)
 		  
@@ -2121,10 +2139,11 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub render_polyline(node As XmlNode, g As Graphics, parentMatrix() As Double)
+		Private Sub render_polyline(node As XmlNode, g As Graphics, parentMatrix() As Double, parentStyle As JSONItem)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
+		  Dim localStyle As JSONItem
 		  Dim style As JSONItem
 		  Dim matrix() As Double
 		  Dim i As Integer
@@ -2137,7 +2156,9 @@ Protected Module DrawSVG
 		  Dim tmpArr() As String
 		  Dim coord() As String
 		  
-		  style = buildStyleItem(node)
+		  style = new JSONItem(parentStyle.ToString)
+		  localStyle = buildStyleItem(node)
+		  style.ApplyValues localStyle
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
 		  matrix = matrixMultiply(parentMatrix, matrix)
 		  
@@ -2199,10 +2220,11 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub render_rect(node As XmlNode, g As Graphics, parentMatrix() As Double)
+		Private Sub render_rect(node As XmlNode, g As Graphics, parentMatrix() As Double, parentStyle As JSONItem)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
+		  Dim localStyle As JSONItem
 		  Dim style As JSONItem
 		  Dim matrix() As Double
 		  Dim points() As Integer
@@ -2217,7 +2239,9 @@ Protected Module DrawSVG
 		  Dim stroke As String
 		  Dim strokeWidth As Double
 		  
-		  style = buildStyleItem(node)
+		  style = new JSONItem(parentStyle.ToString)
+		  localStyle = buildStyleItem(node)
+		  style.ApplyValues localStyle
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
 		  matrix = matrixMultiply(parentMatrix, matrix)
 		  
@@ -2277,21 +2301,24 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub render_svg(node As XmlNode, g As Graphics, parentMatrix() As Double)
+		Private Sub render_svg(node As XmlNode, g As Graphics, parentMatrix() As Double, parentStyle As JSONItem)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
+		  Dim localStyle As JSONItem
 		  Dim style As JSONItem
 		  Dim matrix() As Double
 		  Dim i As Integer
 		  
-		  style = buildStyleItem(node)
+		  style = new JSONItem(parentStyle.ToString)
+		  localStyle = buildStyleItem(node)
+		  style.ApplyValues localStyle
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
 		  matrix = matrixMultiply(parentMatrix, matrix)
 		  
 		  i = 0
 		  while i < node.ChildCount
-		    renderNode node.Child(i), g, matrix
+		    renderNode node.Child(i), g, matrix, style
 		    i = i + 1
 		  wend
 		  
@@ -2299,10 +2326,11 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub render_text(node As XmlNode, g As Graphics, parentMatrix() As Double)
+		Private Sub render_text(node As XmlNode, g As Graphics, parentMatrix() As Double, parentStyle As JSONItem)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
+		  Dim localStyle As JSONItem
 		  Dim style As JSONItem
 		  Dim matrix() As Double
 		  Dim mulMatrix() As Double
@@ -2315,7 +2343,9 @@ Protected Module DrawSVG
 		  Dim fill As String
 		  Dim strShape as new StringShape
 		  
-		  style = buildStyleItem(node)
+		  style = new JSONItem(parentStyle.ToString)
+		  localStyle = buildStyleItem(node)
+		  style.ApplyValues localStyle
 		  matrix = buildTransformationMatrix(style.Lookup("transform", ""))
 		  matrix = matrixMultiply(parentMatrix, matrix)
 		  
