@@ -1017,7 +1017,7 @@ Protected Module DrawSVG
 		      
 		    case else
 		      
-		      // we only want to raise the unknown element event during debugging
+		      // we only want to raise the unknown element exception during debugging
 		      // during runtime we simply ignore unknown elements
 		      
 		      #if DebugBuild then
