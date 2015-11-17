@@ -1019,6 +1019,7 @@ Protected Module DrawSVG
 		      
 		    case else
 		      foundNode = false
+		      // we simply ignore unknown tags
 		      
 		    end select
 		    
