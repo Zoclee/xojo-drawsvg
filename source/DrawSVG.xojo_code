@@ -958,9 +958,7 @@ Protected Module DrawSVG
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
-		  Dim foundNode As Boolean
-		  
-		  foundNode = true
+		  Dim e As DrawSVG.SVGException
 		  
 		  if node.Name.Left(9) = "sodipodi:" then
 		    // we ignore sodipodi tags
@@ -1018,20 +1016,22 @@ Protected Module DrawSVG
 		      // we ignore these tags
 		      
 		    case else
-		      foundNode = false
-		      // we simply ignore unknown tags
+		      
+		      // we only want to raise the unknown element event during debugging
+		      // during runtime we simply ignore unknown elements
+		      
+		      #if DebugBuild then
+		        e = new DrawSVG.SVGException()
+		        e.ErrorNumber = 4
+		        e.Message = "Unknown element: " + node.Name
+		        Raise e
+		      #endif
 		      
 		    end select
 		    
 		  end if
 		  
-		  // we only want to display error popups when debugging
 		  
-		  #if DebugBuild then
-		    if not foundNode then
-		      MsgBox "Unknown element: " + node.Name
-		    end if
-		  #endif
 		  
 		End Sub
 	#tag EndMethod
@@ -2395,10 +2395,10 @@ Protected Module DrawSVG
 
 
 	#tag Note, Name = Exceptions
-		1: Expected path command: info
-		2: Feature not yet implemented: info
+		1: Expected path command: ...
+		2: Feature not yet implemented: ...
 		3: Malformed SVG XML.
-		
+		4: Unknown element: ...
 	#tag EndNote
 
 
