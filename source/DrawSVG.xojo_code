@@ -1569,7 +1569,11 @@ Protected Module DrawSVG
 		      i = path.Ubound
 		      
 		    elseif StrComp(path(i), "q", 0) = 0 then // relative quadratic Bézier curveto
-		      // todo
+		      e = new DrawSVG.SVGException()
+		      e.ErrorNumber = 2
+		      e.Message = "Feature not yet implemented: Relative quadratic Bézier curveto"
+		      Raise e
+		      i = path.Ubound
 		      
 		    elseif StrComp(path(i), "L", 0) = 0 then // absolute lineto
 		      cs =new CurveShape
