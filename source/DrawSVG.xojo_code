@@ -1331,7 +1331,6 @@ Protected Module DrawSVG
 		  Dim itemStroke As Double
 		  Dim itemStrokeColor As Color
 		  Dim prevClosed As Boolean
-		  Dim currentStart As Integer
 		  Dim currentCommand As String
 		  Dim additionalPath() As String
 		  Dim e As DrawSVG.SVGException
