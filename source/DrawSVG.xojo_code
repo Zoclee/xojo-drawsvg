@@ -196,6 +196,8 @@ Protected Module DrawSVG
 		  
 		  if Left(s, 1) = "#" then
 		    tmpStr = Right(s, Len(s) - 1)
+		  else
+		    tmpStr = s
 		  end if
 		  
 		  if Len(tmpStr) = 3 then
@@ -1357,6 +1359,7 @@ Protected Module DrawSVG
 		  Dim currentCommand As String
 		  Dim additionalPath() As String
 		  Dim e As DrawSVG.SVGException
+		  Dim tmpStr As String
 		  
 		  style = new JSONItem("{}")
 		  style.ApplyValues parentStyle
