@@ -530,7 +530,7 @@ Protected Module DrawSVG
 		        b = dy2 * ( dx2 * ( p1.blue ) + dx1 * ( p2.blue ) ) + dy1 * ( dx2 * ( p3.blue ) + dx1 * ( p4.blue ) )
 		        a = dy2 * ( dx2 * ( p1.Alpha ) + dx1 * ( p2.Alpha ) ) + dy1 * ( dx2 * ( p3.Alpha ) + dx1 * ( p4.Alpha ) )
 		        
-		        tgtRGB.Pixel(x,y) = RGB(r,gp,b, a)
+		        tgtRGB.Pixel(x,y) = RGB(r, gp, b, a)
 		      end if
 		    next
 		  next
@@ -792,6 +792,7 @@ Protected Module DrawSVG
 		  ' www.zoclee.com
 		  
 		  Dim image As Picture
+		  Dim alphaImage As Picture
 		  Dim imageData As MemoryBlock
 		  Dim commaPos As Integer
 		  
@@ -799,6 +800,8 @@ Protected Module DrawSVG
 		  if commaPos > 0 then
 		    imageData = DecodeBase64(Right(data, Len(data) - commaPos))
 		    image = Picture.FromData(imageData)
+		    alphaImage = new Picture(image.Width, image.Height)
+		    alphaImage.Graphics.DrawPicture image, 0, 0
 		  end if
 		  
 		  return image
