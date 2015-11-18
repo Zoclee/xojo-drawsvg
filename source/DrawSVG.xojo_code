@@ -1341,6 +1341,7 @@ Protected Module DrawSVG
 		  Dim path() As String
 		  Dim continueImplicit As Boolean
 		  Dim prevCCommand As Boolean
+		  Dim prevQCommand As Boolean
 		  Dim prevControlX As Double
 		  Dim prevControlY As Double
 		  Dim grp As Group2D
@@ -1473,6 +1474,7 @@ Protected Module DrawSVG
 		  // process (draw) path
 		  
 		  prevCCommand = false
+		  prevQCommand = false
 		  
 		  i = 0
 		  while i <= path.Ubound
@@ -1485,6 +1487,9 @@ Protected Module DrawSVG
 		      Raise e
 		      i = path.Ubound
 		      
+		      prevCCommand = false
+		      prevQCommand = false
+		      
 		    elseif StrComp(path(i), "a", 0) = 0 then // relative elliptical arc
 		      // todo
 		      e = new DrawSVG.SVGException()
@@ -1492,6 +1497,9 @@ Protected Module DrawSVG
 		      e.Message = "Feature not yet implemented: Relative elliptical arc"
 		      Raise e
 		      i = path.Ubound
+		      
+		      prevCCommand = false
+		      prevQCommand = false
 		      
 		    elseif StrComp(path(i), "C", 0) = 0 then // absolute curveto
 		      do
@@ -1539,6 +1547,7 @@ Protected Module DrawSVG
 		      loop until not continueImplicit
 		      
 		      prevCCommand = true
+		      prevQCommand = false
 		      
 		    elseif StrComp(path(i), "c", 0) = 0 then // relative curveto
 		      do
@@ -1586,6 +1595,7 @@ Protected Module DrawSVG
 		      loop until not continueImplicit
 		      
 		      prevCCommand = true
+		      prevQCommand = false
 		      
 		    elseif StrComp(path(i), "H", 0) = 0 then // absolute horizontal lineto
 		      cs =new CurveShape
@@ -1603,6 +1613,9 @@ Protected Module DrawSVG
 		      cs.X2 = tmpX
 		      cs.Y2 = tmpY
 		      
+		      prevCCommand = false
+		      prevQCommand = false
+		      
 		    elseif StrComp(path(i), "h", 0) = 0 then // relative horizontal lineto
 		      cs =new CurveShape
 		      fs.Append cs
@@ -1618,6 +1631,9 @@ Protected Module DrawSVG
 		      transformPoint tmpX, tmpY, matrix
 		      cs.X2 = tmpX
 		      cs.Y2 = tmpY
+		      
+		      prevCCommand = false
+		      prevQCommand = false
 		      
 		    elseif StrComp(path(i), "Q", 0) = 0 then // absolute quadratic Bézier curveto
 		      do
@@ -1657,6 +1673,9 @@ Protected Module DrawSVG
 		        
 		      loop until not continueImplicit
 		      
+		      prevCCommand = false
+		      prevQCommand = true
+		      
 		    elseif StrComp(path(i), "q", 0) = 0 then // relative quadratic Bézier curveto
 		      do
 		        cs = new CurveShape
@@ -1695,6 +1714,9 @@ Protected Module DrawSVG
 		        
 		      loop until not continueImplicit
 		      
+		      prevCCommand = false
+		      prevQCommand = true
+		      
 		    elseif StrComp(path(i), "L", 0) = 0 then // absolute lineto
 		      
 		      do
@@ -1725,6 +1747,9 @@ Protected Module DrawSVG
 		        
 		      loop until not continueImplicit
 		      
+		      prevCCommand = false
+		      prevQCommand = false
+		      
 		    elseif StrComp(path(i), "l", 0) = 0 then // relative lineto
 		      
 		      do
@@ -1754,6 +1779,9 @@ Protected Module DrawSVG
 		        end if
 		        
 		      loop until not continueImplicit
+		      
+		      prevCCommand = false
+		      prevQCommand = false
 		      
 		    elseif StrComp(path(i), "M", 0) = 0 then // absolute move
 		      if (fs.Count > 0) and not prevclosed then
@@ -1799,6 +1827,9 @@ Protected Module DrawSVG
 		          end if
 		        end if
 		      loop until (i > path.Ubound) or not continueImplicit
+		      
+		      prevCCommand = false
+		      prevQCommand = false
 		      
 		    elseif StrComp(path(i), "m", 0) = 0 then // relative move
 		      
@@ -1849,6 +1880,9 @@ Protected Module DrawSVG
 		        end if
 		      loop until (i > path.Ubound) or not continueImplicit
 		      
+		      prevCCommand = false
+		      prevQCommand = false
+		      
 		    elseif StrComp(path(i), "S", 0) = 0 then // absolute smooth curveto
 		      
 		      do
@@ -1897,6 +1931,7 @@ Protected Module DrawSVG
 		      loop until not continueImplicit
 		      
 		      prevCCommand = true
+		      prevQCommand = false
 		      
 		    elseif StrComp(path(i), "s", 0) = 0 then // relative smooth curveto
 		      
@@ -1946,6 +1981,7 @@ Protected Module DrawSVG
 		      loop until not continueImplicit
 		      
 		      prevCCommand = true
+		      prevQCommand = false
 		      
 		    elseif StrComp(path(i), "T", 0) = 0 then // absolute smooth quadratic Bézier curveto
 		      do
@@ -1957,8 +1993,13 @@ Protected Module DrawSVG
 		        cs.X = tmpX
 		        cs.Y = tmpY
 		        cs.Order = 1
-		        cs.ControlX(0) = (tmpX - prevControlX)  + tmpX
-		        cs.ControlY(0) = (tmpY - prevControlY)  + tmpY
+		        if prevQCommand then
+		          cs.ControlX(0) = (tmpX - prevControlX)  + tmpX
+		          cs.ControlY(0) = (tmpY - prevControlY)  + tmpY
+		        else
+		          cs.ControlX(0) = tmpX
+		          cs.ControlY(0) = tmpY
+		        end if
 		        prevControlX = tmpX
 		        prevControlY = tmpY
 		        i = i + 1
@@ -1980,6 +2021,9 @@ Protected Module DrawSVG
 		        
 		      loop until not continueImplicit
 		      
+		      prevCCommand = false
+		      prevQCommand = true
+		      
 		    elseif StrComp(path(i), "t", 0) = 0 then // relative smooth quadratic Bézier curveto
 		      do
 		        cs = new CurveShape
@@ -1990,8 +2034,13 @@ Protected Module DrawSVG
 		        cs.X = tmpX
 		        cs.Y = tmpY
 		        cs.Order = 1
-		        cs.ControlX(0) = (tmpX - prevControlX)  + tmpX
-		        cs.ControlY(0) = (tmpY - prevControlY)  + tmpY
+		        if prevQCommand then
+		          cs.ControlX(0) = (tmpX - prevControlX)  + tmpX
+		          cs.ControlY(0) = (tmpY - prevControlY)  + tmpY
+		        else
+		          cs.ControlX(0) = tmpX
+		          cs.ControlY(0) = tmpY
+		        end if
 		        prevControlX = tmpX
 		        prevControlY = tmpY
 		        i = i + 1
@@ -2013,6 +2062,9 @@ Protected Module DrawSVG
 		        
 		      loop until not continueImplicit
 		      
+		      prevCCommand = false
+		      prevQCommand = true
+		      
 		    elseif StrComp(path(i), "V", 0) = 0 then // absolute vertical lineto
 		      cs =new CurveShape
 		      fs.Append cs
@@ -2028,6 +2080,9 @@ Protected Module DrawSVG
 		      transformPoint tmpX, tmpY, matrix
 		      cs.X2 = tmpX
 		      cs.Y2 = tmpY
+		      
+		      prevCCommand = false
+		      prevQCommand = false
 		      
 		    elseif StrComp(path(i), "v", 0) = 0 then // relative vertical lineto
 		      cs =new CurveShape
@@ -2045,8 +2100,14 @@ Protected Module DrawSVG
 		      cs.X2 = tmpX
 		      cs.Y2 = tmpY
 		      
+		      prevCCommand = false
+		      prevQCommand = false
+		      
 		    elseif path(i) = "z" then // close path
 		      prevClosed = true
+		      
+		      prevCCommand = false
+		      prevQCommand = false
 		      
 		    else
 		      if IsNumeric(path(i)) then
@@ -2056,6 +2117,8 @@ Protected Module DrawSVG
 		        Raise e
 		        i = path.Ubound
 		      end if
+		      
+		      prevCCommand = false
 		      
 		    end if
 		    
