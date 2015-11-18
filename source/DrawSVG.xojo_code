@@ -58,8 +58,10 @@ Protected Module DrawSVG
 		        j = j + 1
 		      wend
 		      
-		    else
+		    elseif Instr(0, xAttr.Name, ":") <= 0 then
+		      
 		      result.Value(xAttr.Name.Lowercase) = node.GetCIAttribute(xAttr.Name)
+		      
 		    end if
 		    
 		    i = i + 1
@@ -785,6 +787,19 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Function loadImage(data As String) As Picture
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
+		  Dim img As Picture
+		  
+		  break
+		  
+		  return img
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Function LookupDouble(Extends Item As JSONItem, Name As String, DefaultValue As Double = 0) As Double
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
@@ -990,6 +1005,9 @@ Protected Module DrawSVG
 		      
 		    case "g"
 		      render_g(node, g, parentMatrix, parentStyle)
+		      
+		    case "image"
+		      render_image(node, g, parentMatrix, parentStyle)
 		      
 		    case "line"
 		      render_line(node, g, parentMatrix, parentStyle)
@@ -1257,6 +1275,109 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
+		Private Sub render_image(node As XmlNode, g As Graphics, parentMatrix() As Double, parentStyle As JSONItem)
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
+		  Dim localStyle As JSONItem
+		  Dim style As JSONItem
+		  Dim matrix() As Double
+		  'Dim mulMatrix() As Double
+		  'Dim element As Picture
+		  'Dim eg As Graphics
+		  'Dim tspanStyle As JSONItem
+		  'Dim textStr As String
+		  Dim imageData As String
+		  Dim image As Picture
+		  Dim x As Double
+		  Dim y As Double
+		  Dim width As Double
+		  Dim height As Double
+		  
+		  style = new JSONItem("{}")
+		  style.ApplyValues parentStyle
+		  localStyle = buildStyleItem(node)
+		  style.ApplyValues localStyle
+		  matrix = buildTransformationMatrix(localStyle.Lookup("transform", ""))
+		  matrix = matrixMultiply(parentMatrix, matrix)
+		  
+		  x = style.LookupDouble("x")
+		  y = style.LookupDouble("y")
+		  width = style.LookupDouble("width")
+		  height = style.LookupDouble("height")
+		  
+		  imageData = node.GetAttribute("xlink:href")
+		  image = loadImage(imageData)
+		  
+		  break
+		  
+		  '// fill
+		  '
+		  'if fill <> "none" then
+		  '
+		  'textStr = ""
+		  'if node.FirstChild <> nil then
+		  'if node.FirstChild.Name = "#text" then
+		  'textStr = Trim(node.FirstChild.Value)
+		  'elseif node.FirstChild.Name = "tspan" then
+		  '
+		  'tspanStyle = buildStyleItem(node.FirstChild)
+		  'style.ApplyValues(tspanStyle)
+		  'if node.FirstChild.FirstChild <> nil then
+		  'if node.FirstChild.FirstChild.Name = "#text" then
+		  'textStr = Trim(node.FirstChild.FirstChild.Value)
+		  'end if
+		  'end if
+		  '
+		  'end if
+		  'end if
+		  '
+		  'g.TextFont = style.LookupString("font-family", "Arial")
+		  'g.TextUnit = FontUnits.Pixel
+		  'g.TextSize = style.LookupDouble("font-size", 16)
+		  '
+		  'if textStr <> "" then
+		  '
+		  'mulMatrix = initTranslationMatrix(x, y - g.TextAscent)
+		  'matrix = matrixMultiply(matrix, mulMatrix)
+		  '
+		  'strShape.FillColor = determineColor(fill)
+		  'strShape.TextFont = g.TextFont
+		  'strShape.TextUnit = g.TextUnit
+		  'strShape.TextSize = g.TextSize
+		  'select case style.Lookup("text-anchor", "start")
+		  'case "end"
+		  'strShape.HorizontalAlignment = StringShape.Alignment.Right
+		  'case "middle"
+		  'strShape.HorizontalAlignment = StringShape.Alignment.Center
+		  'case else
+		  'strShape.HorizontalAlignment = StringShape.Alignment.Left
+		  'end select
+		  'strShape.VerticalAlignment = StringShape.Alignment.Top
+		  'strShape.Text = textStr
+		  '
+		  '// to speed up rendering, we only use DrawTransformedPicture when needed
+		  '
+		  'if isTranslationMatrix(matrix) then
+		  'g.DrawObject strShape, matrix(2), matrix(5)
+		  'else
+		  'element = new Picture(g.StringWidth(textStr), g.TextHeight)
+		  'eg = element.Graphics
+		  '
+		  'eg.DrawObject strShape, _
+		  '0, _
+		  '0
+		  '
+		  'g.DrawTransformedPicture element, matrix
+		  'end if
+		  '
+		  'end if
+		  '
+		  'end if
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub render_line(node As XmlNode, g As Graphics, parentMatrix() As Double, parentStyle As JSONItem)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
@@ -1359,7 +1480,6 @@ Protected Module DrawSVG
 		  Dim currentCommand As String
 		  Dim additionalPath() As String
 		  Dim e As DrawSVG.SVGException
-		  Dim tmpStr As String
 		  
 		  style = new JSONItem("{}")
 		  style.ApplyValues parentStyle
