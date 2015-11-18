@@ -1634,20 +1634,30 @@ Protected Module DrawSVG
 		      prevQCommand = false
 		      
 		    elseif StrComp(path(i), "h", 0) = 0 then // relative horizontal lineto
-		      cs =new CurveShape
-		      fs.Append cs
-		      tmpX = penX
-		      tmpY = penY
-		      transformPoint tmpX, tmpY, matrix
-		      cs.X = tmpX
-		      cs.Y = tmpY
-		      i = i + 1
-		      tmpX = penX + Val(path(i))
-		      penX = tmpX
-		      tmpY = penY
-		      transformPoint tmpX, tmpY, matrix
-		      cs.X2 = tmpX
-		      cs.Y2 = tmpY
+		      do
+		        cs =new CurveShape
+		        fs.Append cs
+		        tmpX = penX
+		        tmpY = penY
+		        transformPoint tmpX, tmpY, matrix
+		        cs.X = tmpX
+		        cs.Y = tmpY
+		        i = i + 1
+		        tmpX = penX + Val(path(i))
+		        penX = tmpX
+		        tmpY = penY
+		        transformPoint tmpX, tmpY, matrix
+		        cs.X2 = tmpX
+		        cs.Y2 = tmpY
+		        
+		        continueImplicit = false
+		        if i < path.Ubound then
+		          if IsNumeric(path(i + 1)) then
+		            continueImplicit = true
+		          end if
+		        end if
+		        
+		      loop until not continueImplicit
 		      
 		      prevCCommand = false
 		      prevQCommand = false
