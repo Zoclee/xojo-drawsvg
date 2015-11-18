@@ -804,7 +804,7 @@ Protected Module DrawSVG
 		    alphaImage.Graphics.DrawPicture image, 0, 0
 		  end if
 		  
-		  return image
+		  return alphaImage
 		End Function
 	#tag EndMethod
 
