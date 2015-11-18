@@ -791,11 +791,17 @@ Protected Module DrawSVG
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
-		  Dim img As Picture
+		  Dim image As Picture
+		  Dim imageData As MemoryBlock
+		  Dim commaPos As Integer
 		  
-		  break
+		  commaPos = Instr(0, data, ",")
+		  if commaPos > 0 then
+		    imageData = DecodeBase64(Right(data, Len(data) - commaPos))
+		    image = Picture.FromData(imageData)
+		  end if
 		  
-		  return img
+		  return image
 		End Function
 	#tag EndMethod
 
@@ -1282,11 +1288,7 @@ Protected Module DrawSVG
 		  Dim localStyle As JSONItem
 		  Dim style As JSONItem
 		  Dim matrix() As Double
-		  'Dim mulMatrix() As Double
-		  'Dim element As Picture
-		  'Dim eg As Graphics
-		  'Dim tspanStyle As JSONItem
-		  'Dim textStr As String
+		  Dim mulMatrix() As Double
 		  Dim imageData As String
 		  Dim image As Picture
 		  Dim x As Double
@@ -1309,71 +1311,21 @@ Protected Module DrawSVG
 		  imageData = node.GetAttribute("xlink:href")
 		  image = loadImage(imageData)
 		  
-		  break
+		  if image <> nil then
+		    
+		    mulMatrix = initTranslationMatrix(x, y)
+		    matrix = matrixMultiply(matrix, mulMatrix)
+		    
+		    // to speed up rendering, we only use DrawTransformedPicture when needed
+		    
+		    if isTranslationMatrix(matrix) then
+		      g.DrawPicture image, matrix(2), matrix(5)
+		    else
+		      g.DrawTransformedPicture image, matrix
+		    end if
+		    
+		  end if
 		  
-		  '// fill
-		  '
-		  'if fill <> "none" then
-		  '
-		  'textStr = ""
-		  'if node.FirstChild <> nil then
-		  'if node.FirstChild.Name = "#text" then
-		  'textStr = Trim(node.FirstChild.Value)
-		  'elseif node.FirstChild.Name = "tspan" then
-		  '
-		  'tspanStyle = buildStyleItem(node.FirstChild)
-		  'style.ApplyValues(tspanStyle)
-		  'if node.FirstChild.FirstChild <> nil then
-		  'if node.FirstChild.FirstChild.Name = "#text" then
-		  'textStr = Trim(node.FirstChild.FirstChild.Value)
-		  'end if
-		  'end if
-		  '
-		  'end if
-		  'end if
-		  '
-		  'g.TextFont = style.LookupString("font-family", "Arial")
-		  'g.TextUnit = FontUnits.Pixel
-		  'g.TextSize = style.LookupDouble("font-size", 16)
-		  '
-		  'if textStr <> "" then
-		  '
-		  'mulMatrix = initTranslationMatrix(x, y - g.TextAscent)
-		  'matrix = matrixMultiply(matrix, mulMatrix)
-		  '
-		  'strShape.FillColor = determineColor(fill)
-		  'strShape.TextFont = g.TextFont
-		  'strShape.TextUnit = g.TextUnit
-		  'strShape.TextSize = g.TextSize
-		  'select case style.Lookup("text-anchor", "start")
-		  'case "end"
-		  'strShape.HorizontalAlignment = StringShape.Alignment.Right
-		  'case "middle"
-		  'strShape.HorizontalAlignment = StringShape.Alignment.Center
-		  'case else
-		  'strShape.HorizontalAlignment = StringShape.Alignment.Left
-		  'end select
-		  'strShape.VerticalAlignment = StringShape.Alignment.Top
-		  'strShape.Text = textStr
-		  '
-		  '// to speed up rendering, we only use DrawTransformedPicture when needed
-		  '
-		  'if isTranslationMatrix(matrix) then
-		  'g.DrawObject strShape, matrix(2), matrix(5)
-		  'else
-		  'element = new Picture(g.StringWidth(textStr), g.TextHeight)
-		  'eg = element.Graphics
-		  '
-		  'eg.DrawObject strShape, _
-		  '0, _
-		  '0
-		  '
-		  'g.DrawTransformedPicture element, matrix
-		  'end if
-		  '
-		  'end if
-		  '
-		  'end if
 		End Sub
 	#tag EndMethod
 
