@@ -1340,6 +1340,7 @@ Protected Module DrawSVG
 		  Dim tmpY As Double
 		  Dim path() As String
 		  Dim continueImplicit As Boolean
+		  Dim prevCCommand As Boolean
 		  Dim prevControlX As Double
 		  Dim prevControlY As Double
 		  Dim grp As Group2D
@@ -1474,6 +1475,8 @@ Protected Module DrawSVG
 		  i = 0
 		  while i <= path.Ubound
 		    
+		    prevCCommand = false
+		    
 		    if StrComp(path(i), "A", 0) = 0 then // absolute elliptical arc
 		      // todo
 		      e = new DrawSVG.SVGException()
@@ -1535,6 +1538,8 @@ Protected Module DrawSVG
 		        
 		      loop until not continueImplicit
 		      
+		      prevCCommand = true
+		      
 		    elseif StrComp(path(i), "c", 0) = 0 then // relative curveto
 		      do
 		        cs = new CurveShape
@@ -1579,6 +1584,8 @@ Protected Module DrawSVG
 		        end if
 		        
 		      loop until not continueImplicit
+		      
+		      prevCCommand = true
 		      
 		    elseif StrComp(path(i), "H", 0) = 0 then // absolute horizontal lineto
 		      cs =new CurveShape
@@ -1851,8 +1858,13 @@ Protected Module DrawSVG
 		      cs.X = tmpX
 		      cs.Y = tmpY
 		      cs.Order = 2
-		      cs.ControlX(0) = (tmpX - prevControlX)  + tmpX
-		      cs.ControlY(0) = (tmpY - prevControlY)  + tmpY
+		      if prevCCommand then
+		        cs.ControlX(0) = (tmpX - prevControlX)  + tmpX
+		        cs.ControlY(0) = (tmpY - prevControlY)  + tmpY
+		      else
+		        cs.ControlX(0) = tmpX
+		        cs.ControlY(0) = tmpY
+		      end if
 		      i = i + 1
 		      tmpX = Val(path(i))
 		      i = i + 1
@@ -1884,8 +1896,13 @@ Protected Module DrawSVG
 		        cs.X = tmpX
 		        cs.Y = tmpY
 		        cs.Order = 2
-		        cs.ControlX(0) = (tmpX - prevControlX)  + tmpX
-		        cs.ControlY(0) = (tmpY - prevControlY)  + tmpY
+		        if prevCCommand then
+		          cs.ControlX(0) = (tmpX - prevControlX)  + tmpX
+		          cs.ControlY(0) = (tmpY - prevControlY)  + tmpY
+		        else
+		          cs.ControlX(0) = tmpX
+		          cs.ControlY(0) = tmpY
+		        end if
 		        i = i + 1
 		        tmpX = penX + Val(path(i))
 		        i = i + 1
