@@ -33,7 +33,7 @@ Begin Window frmMain
       Backdrop        =   0
       DoubleBuffer    =   True
       Enabled         =   True
-      EraseBackground =   True
+      EraseBackground =   False
       Height          =   346
       HelpTag         =   ""
       Index           =   -2147483648
