@@ -195,10 +195,14 @@ Protected Module DrawSVG
 		  Dim tmpStr As String
 		  
 		  if Left(s, 1) = "#" then
-		    tmpStr = "&c" + Right(s, Len(s) - 1)
-		  else
-		    tmpStr = "&c" + s
+		    tmpStr = Right(s, Len(s) - 1)
 		  end if
+		  
+		  if Len(tmpStr) = 3 then
+		    tmpStr = Left(tmpStr, 1) + Left(tmpStr, 1) + Mid(tmpStr, 2, 1) + Mid(tmpStr, 2, 1) + Right(tmpStr, 1) + Right(tmpStr, 1)
+		  end if
+		  
+		  tmpStr = "&c" + tmpStr
 		  
 		  colVariant = tmpStr
 		  result = colVariant.ColorValue
