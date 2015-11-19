@@ -2563,8 +2563,10 @@ Protected Module DrawSVG
 		  
 		  Dim localStyle As JSONItem
 		  Dim style As JSONItem
+		  Dim elementStyle As JSONItem
 		  Dim matrix() As Double
 		  Dim mulMatrix() As Double
+		  Dim elementMatrix() As Double
 		  Dim element As Picture
 		  Dim eg As Graphics
 		  Dim tspanStyle As JSONItem
@@ -2573,6 +2575,7 @@ Protected Module DrawSVG
 		  Dim y As Double
 		  Dim fill As String
 		  Dim strShape as new StringShape
+		  Dim i As Integer
 		  
 		  style = new JSONItem("{}")
 		  style.ApplyValues parentStyle
@@ -2589,63 +2592,74 @@ Protected Module DrawSVG
 		  
 		  if fill <> "none" then
 		    
-		    textStr = ""
-		    if node.FirstChild <> nil then
-		      if node.FirstChild.Name = "#text" then
+		    i = 0
+		    while i < node.ChildCount
+		      
+		      textStr = ""
+		      
+		      elementStyle = new JSONItem(style.ToString())
+		      
+		      if node.Child(i).Name = "#text" then
 		        textStr = Trim(node.FirstChild.Value)
-		      elseif node.FirstChild.Name = "tspan" then
+		      elseif node.Child(i).Name = "tspan" then
 		        
-		        tspanStyle = buildStyleItem(node.FirstChild)
-		        style.ApplyValues(tspanStyle)
-		        if node.FirstChild.FirstChild <> nil then
-		          if node.FirstChild.FirstChild.Name = "#text" then
-		            textStr = Trim(node.FirstChild.FirstChild.Value)
+		        tspanStyle = buildStyleItem(node.Child(i))
+		        elementStyle.ApplyValues(tspanStyle)
+		        if node.Child(i).FirstChild <> nil then
+		          if node.Child(i).FirstChild.Name = "#text" then
+		            textStr = Trim(node.Child(i).FirstChild.Value)
 		          end if
 		        end if
 		        
-		      end if
-		    end if
-		    
-		    g.TextFont = style.LookupString("font-family", "Arial")
-		    g.TextUnit = FontUnits.Pixel
-		    g.TextSize = style.LookupDouble("font-size", 16)
-		    
-		    if textStr <> "" then
-		      
-		      mulMatrix = initTranslationMatrix(x, y - g.TextAscent)
-		      matrix = matrixMultiply(matrix, mulMatrix)
-		      
-		      strShape.FillColor = determineColor(fill)
-		      strShape.TextFont = g.TextFont
-		      strShape.TextUnit = g.TextUnit
-		      strShape.TextSize = g.TextSize
-		      select case style.Lookup("text-anchor", "start")
-		      case "end"
-		        strShape.HorizontalAlignment = StringShape.Alignment.Right
-		      case "middle"
-		        strShape.HorizontalAlignment = StringShape.Alignment.Center
-		      case else
-		        strShape.HorizontalAlignment = StringShape.Alignment.Left
-		      end select
-		      strShape.VerticalAlignment = StringShape.Alignment.Top
-		      strShape.Text = textStr
-		      
-		      // to speed up rendering, we only use DrawTransformedPicture when needed
-		      
-		      if isTranslationMatrix(matrix) then
-		        g.DrawObject strShape, matrix(2), matrix(5)
-		      else
-		        element = new Picture(g.StringWidth(textStr), g.TextHeight)
-		        eg = element.Graphics
+		        x = elementStyle.LookupDouble("x")
+		        y = elementStyle.LookupDouble("y")
 		        
-		        eg.DrawObject strShape, _
-		        0, _
-		        0
-		        
-		        g.DrawTransformedPicture element, matrix
 		      end if
 		      
-		    end if
+		      g.TextFont = elementStyle.LookupString("font-family", "Arial")
+		      g.TextUnit = FontUnits.Pixel
+		      g.TextSize = elementStyle.LookupDouble("font-size", 16)
+		      
+		      if textStr <> "" then
+		        
+		        mulMatrix = initTranslationMatrix(x, y - g.TextAscent)
+		        elementMatrix = matrixMultiply(matrix, mulMatrix)
+		        
+		        strShape.FillColor = determineColor(fill)
+		        strShape.TextFont = g.TextFont
+		        strShape.TextUnit = g.TextUnit
+		        strShape.TextSize = g.TextSize
+		        select case style.Lookup("text-anchor", "start")
+		        case "end"
+		          strShape.HorizontalAlignment = StringShape.Alignment.Right
+		        case "middle"
+		          strShape.HorizontalAlignment = StringShape.Alignment.Center
+		        case else
+		          strShape.HorizontalAlignment = StringShape.Alignment.Left
+		        end select
+		        strShape.VerticalAlignment = StringShape.Alignment.Top
+		        strShape.Text = textStr
+		        
+		        // to speed up rendering, we only use DrawTransformedPicture when needed
+		        
+		        if isTranslationMatrix(matrix) then
+		          g.DrawObject strShape, elementMatrix(2), elementMatrix(5)
+		        else
+		          element = new Picture(g.StringWidth(textStr), g.TextHeight)
+		          eg = element.Graphics
+		          
+		          eg.DrawObject strShape, _
+		          0, _
+		          0
+		          
+		          g.DrawTransformedPicture element, elementMatrix
+		        end if
+		        
+		      end if
+		      
+		      i = i + 1
+		      
+		    wend
 		    
 		  end if
 		End Sub
