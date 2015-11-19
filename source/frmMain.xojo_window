@@ -137,6 +137,10 @@ End
 		  f = dlg.ShowModal()
 		  
 		  if f <> nil then
+		    
+		    Self.Title = "DrawSVG Extension v" + Str(App.MajorVersion) + "." + Str(App.MinorVersion) + "." + Str(App.BugVersion) + _
+		    " - " + f.NativePath
+		    
 		    tis = TextInputStream.Open(f)
 		    SvgXML = tis.ReadAll()
 		    tis.Close
