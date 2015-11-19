@@ -2619,7 +2619,9 @@ Protected Module DrawSVG
 		      g.TextFont = elementStyle.LookupString("font-family", "Arial")
 		      g.TextUnit = FontUnits.Pixel
 		      g.TextSize = elementStyle.LookupDouble("font-size", 16)
-		      
+		      if elementStyle.LookupString("font-weight", "") = "bold" then
+		         g.Bold = true
+		      end if
 		      if textStr <> "" then
 		        
 		        mulMatrix = initTranslationMatrix(x, y - g.TextAscent)
@@ -2629,6 +2631,7 @@ Protected Module DrawSVG
 		        strShape.TextFont = g.TextFont
 		        strShape.TextUnit = g.TextUnit
 		        strShape.TextSize = g.TextSize
+		        strShape.Bold = g.Bold
 		        select case style.Lookup("text-anchor", "start")
 		        case "end"
 		          strShape.HorizontalAlignment = StringShape.Alignment.Right
