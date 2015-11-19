@@ -1435,6 +1435,15 @@ Protected Module DrawSVG
 		  Dim currentCommand As String
 		  Dim additionalPath() As String
 		  Dim e As DrawSVG.SVGException
+		  Dim x1 As Double
+		  Dim y1 As Double
+		  Dim x2 As Double
+		  Dim y2 As Double
+		  Dim flagA As Integer
+		  Dim flagS As Integer
+		  Dim rx As Double
+		  Dim ry As Double
+		  Dim theta As Double
 		  
 		  style = new JSONItem("{}")
 		  style.ApplyValues parentStyle
@@ -1561,24 +1570,52 @@ Protected Module DrawSVG
 		  i = 0
 		  while i <= path.Ubound
 		    
-		    if StrComp(path(i), "A", 0) = 0 then // absolute elliptical arc
-		      // todo
-		      e = new DrawSVG.SVGException()
-		      e.ErrorNumber = 2
-		      e.Message = "Feature not yet implemented: Absolute elliptical arc"
-		      Raise e
-		      i = path.Ubound
+		    // absolute elliptical arc AND relative elliptical arc
+		    
+		    if (StrComp(path(i), "A", 0) = 0) or (StrComp(path(i), "a", 0) = 0) then 
 		      
-		      prevCCommand = false
-		      prevQCommand = false
-		      
-		    elseif StrComp(path(i), "a", 0) = 0 then // relative elliptical arc
-		      // todo
-		      e = new DrawSVG.SVGException()
-		      e.ErrorNumber = 2
-		      e.Message = "Feature not yet implemented: Relative elliptical arc"
-		      Raise e
-		      i = path.Ubound
+		      do
+		        
+		        x1 = penX
+		        y1 = penY
+		        i = i + 1
+		        rx = Val(path(i))
+		        i = i + 1
+		        ry = Val(path(i))
+		        i = i + 1
+		        theta = Val(path(i))
+		        i = i + 1
+		        flagA = Val(path(i))
+		        i = i + 1
+		        flagS = Val(path(i))
+		        
+		        if (StrComp(path(i), "A", 0) = 0) then
+		          i = i + 1
+		          x2 = Val(path(i))
+		          i = i + 1
+		          y2 = Val(path(i))
+		        else
+		          i = i + 1
+		          x2 = penX + Val(path(i))
+		          i = i + 1
+		          y2 = penY + Val(path(i))
+		        end if
+		        
+		        penX = x2
+		        penY = y2
+		        
+		        ' x1, y1, x2, y2, fA, fS, rx, ry, theta
+		        
+		        break // todo
+		        
+		        continueImplicit = false
+		        if i < path.Ubound then
+		          if IsNumeric(path(i + 1)) then
+		            continueImplicit = true
+		          end if
+		        end if
+		        
+		      loop until not continueImplicit
 		      
 		      prevCCommand = false
 		      prevQCommand = false
@@ -2620,7 +2657,7 @@ Protected Module DrawSVG
 		      g.TextUnit = FontUnits.Pixel
 		      g.TextSize = elementStyle.LookupDouble("font-size", 16)
 		      if elementStyle.LookupString("font-weight", "") = "bold" then
-		         g.Bold = true
+		        g.Bold = true
 		      end if
 		      if textStr <> "" then
 		        
