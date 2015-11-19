@@ -113,7 +113,15 @@ End
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
-		  g.DrawSVG SvgXML, 0, 0
+		  try
+		    
+		    g.DrawSVG SvgXML, 0, 0
+		    
+		  catch e As DrawSVG.SVGException
+		    
+		    MsgBox "Error " + Str(e.ErrorNumber) + " - " + e.Message
+		    
+		  end try
 		  
 		End Sub
 	#tag EndEvent
