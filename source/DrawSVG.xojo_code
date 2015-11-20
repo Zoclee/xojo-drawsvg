@@ -1,6 +1,28 @@
 #tag Module
 Protected Module DrawSVG
 	#tag Method, Flags = &h21
+		Private Function angleBetweenVectors(u As REALbasic.Point, v As REALbasic.Point) As Double
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
+		  Dim angle As Double
+		  
+		  angle = ACos( (u.X * v.X + u.Y * v.Y) / ( Sqrt(u.X^2 + u.Y^2) * Sqrt(v.X^2 + v.Y^2) ) )
+		  
+		  if (u.x * v.y - u.y * v.x) < 0 then
+		    angle = -Abs(angle)
+		  else
+		    angle = Abs(angle)
+		  end if
+		  
+		  angle = angle * RadToDeg
+		  
+		  return angle
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
 		Private Sub ApplyValues(Extends Item As JSONItem, withItem As JSONItem)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
@@ -1444,6 +1466,17 @@ Protected Module DrawSVG
 		  Dim rx As Double
 		  Dim ry As Double
 		  Dim theta As Double
+		  Dim x1Comp As Double
+		  Dim y1Comp As Double
+		  Dim cxComp As Double
+		  Dim cyComp As Double
+		  Dim cx As Double
+		  Dim cy As Double
+		  Dim theta1 As Double
+		  Dim thetaDelta As Double
+		  Dim tmpDbl As Double
+		  Dim u As REALbasic.Point
+		  Dim v As REALbasic.Point
 		  
 		  style = new JSONItem("{}")
 		  style.ApplyValues parentStyle
@@ -1604,7 +1637,47 @@ Protected Module DrawSVG
 		        penX = x2
 		        penY = y2
 		        
+		        ' Given the followin variables:
 		        ' x1, y1, x2, y2, fA, fS, rx, ry, theta
+		        ' we want to find:
+		        ' cx cy theta1 and thetaDelta
+		        
+		        // Step 1: Compute (x1', y1')
+		        
+		        x1Comp = cos(theta * DegToRad) * ((x1 - x2) / 2) +  sin(theta * DegToRad) * ((y1 - y2) / 2)
+		        y1Comp = -sin(theta * DegToRad) * ((x1 - x2) / 2) +  cos(theta * DegToRad) * ((y1 - y2) / 2)
+		        
+		        // Step 2: Compute(cx', cy')
+		        
+		        tmpDbl = Sqrt( (rx^2 * ry^2 - rx^2 * y1Comp^2 - ry^2 * x1Comp^2) / (rx^2 * y1Comp^2 + ry^2 * x1Comp^2) )
+		        if flagA = flagS then
+		          tmpDbl = -tmpDbl
+		        end if
+		        
+		        cxComp = tmpDbl * (rx * y1Comp / ry)
+		        cyComp = tmpDbl * -(ry * x1Comp / rx)
+		        
+		        // Step 3: Compute (cx, cy) from (cx', cy')
+		        
+		        cx = (cos(theta * DegToRad) * cxComp + -sin(theta * DegToRad) * cyComp) + ((x1 + x2) / 2)
+		        cy = (sin(theta * DegToRad) * cxComp + cos(theta * DegToRad) * cyComp) + ((y1 + y2) / 2)
+		        
+		        // Step 4: Compute theta1 and thetaDelta
+		        
+		        u = new REALbasic.Point(1, 0)
+		        v = new REALbasic.Point((x1Comp - cxComp) / rx, (y1Comp - cyComp) / ry)
+		        theta1 = angleBetweenVectors(u, v)
+		        
+		        u = new REALbasic.Point((x1Comp - cxComp) / rx, (y1Comp - cyComp) / ry)
+		        v = new REALbasic.Point((-x1Comp - cxComp) / rx, (-y1Comp - cyComp) / ry)
+		        thetaDelta = angleBetweenVectors(u, v)
+		        thetaDelta = thetaDelta mod 360
+		        
+		        if (flagS = 0) and (thetaDelta > 0) then
+		          thetaDelta = thetaDelta - 360
+		        elseif (flagS = 1) and (thetaDelta < 0) then
+		          thetaDelta = thetaDelta + 360
+		        end if
 		        
 		        break // todo
 		        
@@ -2763,6 +2836,9 @@ Protected Module DrawSVG
 	#tag EndConstant
 
 	#tag Constant, Name = Pi, Type = Double, Dynamic = False, Default = \"3.1415927", Scope = Private
+	#tag EndConstant
+
+	#tag Constant, Name = RadToDeg, Type = Double, Dynamic = False, Default = \"57.2958", Scope = Private
 	#tag EndConstant
 
 
