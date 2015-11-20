@@ -1477,6 +1477,7 @@ Protected Module DrawSVG
 		  Dim tmpDbl As Double
 		  Dim u As REALbasic.Point
 		  Dim v As REALbasic.Point
+		  Dim currentAngle As Double
 		  
 		  style = new JSONItem("{}")
 		  style.ApplyValues parentStyle
@@ -1679,7 +1680,33 @@ Protected Module DrawSVG
 		          thetaDelta = thetaDelta + 360
 		        end if
 		        
-		        break // todo
+		        // Build path using calculated values
+		        
+		        if thetaDelta > 0 then
+		          currentAngle = theta1
+		          while (currentAngle + 20) < (theta1 + thetaDelta)
+		            cs = new CurveShape()
+		            fs.Append cs
+		            
+		            tmpX = cx + rx * cos(currentAngle * DegToRad) // center a + radius x * cos(theta)
+		            tmpY = cy + ry * sin(currentAngle * DegToRad) // center b + radius y * sin(theta)
+		            transformPoint tmpX, tmpY, matrix
+		            cs.X = tmpX
+		            cs.Y = tmpY
+		            
+		            tmpX = cx + rx * cos((currentAngle + 20)  * DegToRad) // center a + radius x * cos(theta)
+		            tmpY = cy + ry * sin((currentAngle + 20)  * DegToRad) // center b + radius y * sin(theta)
+		            transformPoint tmpX, tmpY, matrix
+		            cs.X2 = tmpX
+		            cs.Y2 = tmpY
+		            
+		            currentAngle = currentAngle + 20
+		          wend 
+		          
+		          
+		        else
+		          break // todo
+		        end if
 		        
 		        continueImplicit = false
 		        if i < path.Ubound then
