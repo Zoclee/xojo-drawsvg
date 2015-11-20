@@ -2772,7 +2772,7 @@ Protected Module DrawSVG
 		        strShape.TextUnit = g.TextUnit
 		        strShape.TextSize = g.TextSize
 		        strShape.Bold = g.Bold
-		        select case style.Lookup("text-anchor", "start")
+		        select case elementStyle.Lookup("text-anchor", "start")
 		        case "end"
 		          strShape.HorizontalAlignment = StringShape.Alignment.Right
 		        case "middle"
