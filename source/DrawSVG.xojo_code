@@ -1639,7 +1639,7 @@ Protected Module DrawSVG
 		        'penX = x2
 		        'penY = y2
 		        
-		        ' Given the followin variables:
+		        ' Given the following variables:
 		        ' x1, y1, x2, y2, fA, fS, rx, ry, theta
 		        ' we want to find:
 		        ' cx cy theta1 and thetaDelta
