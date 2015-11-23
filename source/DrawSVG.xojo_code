@@ -1478,6 +1478,7 @@ Protected Module DrawSVG
 		  Dim u As REALbasic.Point
 		  Dim v As REALbasic.Point
 		  Dim currentAngle As Integer
+		  Dim angleStep As Integer
 		  
 		  style = new JSONItem("{}")
 		  style.ApplyValues parentStyle
@@ -1682,59 +1683,34 @@ Protected Module DrawSVG
 		        
 		        // Build path using calculated values
 		        
-		        
-		        
 		        if thetaDelta > 0 then
-		          
-		          currentAngle = theta1 + 1
-		          
-		          while currentAngle <= (theta1 + thetaDelta)
-		            cs = new CurveShape()
-		            fs.Append cs
-		            
-		            tmpX = penX
-		            tmpY = penY
-		            transformPoint tmpX, tmpY, matrix
-		            cs.X = tmpX
-		            cs.Y = tmpY
-		            
-		            tmpX = cx + rx * cos(currentAngle * DegToRad) // center a + radius x * cos(theta)
-		            tmpY = cy + ry * sin(currentAngle * DegToRad) // center b + radius y * sin(theta)
-		            penX = tmpX
-		            penY = tmpY
-		            transformPoint tmpX, tmpY, matrix
-		            cs.X2 = tmpX
-		            cs.Y2 = tmpY
-		            
-		            currentAngle = currentAngle + 1
-		          wend 
-		          
+		          angleStep = 1
 		        else
-		          
-		          currentAngle = theta1 - 1
-		          
-		          while currentAngle >= (theta1 + thetaDelta)
-		            cs = new CurveShape()
-		            fs.Append cs
-		            
-		            tmpX = penX
-		            tmpY = penY
-		            transformPoint tmpX, tmpY, matrix
-		            cs.X = tmpX
-		            cs.Y = tmpY
-		            
-		            tmpX = cx + rx * cos(currentAngle  * DegToRad) // center a + radius x * cos(theta)
-		            tmpY = cy + ry * sin(currentAngle  * DegToRad) // center b + radius y * sin(theta)
-		            penX = tmpX
-		            penY = tmpY
-		            transformPoint tmpX, tmpY, matrix
-		            cs.X2 = tmpX
-		            cs.Y2 = tmpY
-		            
-		            currentAngle = currentAngle - 1
-		          wend
-		          
+		          angleStep = -1
 		        end if
+		        
+		        currentAngle = theta1 + angleStep
+		        
+		        while currentAngle * angleStep <= (theta1 + thetaDelta) * angleStep
+		          cs = new CurveShape()
+		          fs.Append cs
+		          
+		          tmpX = penX
+		          tmpY = penY
+		          transformPoint tmpX, tmpY, matrix
+		          cs.X = tmpX
+		          cs.Y = tmpY
+		          
+		          tmpX = cx + rx * cos(currentAngle * DegToRad) // center a + radius x * cos(theta)
+		          tmpY = cy + ry * sin(currentAngle * DegToRad) // center b + radius y * sin(theta)
+		          penX = tmpX
+		          penY = tmpY
+		          transformPoint tmpX, tmpY, matrix
+		          cs.X2 = tmpX
+		          cs.Y2 = tmpY
+		          
+		          currentAngle = currentAngle + angleStep
+		        wend 
 		        
 		        continueImplicit = false
 		        if i < path.Ubound then
