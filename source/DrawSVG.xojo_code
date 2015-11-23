@@ -1682,12 +1682,10 @@ Protected Module DrawSVG
 		        
 		        // Build path using calculated values
 		        
+		        currentAngle = theta1
+		        
 		        if thetaDelta > 0 then
 		          
-		          'cs = new CurveShape()
-		          'fs.Append cs
-		          
-		          currentAngle = theta1
 		          while (currentAngle + 20) < (theta1 + thetaDelta)
 		            cs = new CurveShape()
 		            fs.Append cs
@@ -1709,8 +1707,7 @@ Protected Module DrawSVG
 		          
 		        else
 		          
-		          currentAngle = theta1
-		          while (currentAngle + 20) > (theta1 + thetaDelta)
+		          while (currentAngle - 20) > (theta1 + thetaDelta)
 		            cs = new CurveShape()
 		            fs.Append cs
 		            
