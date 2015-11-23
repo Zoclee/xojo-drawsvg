@@ -497,8 +497,8 @@ Protected Module DrawSVG
 		  
 		  startX = minXY.X
 		  startY = minXY.Y
-		  stopX = maxXY.X
-		  stopY = maxXY.Y
+		  stopX = maxXY.X 
+		  stopY = maxXY.Y 
 		  
 		  'calculate tranformation matrix
 		  
@@ -2796,7 +2796,9 @@ Protected Module DrawSVG
 		        case "end"
 		          strShape.HorizontalAlignment = StringShape.Alignment.Right
 		        case "middle"
-		          strShape.HorizontalAlignment = StringShape.Alignment.Center
+		          strShape.HorizontalAlignment = StringShape.Alignment.Left
+		          mulMatrix = initTranslationMatrix(-g.StringWidth(textStr) / 2, 0)
+		          elementMatrix = matrixMultiply(elementMatrix, mulMatrix)
 		        case else
 		          strShape.HorizontalAlignment = StringShape.Alignment.Left
 		        end select
