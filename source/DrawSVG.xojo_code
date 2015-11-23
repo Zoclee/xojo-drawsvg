@@ -1477,8 +1477,8 @@ Protected Module DrawSVG
 		  Dim tmpDbl As Double
 		  Dim u As REALbasic.Point
 		  Dim v As REALbasic.Point
-		  Dim currentAngle As Integer
-		  Dim angleStep As Integer
+		  Dim currentAngle As Double
+		  Dim angleStep As Double
 		  
 		  style = new JSONItem("{}")
 		  style.ApplyValues parentStyle
@@ -1683,11 +1683,7 @@ Protected Module DrawSVG
 		        
 		        // Build path using calculated values
 		        
-		        if thetaDelta > 0 then
-		          angleStep = 1
-		        else
-		          angleStep = -1
-		        end if
+		        angleStep = thetaDelta / Abs(thetaDelta)
 		        
 		        currentAngle = theta1 + angleStep
 		        
