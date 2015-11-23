@@ -1698,6 +1698,7 @@ Protected Module DrawSVG
 		            
 		            tmpX = cx + rx * cos((currentAngle + 20)  * DegToRad) // center a + radius x * cos(theta)
 		            tmpY = cy + ry * sin((currentAngle + 20)  * DegToRad) // center b + radius y * sin(theta)
+		            
 		            transformPoint tmpX, tmpY, matrix
 		            cs.X2 = tmpX
 		            cs.Y2 = tmpY
@@ -2777,6 +2778,7 @@ Protected Module DrawSVG
 		      g.TextFont = elementStyle.LookupString("font-family", "Arial")
 		      g.TextUnit = FontUnits.Pixel
 		      g.TextSize = elementStyle.LookupDouble("font-size", 16)
+		      g.Bold = false
 		      if elementStyle.LookupString("font-weight", "") = "bold" then
 		        g.Bold = true
 		      end if
