@@ -1429,14 +1429,13 @@ Protected Module DrawSVG
 		  Dim localStyle As JSONItem
 		  Dim style As JSONItem
 		  Dim matrix() As Double
-		  Dim i As Integer
+		  Dim i As UInt64
 		  Dim fill As String
 		  Dim stroke As String
 		  Dim strokeWidth As Double
 		  Dim fs as new FigureShape
 		  Dim cs As CurveShape
 		  Dim d As String
-		  Dim dLen As Integer
 		  Dim ch As String
 		  Dim penX As Double
 		  Dim penY As Double
@@ -1479,6 +1478,7 @@ Protected Module DrawSVG
 		  Dim v As REALbasic.Point
 		  Dim currentAngle As Double
 		  Dim angleStep As Double
+		  Dim pathMB As MemoryBlock
 		  
 		  style = new JSONItem("{}")
 		  style.ApplyValues parentStyle
@@ -1517,13 +1517,14 @@ Protected Module DrawSVG
 		  
 		  d = Trim(style.LookupString("d", ""))
 		  d = d.ReplaceAll(",", " ")
-		  dLen = Len(d)
+		  
+		  pathMB = d
 		  
 		  Redim path(-1)
 		  path.Append ""
-		  i = 1
-		  while i <= dLen
-		    ch = Mid(d, i, 1)
+		  i = 0
+		  while i < pathMB.Size
+		    ch = pathMB.StringValue(i, 1)
 		    
 		    if ch = " " then
 		      
