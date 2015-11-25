@@ -1690,7 +1690,7 @@ Protected Module DrawSVG
 		        
 		        currentAngle = theta1 + angleStep
 		        
-		        while currentAngle * adjustValue <= (theta1 + thetaDelta) * adjustValue
+		        while currentAngle * adjustValue < (theta1 + thetaDelta) * adjustValue
 		          cs = new CurveShape()
 		          fs.Append cs
 		          
@@ -1700,8 +1700,14 @@ Protected Module DrawSVG
 		          cs.X = tmpX
 		          cs.Y = tmpY
 		          
-		          tmpX = cx + rx * cos(currentAngle * DegToRad) // center a + radius x * cos(theta)
-		          tmpY = cy + ry * sin(currentAngle * DegToRad) // center b + radius y * sin(theta)
+		          if ((currentAngle + angleStep) * adjustValue) >= ((theta1 + thetaDelta) * adjustValue) then
+		            tmpX = x2
+		            tmpY = y2
+		          else
+		            tmpX = cx + rx * cos(currentAngle * DegToRad) // center a + radius x * cos(theta)
+		            tmpY = cy + ry * sin(currentAngle * DegToRad) // center b + radius y * sin(theta)
+		          end if
+		          
 		          penX = tmpX
 		          penY = tmpY
 		          transformPoint tmpX, tmpY, matrix
@@ -1709,6 +1715,7 @@ Protected Module DrawSVG
 		          cs.Y2 = tmpY
 		          
 		          currentAngle = currentAngle + angleStep
+		          
 		        wend 
 		        
 		        continueImplicit = false
