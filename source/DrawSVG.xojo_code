@@ -1479,6 +1479,7 @@ Protected Module DrawSVG
 		  Dim currentAngle As Double
 		  Dim angleStep As Double
 		  Dim pathMB As MemoryBlock
+		  Dim adjustValue As Integer
 		  
 		  style = new JSONItem("{}")
 		  style.ApplyValues parentStyle
@@ -1637,8 +1638,7 @@ Protected Module DrawSVG
 		          y2 = penY + Val(path(i))
 		        end if
 		        
-		        'penX = x2
-		        'penY = y2
+		        
 		        
 		        ' Given the following variables:
 		        ' x1, y1, x2, y2, fA, fS, rx, ry, theta
@@ -1684,11 +1684,13 @@ Protected Module DrawSVG
 		        
 		        // Build path using calculated values
 		        
-		        angleStep = thetaDelta / Abs(thetaDelta)
+		        adjustValue = thetaDelta / Abs(thetaDelta)
+		        
+		        angleStep = (thetaDelta / 360) 
 		        
 		        currentAngle = theta1 + angleStep
 		        
-		        while currentAngle * angleStep <= (theta1 + thetaDelta) * angleStep
+		        while currentAngle * adjustValue <= (theta1 + thetaDelta) * adjustValue
 		          cs = new CurveShape()
 		          fs.Append cs
 		          
