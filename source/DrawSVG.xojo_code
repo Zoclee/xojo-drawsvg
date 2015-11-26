@@ -1604,6 +1604,10 @@ Protected Module DrawSVG
 		            i = i + 6
 		          wend
 		          
+		        else
+		          
+		          i = i + 1
+		          
 		        end if
 		        
 		        i = i + 1
