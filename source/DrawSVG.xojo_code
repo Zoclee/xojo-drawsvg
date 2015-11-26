@@ -1480,6 +1480,7 @@ Protected Module DrawSVG
 		  Dim angleStep As Double
 		  Dim pathMB As MemoryBlock
 		  Dim adjustValue As Integer
+		  Dim relativeCommand As Boolean
 		  
 		  style = new JSONItem("{}")
 		  style.ApplyValues parentStyle
@@ -1572,24 +1573,57 @@ Protected Module DrawSVG
 		  currentCommand = ""
 		  while i <= path.Ubound
 		    select case path(i)
+		      
 		    case "M", "m"
+		      if StrComp(path(i), "m", 0) = 0 then
+		        penX = penX + Val(path(i + 1))
+		        penY = penY + Val(path(i + 2))
+		        relativeCommand = true
+		      else
+		        penX = Val(path(i + 1))
+		        penY = Val(path(i + 2))
+		        relativeCommand = false
+		      end if
 		      if currentCommand <> path(i) then
 		        additionalPath.Append path(i)
 		      end if
 		      additionalPath.Append path(i + 1)
 		      additionalPath.Append path(i + 2)
 		      currentCommand = path(i)
+		      i = i + 3
 		      while (i <= path.Ubound) and path(i) <> "z"
-		        i = i + 1
+		        
+		        if StrComp(path(i), "c", 0) = 0 then // relative curveto
+		          
+		          penX = penX + Val(path(i + 5))
+		          penY = penY + Val(path(i + 6))
+		          i = i + 7
+		          while IsNumeric(path(i))
+		            penX = penX + Val(path(i + 4))
+		            penY = penY + Val(path(i + 5))
+		            i = i + 6
+		          wend
+		          i = i + 1
+		        else
+		          i = i + 1
+		        end if
+		        
 		      wend
 		      if i <= path.Ubound then
 		        path.Insert i, "L"
-		        path.Insert i + 1, additionalPath(additionalPath.Ubound - 1)
-		        path.Insert i + 2, additionalPath(additionalPath.Ubound)
+		        if relativeCommand then
+		          path.Insert i + 1, Str(penX)
+		          path.Insert i + 2, Str(penY)
+		        else
+		          path.Insert i + 1, additionalPath(additionalPath.Ubound - 1)
+		          path.Insert i + 2, additionalPath(additionalPath.Ubound)
+		        end if
 		      end if
 		      i = i + 1
+		      
 		    case else 
 		      i = i + 1
+		      
 		    end select
 		    
 		  wend
@@ -1603,7 +1637,10 @@ Protected Module DrawSVG
 		    wend
 		  end if
 		  
-		  // process (draw) path
+		  penX = 0
+		  penY = 0
+		  
+		  // draw path
 		  
 		  prevCCommand = false
 		  prevQCommand = false
