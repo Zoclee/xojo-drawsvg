@@ -1536,12 +1536,16 @@ Protected Module DrawSVG
 		    elseif ch = "-" then
 		      
 		      if path(path.Ubound) <> "" then
-		        path.Append "-"
+		        if right(path(path.Ubound), 1) = "e" then
+		          path(path.Ubound) = path(path.Ubound) + ch
+		        else
+		          path.Append "-"
+		        end if
 		      else
 		        path(path.Ubound) = ch
 		      end if
 		      
-		    elseif not IsNumeric(ch) and (ch <> ".") and (ch <> "-") then
+		    elseif not IsNumeric(ch) and (ch <> ".") and (ch <> "-") and (ch <> "e") then
 		      
 		      if path(path.Ubound) <> "" then
 		        path.Append ch
@@ -1637,8 +1641,6 @@ Protected Module DrawSVG
 		          i = i + 1
 		          y2 = penY + Val(path(i))
 		        end if
-		        
-		        
 		        
 		        ' Given the following variables:
 		        ' x1, y1, x2, y2, fA, fS, rx, ry, theta
