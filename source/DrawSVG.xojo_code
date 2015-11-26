@@ -1593,7 +1593,18 @@ Protected Module DrawSVG
 		      i = i + 3
 		      while (i <= path.Ubound) and (path(i) <> "z")
 		        
-		        if StrComp(path(i), "c", 0) = 0 then // relative curveto
+		        if StrComp(path(i), "C", 0) = 0 then // absolute curveto
+		          
+		          penX = Val(path(i + 5))
+		          penY = Val(path(i + 6))
+		          i = i + 7
+		          while (i <= path.Ubound) and IsNumeric(path(i))
+		            penX = Val(path(i + 4))
+		            penY = Val(path(i + 5))
+		            i = i + 6
+		          wend
+		          
+		        elseif StrComp(path(i), "c", 0) = 0 then // relative curveto
 		          
 		          penX = penX + Val(path(i + 5))
 		          penY = penY + Val(path(i + 6))
@@ -1602,6 +1613,26 @@ Protected Module DrawSVG
 		            penX = penX + Val(path(i + 4))
 		            penY = penY + Val(path(i + 5))
 		            i = i + 6
+		          wend
+		          
+		          'elseif StrComp(path(i), "H", 0) = 0 then // absolute horizontal lineto
+		          '
+		          'penX = Val(path(i + 1))
+		          '
+		          'i = i + 2
+		          'while (i <= path.Ubound) and IsNumeric(path(i))
+		          'penX = Val(path(i))
+		          'i = i + 1
+		          'wend
+		          
+		        elseif StrComp(path(i), "h", 0) = 0 then // relative horizontal lineto
+		          
+		          penX = penX + Val(path(i + 1))
+		          
+		          i = i + 2
+		          while (i <= path.Ubound) and IsNumeric(path(i))
+		            penX = penX + Val(path(i))
+		            i = i + 1
 		          wend
 		          
 		        else
