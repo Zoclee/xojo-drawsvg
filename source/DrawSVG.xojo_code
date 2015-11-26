@@ -1591,22 +1591,22 @@ Protected Module DrawSVG
 		      additionalPath.Append path(i + 2)
 		      currentCommand = path(i)
 		      i = i + 3
-		      while (i <= path.Ubound) and path(i) <> "z"
+		      while (i <= path.Ubound) and (path(i) <> "z")
 		        
 		        if StrComp(path(i), "c", 0) = 0 then // relative curveto
 		          
 		          penX = penX + Val(path(i + 5))
 		          penY = penY + Val(path(i + 6))
 		          i = i + 7
-		          while IsNumeric(path(i))
+		          while (i <= path.Ubound) and IsNumeric(path(i))
 		            penX = penX + Val(path(i + 4))
 		            penY = penY + Val(path(i + 5))
 		            i = i + 6
 		          wend
-		          i = i + 1
-		        else
-		          i = i + 1
+		          
 		        end if
+		        
+		        i = i + 1
 		        
 		      wend
 		      if i <= path.Ubound then
