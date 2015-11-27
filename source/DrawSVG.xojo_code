@@ -1582,10 +1582,10 @@ Protected Module DrawSVG
 		          relativeCommand = true
 		        end if
 		        if currentCommand <> path(i) then
-		          additionalPath.Append path(i)
+		          additionalPath.Append "M"
 		        end if
-		        additionalPath.Append path(i + 1)
-		        additionalPath.Append path(i + 2)
+		        additionalPath.Append Str(penX)
+		        additionalPath.Append Str(penY)
 		        currentCommand = path(i)
 		        i = i + 3
 		        while (i <= path.Ubound) and IsNumeric(path(i))
@@ -1600,7 +1600,7 @@ Protected Module DrawSVG
 		          relativeCommand = false
 		        end if
 		        if currentCommand <> path(i) then
-		          additionalPath.Append path(i)
+		          additionalPath.Append "M"
 		        end if
 		        additionalPath.Append path(i + 1)
 		        additionalPath.Append path(i + 2)
@@ -1735,15 +1735,8 @@ Protected Module DrawSVG
 		      wend
 		      if i <= path.Ubound then
 		        path.Insert i, "L"
-		        if relativeCommand then
-		          'path.Insert i + 1, Str(penX)
-		          'path.Insert i + 2, Str(penY)
-		          path.Insert i + 1, additionalPath(additionalPath.Ubound - 1)
-		          path.Insert i + 2, additionalPath(additionalPath.Ubound)
-		        else
-		          path.Insert i + 1, additionalPath(additionalPath.Ubound - 1)
-		          path.Insert i + 2, additionalPath(additionalPath.Ubound)
-		        end if
+		        path.Insert i + 1, additionalPath(additionalPath.Ubound - 1)
+		        path.Insert i + 2, additionalPath(additionalPath.Ubound)
 		      end if
 		      i = i + 1
 		      
