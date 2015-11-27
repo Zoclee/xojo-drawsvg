@@ -1581,21 +1581,39 @@ Protected Module DrawSVG
 		        if i = 0 then
 		          relativeCommand = true
 		        end if
+		        if currentCommand <> path(i) then
+		          additionalPath.Append path(i)
+		        end if
+		        additionalPath.Append path(i + 1)
+		        additionalPath.Append path(i + 2)
+		        currentCommand = path(i)
+		        i = i + 3
+		        while (i <= path.Ubound) and IsNumeric(path(i))
+		          penX = penX + Val(path(i))
+		          penX = penY + Val(path(i + 1))
+		          i = i + 2
+		        wend
 		      else
 		        penX = Val(path(i + 1))
 		        penY = Val(path(i + 2))
 		        if i = 0 then
 		          relativeCommand = false
 		        end if
+		        if currentCommand <> path(i) then
+		          additionalPath.Append path(i)
+		        end if
+		        additionalPath.Append path(i + 1)
+		        additionalPath.Append path(i + 2)
+		        currentCommand = path(i)
+		        i = i + 3
+		        while (i <= path.Ubound) and IsNumeric(path(i))
+		          penX = Val(path(i))
+		          penX = Val(path(i + 1))
+		          i = i + 2
+		        wend
 		      end if
-		      if currentCommand <> path(i) then
-		        additionalPath.Append path(i)
-		      end if
-		      additionalPath.Append path(i + 1)
-		      additionalPath.Append path(i + 2)
-		      currentCommand = path(i)
 		      
-		      i = i + 3
+		      
 		      while (i <= path.Ubound) and (path(i) <> "z")
 		        
 		        if StrComp(path(i), "C", 0) = 0 then // absolute curveto
@@ -1688,7 +1706,7 @@ Protected Module DrawSVG
 		            i = i + 4
 		          wend
 		          
-		        elseif StrComp(path(i), "v", 0) = 0 then // absolute vertical lineto
+		        elseif StrComp(path(i), "V", 0) = 0 then // absolute vertical lineto
 		          
 		          penY = Val(path(i + 1))
 		          
@@ -1718,8 +1736,10 @@ Protected Module DrawSVG
 		      if i <= path.Ubound then
 		        path.Insert i, "L"
 		        if relativeCommand then
-		          path.Insert i + 1, Str(penX)
-		          path.Insert i + 2, Str(penY)
+		          'path.Insert i + 1, Str(penX)
+		          'path.Insert i + 2, Str(penY)
+		          path.Insert i + 1, additionalPath(additionalPath.Ubound - 1)
+		          path.Insert i + 2, additionalPath(additionalPath.Ubound)
 		        else
 		          path.Insert i + 1, additionalPath(additionalPath.Ubound - 1)
 		          path.Insert i + 2, additionalPath(additionalPath.Ubound)
