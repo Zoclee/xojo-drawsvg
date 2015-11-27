@@ -1586,13 +1586,6 @@ Protected Module DrawSVG
 		        end if
 		        additionalPath.Append Str(penX)
 		        additionalPath.Append Str(penY)
-		        currentCommand = path(i)
-		        i = i + 3
-		        while (i <= path.Ubound) and IsNumeric(path(i))
-		          penX = penX + Val(path(i))
-		          penX = penY + Val(path(i + 1))
-		          i = i + 2
-		        wend
 		      else
 		        penX = Val(path(i + 1))
 		        penY = Val(path(i + 2))
@@ -1604,15 +1597,15 @@ Protected Module DrawSVG
 		        end if
 		        additionalPath.Append path(i + 1)
 		        additionalPath.Append path(i + 2)
-		        currentCommand = path(i)
-		        i = i + 3
-		        while (i <= path.Ubound) and IsNumeric(path(i))
-		          penX = Val(path(i))
-		          penX = Val(path(i + 1))
-		          i = i + 2
-		        wend
 		      end if
 		      
+		      currentCommand = path(i)
+		      i = i + 3
+		      while (i <= path.Ubound) and IsNumeric(path(i))
+		        penX = Val(path(i))
+		        penX = Val(path(i + 1))
+		        i = i + 2
+		      wend
 		      
 		      while (i <= path.Ubound) and (path(i) <> "z")
 		        
