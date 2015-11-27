@@ -1578,11 +1578,15 @@ Protected Module DrawSVG
 		      if StrComp(path(i), "m", 0) = 0 then
 		        penX = penX + Val(path(i + 1))
 		        penY = penY + Val(path(i + 2))
-		        relativeCommand = true
+		        if i = 0 then
+		          relativeCommand = true
+		        end if
 		      else
 		        penX = Val(path(i + 1))
 		        penY = Val(path(i + 2))
-		        relativeCommand = false
+		        if i = 0 then
+		          relativeCommand = false
+		        end if
 		      end if
 		      if currentCommand <> path(i) then
 		        additionalPath.Append path(i)
@@ -1590,6 +1594,7 @@ Protected Module DrawSVG
 		      additionalPath.Append path(i + 1)
 		      additionalPath.Append path(i + 2)
 		      currentCommand = path(i)
+		      
 		      i = i + 3
 		      while (i <= path.Ubound) and (path(i) <> "z")
 		        
@@ -1615,15 +1620,15 @@ Protected Module DrawSVG
 		            i = i + 6
 		          wend
 		          
-		          'elseif StrComp(path(i), "H", 0) = 0 then // absolute horizontal lineto
-		          '
-		          'penX = Val(path(i + 1))
-		          '
-		          'i = i + 2
-		          'while (i <= path.Ubound) and IsNumeric(path(i))
-		          'penX = Val(path(i))
-		          'i = i + 1
-		          'wend
+		        elseif StrComp(path(i), "H", 0) = 0 then // absolute horizontal lineto
+		          
+		          penX = Val(path(i + 1))
+		          
+		          i = i + 2
+		          while (i <= path.Ubound) and IsNumeric(path(i))
+		            penX = Val(path(i))
+		            i = i + 1
+		          wend
 		          
 		        elseif StrComp(path(i), "h", 0) = 0 then // relative horizontal lineto
 		          
@@ -1635,13 +1640,79 @@ Protected Module DrawSVG
 		            i = i + 1
 		          wend
 		          
+		        elseif StrComp(path(i), "L", 0) = 0 then // absolute lineto
+		          
+		          penX = Val(path(i + 1))
+		          penY = Val(path(i + 2))
+		          
+		          i = i + 3
+		          while (i <= path.Ubound) and IsNumeric(path(i))
+		            penX = Val(path(i))
+		            penX = Val(path(i + 1))
+		            i = i + 2
+		          wend
+		          
+		        elseif StrComp(path(i), "l", 0) = 0 then // relative lineto
+		          
+		          penX = penX + Val(path(i + 1))
+		          penY = penY + Val(path(i + 2))
+		          
+		          i = i + 3
+		          while (i <= path.Ubound) and IsNumeric(path(i))
+		            penX = penX + Val(path(i))
+		            penX = penY + Val(path(i + 1))
+		            i = i + 2
+		          wend
+		          
+		        elseif StrComp(path(i), "S", 0) = 0 then // absolute smooth curveto
+		          
+		          penX = Val(path(i + 3))
+		          penY = Val(path(i + 4))
+		          
+		          i = i + 5
+		          while (i <= path.Ubound) and IsNumeric(path(i))
+		            penX = Val(path(i + 2))
+		            penX = Val(path(i + 3))
+		            i = i + 4
+		          wend
+		          
+		        elseif StrComp(path(i), "s", 0) = 0 then // relative smooth curveto
+		          
+		          penX = penX + Val(path(i + 3))
+		          penY = penY + Val(path(i + 4))
+		          
+		          i = i + 5
+		          while (i <= path.Ubound) and IsNumeric(path(i))
+		            penX = penX + Val(path(i + 2))
+		            penX = penY + Val(path(i + 3))
+		            i = i + 4
+		          wend
+		          
+		        elseif StrComp(path(i), "v", 0) = 0 then // absolute vertical lineto
+		          
+		          penY = Val(path(i + 1))
+		          
+		          i = i + 2
+		          while (i <= path.Ubound) and IsNumeric(path(i))
+		            penY = Val(path(i))
+		            i = i + 1
+		          wend
+		          
+		        elseif StrComp(path(i), "v", 0) = 0 then // relative vertical lineto
+		          
+		          penY = penY + Val(path(i + 1))
+		          
+		          i = i + 2
+		          while (i <= path.Ubound) and IsNumeric(path(i))
+		            penY = penY + Val(path(i))
+		            i = i + 1
+		          wend
+		          
 		        else
 		          
 		          i = i + 1
 		          
 		        end if
-		        
-		        i = i + 1
 		        
 		      wend
 		      if i <= path.Ubound then
@@ -1665,6 +1736,11 @@ Protected Module DrawSVG
 		  
 		  if additionalPath.Ubound > 3 then
 		    additionalPath.Append "z"
+		    if relativeCommand then
+		      additionalPath.Append "M"
+		      additionalPath.Append "0"
+		      additionalPath.Append "0"
+		    end if
 		    i = 0
 		    while i <= additionalPath.Ubound
 		      path.Insert(i, additionalPath(i))
