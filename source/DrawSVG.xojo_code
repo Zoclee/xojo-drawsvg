@@ -1605,7 +1605,7 @@ Protected Module DrawSVG
 		      i = i + 3
 		      while (i <= path.Ubound) and IsNumeric(path(i))
 		        penX = Val(path(i))
-		        penX = Val(path(i + 1))
+		        penY = Val(path(i + 1))
 		        i = i + 2
 		      wend
 		      
@@ -1661,7 +1661,7 @@ Protected Module DrawSVG
 		          i = i + 3
 		          while (i <= path.Ubound) and IsNumeric(path(i))
 		            penX = Val(path(i))
-		            penX = Val(path(i + 1))
+		            penY = Val(path(i + 1))
 		            i = i + 2
 		          wend
 		          
@@ -1673,7 +1673,7 @@ Protected Module DrawSVG
 		          i = i + 3
 		          while (i <= path.Ubound) and IsNumeric(path(i))
 		            penX = penX + Val(path(i))
-		            penX = penY + Val(path(i + 1))
+		            penY = penY + Val(path(i + 1))
 		            i = i + 2
 		          wend
 		          
@@ -1685,7 +1685,7 @@ Protected Module DrawSVG
 		          i = i + 5
 		          while (i <= path.Ubound) and IsNumeric(path(i))
 		            penX = Val(path(i + 2))
-		            penX = Val(path(i + 3))
+		            penY = Val(path(i + 3))
 		            i = i + 4
 		          wend
 		          
@@ -1697,7 +1697,7 @@ Protected Module DrawSVG
 		          i = i + 5
 		          while (i <= path.Ubound) and IsNumeric(path(i))
 		            penX = penX + Val(path(i + 2))
-		            penX = penY + Val(path(i + 3))
+		            penY = penY + Val(path(i + 3))
 		            i = i + 4
 		          wend
 		          
@@ -1742,7 +1742,7 @@ Protected Module DrawSVG
 		    
 		  wend
 		  
-		  if additionalPath.Ubound > 3 then
+		  if additionalPath.Ubound > 4 then
 		    additionalPath.Append "z"
 		    if relativeCommand then
 		      additionalPath.Append "M"
@@ -1772,7 +1772,6 @@ Protected Module DrawSVG
 		    if (StrComp(path(i), "A", 0) = 0) or (StrComp(path(i), "a", 0) = 0) then 
 		      
 		      do
-		        
 		        
 		        x1 = penX
 		        y1 = penY
