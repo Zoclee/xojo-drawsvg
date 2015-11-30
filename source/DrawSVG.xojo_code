@@ -1429,6 +1429,8 @@ Protected Module DrawSVG
 		  Dim localStyle As JSONItem
 		  Dim style As JSONItem
 		  Dim matrix() As Double
+		  Dim tmpMatrix() As Double
+		  Dim tmpMatrix2() As Double
 		  Dim i As UInt64
 		  Dim fill As String
 		  Dim stroke As String
@@ -1808,7 +1810,15 @@ Protected Module DrawSVG
 		        
 		        // Step 2: Compute(cx', cy')
 		        
-		        tmpDbl = Sqrt( (rx^2 * ry^2 - rx^2 * y1Comp^2 - ry^2 * x1Comp^2) / (rx^2 * y1Comp^2 + ry^2 * x1Comp^2) )
+		        'tmpDbl = Sqrt( (rx^2 * ry^2 - rx^2 * y1Comp^2 - ry^2 * x1Comp^2) / (rx^2 * y1Comp^2 + ry^2 * x1Comp^2) )
+		        
+		        //tmpDbl = (rx^2 * ry^2) - (rx^2 * y1Comp^2) - (ry^2 * x1Comp^2)
+		        //tmpDbl = (rx^2 * y1Comp^2) + (ry^2 * x1Comp^2)
+		        
+		        tmpDbl = (rx^2 * ry^2) - (rx^2 * y1Comp^2) - (ry^2 * x1Comp^2)
+		        tmpDbl = tmpDbl / ((rx^2 * y1Comp^2) + (ry^2 * x1Comp^2))
+		        tmpDbl = Sqrt(Abs(tmpDbl))
+		        
 		        if flagA = flagS then
 		          tmpDbl = -tmpDbl
 		        end if
@@ -1846,6 +1856,12 @@ Protected Module DrawSVG
 		        
 		        currentAngle = theta1 + angleStep
 		        
+		        tmpMatrix = initTranslationMatrix(cx, cy)
+		        tmpMatrix2 = initRotateMatrix(theta)
+		        tmpMatrix = matrixMultiply(tmpMatrix, tmpMatrix2)
+		        tmpMatrix2 = initTranslationMatrix(-cx, -cy)
+		        tmpMatrix = matrixMultiply(tmpMatrix, tmpMatrix2)
+		        
 		        while currentAngle * adjustValue < (theta1 + thetaDelta) * adjustValue
 		          cs = new CurveShape()
 		          fs.Append cs
@@ -1862,6 +1878,7 @@ Protected Module DrawSVG
 		          else
 		            tmpX = cx + rx * cos(currentAngle * DegToRad) // center a + radius x * cos(theta)
 		            tmpY = cy + ry * sin(currentAngle * DegToRad) // center b + radius y * sin(theta)
+		            transformPoint tmpX, tmpY, tmpMatrix
 		          end if
 		          
 		          penX = tmpX
