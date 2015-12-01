@@ -1677,6 +1677,28 @@ Protected Module DrawSVG
 		            i = i + 2
 		          wend
 		          
+		        elseif StrComp(path(i), "Q", 0) = 0 then // absolute  quadratic Bézier curveto
+		          
+		          penX = Val(path(i + 3))
+		          penY = Val(path(i + 4))
+		          i = i + 5
+		          while (i <= path.Ubound) and IsNumeric(path(i))
+		            penX = Val(path(i + 2))
+		            penY = Val(path(i + 3))
+		            i = i + 4
+		          wend
+		          
+		        elseif StrComp(path(i), "q", 0) = 0 then // relative  quadratic Bézier curveto
+		          
+		          penX = penX + Val(path(i + 3))
+		          penY = penY + Val(path(i + 4))
+		          i = i + 5
+		          while (i <= path.Ubound) and IsNumeric(path(i))
+		            penX = penX + Val(path(i + 2))
+		            penY = penY + Val(path(i + 3))
+		            i = i + 4
+		          wend
+		          
 		        elseif StrComp(path(i), "S", 0) = 0 then // absolute smooth curveto
 		          
 		          penX = Val(path(i + 3))
@@ -1699,6 +1721,28 @@ Protected Module DrawSVG
 		            penX = penX + Val(path(i + 2))
 		            penY = penY + Val(path(i + 3))
 		            i = i + 4
+		          wend
+		          
+		        elseif StrComp(path(i), "T", 0) = 0 then // absolute  smooth quadratic Bézier curveto
+		          
+		          penX = Val(path(i + 1))
+		          penY = Val(path(i + 2))
+		          i = i + 5
+		          while (i <= path.Ubound) and IsNumeric(path(i))
+		            penX = Val(path(i))
+		            penY = Val(path(i + 1))
+		            i = i + 4
+		          wend
+		          
+		        elseif StrComp(path(i), "t", 0) = 0 then // relative  smooth quadratic Bézier curveto
+		          
+		          penX = penX + Val(path(i + 1))
+		          penY = penY + Val(path(i + 2))
+		          i = i + 3
+		          while (i <= path.Ubound) and IsNumeric(path(i))
+		            penX = penX + Val(path(i))
+		            penY = penY + Val(path(i + 1))
+		            i = i + 2
 		          wend
 		          
 		        elseif StrComp(path(i), "V", 0) = 0 then // absolute vertical lineto
