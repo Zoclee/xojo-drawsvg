@@ -1677,6 +1677,28 @@ Protected Module DrawSVG
 		            i = i + 2
 		          wend
 		          
+		        elseif StrComp(path(i), "M", 0) = 0 then // absolute  moveto
+		          
+		          penX = Val(path(i + 1))
+		          penY = Val(path(i + 2))
+		          i = i + 3
+		          while (i <= path.Ubound) and IsNumeric(path(i))
+		            penX = Val(path(i))
+		            penY = Val(path(i + 1))
+		            i = i + 2
+		          wend
+		          
+		        elseif StrComp(path(i), "m", 0) = 0 then // relative  moveto
+		          
+		          penX = penX + Val(path(i + 1))
+		          penY = penY + Val(path(i + 2))
+		          i = i + 3
+		          while (i <= path.Ubound) and IsNumeric(path(i))
+		            penX = penX + Val(path(i))
+		            penY = penY + Val(path(i + 1))
+		            i = i + 2
+		          wend
+		          
 		        elseif StrComp(path(i), "Q", 0) = 0 then // absolute  quadratic Bézier curveto
 		          
 		          penX = Val(path(i + 3))
