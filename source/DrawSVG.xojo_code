@@ -2954,10 +2954,18 @@ Protected Module DrawSVG
 		        strShape.VerticalAlignment = StringShape.Alignment.Top
 		        strShape.Text = textStr
 		        
-		        // to speed up rendering, we only use DrawTransformedPicture when needed
+		        // to speed up rendering and improve quality, we only use DrawTransformedPicture when needed
 		        
-		        if isTranslationMatrix(matrix) then
+		        if isTranslationMatrix(elementMatrix) then
 		          g.DrawObject strShape, elementMatrix(2), elementMatrix(5)
+		          
+		        elseif (elementMatrix(1) = 0) and (elementMatrix(3) = 0)  and (elementMatrix(6) = 0) and _
+		          (elementMatrix(7) = 0) and (elementMatrix(8) = 1) and _
+		          (elementMatrix(0) = elementMatrix(4)) then
+		          
+		          strShape.TextSize = strShape.TextSize * elementMatrix(0)
+		          g.DrawObject strShape, elementMatrix(2), elementMatrix(5)
+		          
 		        else
 		          element = new Picture(g.StringWidth(textStr), g.TextHeight)
 		          eg = element.Graphics
