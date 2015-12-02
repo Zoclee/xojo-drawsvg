@@ -54,15 +54,15 @@ Begin Window frmMain
       Visible         =   True
       Width           =   600
    End
-   Begin PushButton cmdOpen
+   Begin PushButton cmdDrawSVG
       AutoDeactivate  =   True
       Bold            =   False
       ButtonStyle     =   "0"
       Cancel          =   False
-      Caption         =   "Open"
+      Caption         =   "DrawSVG"
       Default         =   False
       Enabled         =   True
-      Height          =   22
+      Height          =   29
       HelpTag         =   ""
       Index           =   -2147483648
       InitialParent   =   ""
@@ -80,10 +80,41 @@ Begin Window frmMain
       TextFont        =   "System"
       TextSize        =   0.0
       TextUnit        =   0
-      Top             =   20
+      Top             =   13
       Underline       =   False
       Visible         =   True
-      Width           =   80
+      Width           =   120
+   End
+   Begin PushButton cmdOpenAsSVG
+      AutoDeactivate  =   True
+      Bold            =   False
+      ButtonStyle     =   "0"
+      Cancel          =   False
+      Caption         =   "OpenAsSVG"
+      Default         =   False
+      Enabled         =   True
+      Height          =   29
+      HelpTag         =   ""
+      Index           =   -2147483648
+      InitialParent   =   ""
+      Italic          =   False
+      Left            =   152
+      LockBottom      =   False
+      LockedInPosition=   False
+      LockLeft        =   True
+      LockRight       =   False
+      LockTop         =   True
+      Scope           =   0
+      TabIndex        =   2
+      TabPanelIndex   =   0
+      TabStop         =   True
+      TextFont        =   "System"
+      TextSize        =   0.0
+      TextUnit        =   0
+      Top             =   13
+      Underline       =   False
+      Visible         =   True
+      Width           =   120
    End
 End
 #tag EndWindow
@@ -101,6 +132,10 @@ End
 
 
 	#tag Property, Flags = &h0
+		SvgPicture As Picture
+	#tag EndProperty
+
+	#tag Property, Flags = &h0
 		SvgXML As String
 	#tag EndProperty
 
@@ -113,20 +148,27 @@ End
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
-		  try
+		  if SvgPicture <> nil then
 		    
-		    g.DrawSVG SvgXML, 0, 0
+		    g.DrawPicture SvgPicture, 0, 0
 		    
-		  catch e As DrawSVG.SVGException
+		  else
 		    
-		    MsgBox "Error " + Str(e.ErrorNumber) + " - " + e.Message
+		    try
+		      
+		      g.DrawSVG SvgXML, 0, 0
+		      
+		    catch e As DrawSVG.SVGException
+		      
+		      MsgBox "Error " + Str(e.ErrorNumber) + " - " + e.Message
+		      
+		    end try
 		    
-		  end try
-		  
+		  end if
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events cmdOpen
+#tag Events cmdDrawSVG
 	#tag Event
 		Sub Action()
 		  ' This project is a {Zoclee}™ open source initiative.
@@ -146,12 +188,49 @@ End
 		  
 		  if f <> nil then
 		    
+		    SvgPicture = nil
+		    
 		    Self.Title = "DrawSVG Extension v" + Str(App.MajorVersion) + "." + Str(App.MinorVersion) + "." + Str(App.BugVersion) + _
 		    " - " + f.NativePath
 		    
 		    tis = TextInputStream.Open(f)
 		    SvgXML = tis.ReadAll()
 		    tis.Close
+		    canTest.Invalidate(false)
+		  end if
+		  
+		End Sub
+	#tag EndEvent
+#tag EndEvents
+#tag Events cmdOpenAsSVG
+	#tag Event
+		Sub Action()
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
+		  Dim f As FolderItem
+		  Dim dlg As new OpenDialog
+		  Dim svgType As new FileType
+		  
+		  svgType.Name = "Scalable Vector Graphics"
+		  svgType.Extensions = ".svg"
+		  
+		  dlg.Filter = svgType
+		  
+		  f = dlg.ShowModal()
+		  
+		  if f <> nil then
+		    
+		    try
+		      
+		      SvgPicture = f.OpenAsSVG()
+		      
+		    catch e As DrawSVG.SVGException
+		      
+		      MsgBox "Error " + Str(e.ErrorNumber) + " - " + e.Message
+		      
+		    end try
+		    
 		    canTest.Invalidate(false)
 		  end if
 		  

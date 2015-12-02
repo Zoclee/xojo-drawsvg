@@ -313,7 +313,6 @@ Protected Module DrawSVG
 		  Dim i As Integer
 		  Dim matrix() As Double
 		  Dim mulMatrix() As Double
-		  Dim drawG As Graphics
 		  Dim w As Integer
 		  Dim h As Integer
 		  Dim wStr As String
@@ -426,8 +425,6 @@ Protected Module DrawSVG
 		      e.ErrorNumber = 3
 		      e.Message = "Malformed SVG XML."
 		      Raise e
-		      
-		      
 		      
 		    end try
 		    
@@ -970,6 +967,9 @@ Protected Module DrawSVG
 
 	#tag Method, Flags = &h21
 		Private Function matrixMultiply(m1() As Double, m2() As Double) As Double()
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
 		  Dim result(8) As Double
 		  
 		  result(0) = m1(0) * m2(0) + m1(1) * m2(3) + m1(2) * m2(6)
@@ -985,6 +985,93 @@ Protected Module DrawSVG
 		  result(8) = m1(6) * m2(2) + m1(7) * m2(5) + m1(8) * m2(8)
 		  
 		  return result
+		  
+		End Function
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Function OpenAsSVG(Extends file As FolderItem) As Picture
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
+		  Dim svgPicture as Picture
+		  Dim xdoc As XmlDocument
+		  Dim svg As String
+		  Dim e As DrawSVG.SVGException
+		  Dim tis As TextInputStream
+		  Dim w As Integer
+		  Dim h As Integer
+		  Dim i As Integer
+		  Dim viewbox As String
+		  Dim foundSVG As Boolean
+		  Dim viewboxArr() As String
+		  
+		  try
+		    
+		    foundSVG = false
+		    
+		    tis = TextInputStream.Open(file)
+		    svg = tis.ReadAll()
+		    tis.Close
+		    
+		    xdoc = new XmlDocument(svg)
+		    
+		    w = 0 
+		    h = 0
+		    
+		    i = 0
+		    while (i < xdoc.ChildCount) and (w = 0) and (h = 0) and not foundSVG
+		      if xdoc.Child(i).Name = "svg" then
+		        
+		        foundSVG = true
+		        w = Val(xdoc.Child(i).GetCIAttribute("width"))
+		        h = Val(xdoc.Child(i).GetCIAttribute("height"))
+		        
+		        viewbox = Trim(xdoc.Child(i).GetCIAttribute("viewbox"))
+		        if ((w = 0) or (h = 0)) and (viewbox <> "") then
+		          
+		          while viewbox.InStr(0, "  ") > 0
+		            viewbox = viewbox.ReplaceAll("  ", " ")
+		          wend
+		          viewboxArr = viewbox.Split(" ")
+		          
+		          w = Val(viewboxArr(2))
+		          h = Val(viewboxArr(3))
+		        end if
+		        
+		      end if
+		      i = i + 1
+		    wend
+		    
+		    if foundSVG then
+		      
+		      if (w = 0) then
+		        w = 100
+		      end if
+		      
+		      if (h = 0) then
+		        h = 100
+		      end if
+		      
+		      if (w > 0) and (h > 0) then
+		        svgPicture = new Picture(w, h)
+		        svgPicture.Graphics.DrawSVG(svg, 0, 0)
+		      end if
+		      
+		    end if
+		    
+		  catch xmlException As XmlException
+		    
+		    // invalid xml, so raise an exception
+		    
+		    e = new DrawSVG.SVGException()
+		    e.ErrorNumber = 3
+		    e.Message = "Malformed SVG XML."
+		    Raise e
+		    
+		  end try
+		  
+		  return svgPicture
 		  
 		End Function
 	#tag EndMethod
@@ -1433,8 +1520,6 @@ Protected Module DrawSVG
 		  Dim localStyle As JSONItem
 		  Dim style As JSONItem
 		  Dim matrix() As Double
-		  Dim tmpMatrix() As Double
-		  Dim tmpMatrix2() As Double
 		  Dim i As UInt64
 		  Dim fill As String
 		  Dim stroke As String
