@@ -1128,7 +1128,7 @@ Protected Module DrawSVG
 		  cy = style.LookupDouble("cy")
 		  fill = style.LookupString("fill", "#000000")
 		  stroke = style.LookupString("stroke", "")
-		  strokeWidth = style.LookupDouble("stroke-width", 1)
+		  strokeWidth = style.LookupDouble("stroke-width", 1) * 2
 		  r = style.LookupDouble("r")
 		  
 		  if (r > 0) then
@@ -1222,7 +1222,7 @@ Protected Module DrawSVG
 		  cy = style.LookupDouble("cy")
 		  fill = style.LookupString("fill", "#000000")
 		  stroke = style.LookupString("stroke", "")
-		  strokeWidth = style.LookupDouble("stroke-width", 1)
+		  strokeWidth = style.LookupDouble("stroke-width", 1) * 2
 		  rx = style.LookupDouble("rx")
 		  ry = style.LookupDouble("ry")
 		  
@@ -1389,7 +1389,7 @@ Protected Module DrawSVG
 		  x2 = style.LookupDouble("x2")
 		  y2 = style.LookupDouble("y2")
 		  stroke = style.LookupString("stroke", "")
-		  strokeWidth = style.LookupDouble("stroke-width", 1)
+		  strokeWidth = style.LookupDouble("stroke-width", 1) * 2
 		  
 		  // build polygon
 		  
@@ -1497,7 +1497,7 @@ Protected Module DrawSVG
 		  
 		  fill = style.LookupString("fill", "#000000")
 		  stroke = style.LookupString("stroke", "")
-		  strokeWidth = style.LookupDouble("stroke-width", 1)
+		  strokeWidth = style.LookupDouble("stroke-width", 2) 
 		  
 		  // fill
 		  
@@ -2696,7 +2696,7 @@ Protected Module DrawSVG
 		  
 		  fill = style.LookupString("fill", "#000000")
 		  stroke = style.LookupString("stroke", "")
-		  strokeWidth = style.LookupDouble("stroke-width", 1)
+		  strokeWidth = style.LookupDouble("stroke-width", 1) * 2
 		  
 		  // build polygon
 		  
@@ -2771,7 +2771,7 @@ Protected Module DrawSVG
 		  
 		  fill = style.LookupString("fill", "#000000")
 		  stroke = style.LookupString("stroke", "")
-		  strokeWidth = style.LookupDouble("stroke-width", 1)
+		  strokeWidth = style.LookupDouble("stroke-width", 1) * 2
 		  
 		  // build polygon
 		  
@@ -2859,7 +2859,7 @@ Protected Module DrawSVG
 		  height = style.LookupDouble("height")
 		  fill = style.LookupString("fill", "#000000")
 		  stroke = style.LookupString("stroke", "")
-		  strokeWidth = style.LookupDouble("stroke-width", 1)
+		  strokeWidth = style.LookupDouble("stroke-width", 1) * 2
 		  
 		  if (width > 0) and (height > 0) then
 		    
