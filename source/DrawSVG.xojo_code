@@ -310,23 +310,7 @@ Protected Module DrawSVG
 		  ' www.zoclee.com
 		  
 		  Dim xdoc As XmlDocument
-		  Dim i As Integer
-		  Dim matrix() As Double
-		  Dim mulMatrix() As Double
-		  Dim w As Integer
-		  Dim h As Integer
-		  Dim wStr As String
-		  Dim hStr As String
-		  Dim viewbox As String
-		  Dim viewboxArr() As String
-		  Dim xScale As Double
-		  Dim yScale As Double
-		  Dim xOffset As Double
-		  Dim yOffset As Double
-		  Dim scale As Double
 		  Dim e As DrawSVG.SVGException
-		  Dim svgImage As Picture
-		  Dim finalImage As Picture
 		  
 		  if Len(svg) > 0 then
 		    
@@ -334,88 +318,7 @@ Protected Module DrawSVG
 		      
 		      xdoc = new XmlDocument(svg)
 		      
-		      // clear classes
-		      
-		      mClasses = new JSONItem("{}")
-		      
-		      matrix = initIdentityMatrix()
-		      
-		      i = 0
-		      while (i < xdoc.ChildCount) 
-		        if xdoc.Child(i).Name = "svg" then
-		          
-		          // determine graphics context width and height
-		          
-		          w = 0
-		          h = 0
-		          
-		          wStr = Trim(xdoc.Child(i).GetCIAttribute("width"))
-		          if wStr <> "" then
-		            if IsNumeric(wStr) then
-		              w = Val(wStr)
-		            elseif Right(wStr, 1) = "%" then
-		              w = g.Width * (Val(Left(wStr, Len(wStr) - 1)) / 100)
-		            end if
-		          end if
-		          
-		          hStr = Trim(xdoc.Child(i).GetCIAttribute("height"))
-		          if hStr <> "" then
-		            if IsNumeric(hStr) then
-		              h = Val(hStr)
-		            elseif Right(hStr, 1) = "%" then
-		              h = g.Height * (Val(Left(hStr, Len(hStr) - 1)) / 100)
-		            end if
-		          end if
-		          
-		          if w = 0 then
-		            w = g.Width
-		          end if
-		          if h = 0 then
-		            h = g.Height
-		          end if
-		          
-		          // apply viewbox if there is one
-		          
-		          viewbox = Trim(xdoc.Child(i).GetCIAttribute("viewbox"))
-		          if viewbox <> "" then
-		            while viewbox.InStr(0, "  ") > 0 
-		              viewbox = viewbox.ReplaceAll("  ", " ")
-		            wend
-		            viewboxArr = viewbox.Split(" ")
-		            if viewboxArr.Ubound = 3 then
-		              xScale = w / Val(viewboxArr(2)) 
-		              yScale = h / Val(viewboxArr(3)) 
-		              if xScale < yScale then
-		                scale = xScale
-		                xOffset = 0
-		                yOffset = (h - (Val(viewboxArr(3))  * scale)) / 2
-		              else
-		                scale = yScale
-		                xOffset = (w - (Val(viewboxArr(2))  * scale)) / 2
-		                yOffset = 0
-		              end if
-		              mulMatrix = initTranslationMatrix(xOffset, yOffset)
-		              matrix = matrixMultiply(matrix, mulMatrix)
-		              mulMatrix = initScaleMatrix(scale, scale)
-		              matrix = matrixMultiply(matrix, mulMatrix)
-		              
-		            end if
-		          end if
-		          
-		          ' Smoohing algoritm courtesy of Marco Hof.
-		          
-		          mulMatrix = initScaleMatrix(2, 2)
-		          matrix = matrixMultiply(matrix, mulMatrix)
-		          
-		          svgImage = new Picture(w * 2, h * 2)
-		          
-		          renderNode(xdoc.Child(i), svgImage.Graphics, matrix, new JSONItem("{}"))
-		          finalImage = svgImage.ScalePicture(w, h)
-		          g.DrawPicture finalImage, x, y, w1, h1, sx, sy, w2, h2
-		          
-		        end if
-		        i = i + 1
-		      wend
+		      renderXML g, xdoc, x, y, w1, h1, sx, sy, w2, h2
 		      
 		    catch xmlException As XmlException
 		      
@@ -429,6 +332,16 @@ Protected Module DrawSVG
 		    end try
 		    
 		  end if
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h0
+		Sub DrawSVG(Extends g As Graphics, svg As XmlDocument, x As Integer, y As Integer, w1 As Integer = -10000, h1 As Integer = -10000, sx As Integer = 0, sy As Integer = 0, w2 As Integer = -10000, h2 As Integer = -10000)
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
+		  renderXML g, svg, x, y, w1, h1, sx, sy, w2, h2
 		  
 		End Sub
 	#tag EndMethod
@@ -1001,6 +914,8 @@ Protected Module DrawSVG
 		  Dim tis As TextInputStream
 		  Dim w As Integer
 		  Dim h As Integer
+		  Dim wStr As String
+		  Dim hStr As String
 		  Dim i As Integer
 		  Dim viewbox As String
 		  Dim foundSVG As Boolean
@@ -1024,8 +939,16 @@ Protected Module DrawSVG
 		      if xdoc.Child(i).Name = "svg" then
 		        
 		        foundSVG = true
-		        w = Val(xdoc.Child(i).GetCIAttribute("width"))
-		        h = Val(xdoc.Child(i).GetCIAttribute("height"))
+		        wStr = xdoc.Child(i).GetCIAttribute("width")
+		        hStr = xdoc.Child(i).GetCIAttribute("height")
+		        
+		        if IsNumeric(wStr) then
+		          w = Val(wStr)
+		        end if
+		        
+		        if IsNumeric(hStr) then
+		          h = Val(hStr)
+		        end if
 		        
 		        viewbox = Trim(xdoc.Child(i).GetCIAttribute("viewbox"))
 		        if ((w = 0) or (h = 0)) and (viewbox <> "") then
@@ -1055,7 +978,7 @@ Protected Module DrawSVG
 		      
 		      if (w > 0) and (h > 0) then
 		        svgPicture = new Picture(w, h)
-		        svgPicture.Graphics.DrawSVG(svg, 0, 0)
+		        renderXML svgPicture.Graphics, xdoc, 0, 0
 		      end if
 		      
 		    end if
@@ -1177,6 +1100,115 @@ Protected Module DrawSVG
 		    
 		  end if
 		  
+		  
+		  
+		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Sub renderXML(g As Graphics, xdoc As XmlDocument, x As Integer, y As Integer, w1 As Integer = -10000, h1 As Integer = -10000, sx As Integer = 0, sy As Integer = 0, w2 As Integer = -10000, h2 As Integer = -10000)
+		  ' This project is a {Zoclee}™ open source initiative.
+		  ' www.zoclee.com
+		  
+		  Dim i As Integer
+		  Dim matrix() As Double
+		  Dim mulMatrix() As Double
+		  Dim w As Integer
+		  Dim h As Integer
+		  Dim wStr As String
+		  Dim hStr As String
+		  Dim viewbox As String
+		  Dim viewboxArr() As String
+		  Dim xScale As Double
+		  Dim yScale As Double
+		  Dim xOffset As Double
+		  Dim yOffset As Double
+		  Dim scale As Double
+		  Dim svgImage As Picture
+		  Dim finalImage As Picture
+		  
+		  // clear classes
+		  
+		  mClasses = new JSONItem("{}")
+		  
+		  matrix = initIdentityMatrix()
+		  
+		  i = 0
+		  while (i < xdoc.ChildCount) 
+		    if xdoc.Child(i).Name = "svg" then
+		      
+		      // determine graphics context width and height
+		      
+		      w = 0
+		      h = 0
+		      
+		      wStr = Trim(xdoc.Child(i).GetCIAttribute("width"))
+		      if wStr <> "" then
+		        if IsNumeric(wStr) then
+		          w = Val(wStr)
+		        elseif Right(wStr, 1) = "%" then
+		          w = g.Width * (Val(Left(wStr, Len(wStr) - 1)) / 100)
+		        end if
+		      end if
+		      
+		      hStr = Trim(xdoc.Child(i).GetCIAttribute("height"))
+		      if hStr <> "" then
+		        if IsNumeric(hStr) then
+		          h = Val(hStr)
+		        elseif Right(hStr, 1) = "%" then
+		          h = g.Height * (Val(Left(hStr, Len(hStr) - 1)) / 100)
+		        end if
+		      end if
+		      
+		      if w = 0 then
+		        w = g.Width
+		      end if
+		      if h = 0 then
+		        h = g.Height
+		      end if
+		      
+		      // apply viewbox if there is one
+		      
+		      viewbox = Trim(xdoc.Child(i).GetCIAttribute("viewbox"))
+		      if viewbox <> "" then
+		        while viewbox.InStr(0, "  ") > 0 
+		          viewbox = viewbox.ReplaceAll("  ", " ")
+		        wend
+		        viewboxArr = viewbox.Split(" ")
+		        if viewboxArr.Ubound = 3 then
+		          xScale = w / Val(viewboxArr(2)) 
+		          yScale = h / Val(viewboxArr(3)) 
+		          if xScale < yScale then
+		            scale = xScale
+		            xOffset = 0
+		            yOffset = (h - (Val(viewboxArr(3))  * scale)) / 2
+		          else
+		            scale = yScale
+		            xOffset = (w - (Val(viewboxArr(2))  * scale)) / 2
+		            yOffset = 0
+		          end if
+		          mulMatrix = initTranslationMatrix(xOffset, yOffset)
+		          matrix = matrixMultiply(matrix, mulMatrix)
+		          mulMatrix = initScaleMatrix(scale, scale)
+		          matrix = matrixMultiply(matrix, mulMatrix)
+		          
+		        end if
+		      end if
+		      
+		      ' Smoohing algoritm courtesy of Marco Hof.
+		      
+		      mulMatrix = initScaleMatrix(2, 2)
+		      matrix = matrixMultiply(matrix, mulMatrix)
+		      
+		      svgImage = new Picture(w * 2, h * 2)
+		      
+		      renderNode(xdoc.Child(i), svgImage.Graphics, matrix, new JSONItem("{}"))
+		      finalImage = svgImage.ScalePicture(w, h)
+		      g.DrawPicture finalImage, x, y, w1, h1, sx, sy, w2, h2
+		      
+		    end if
+		    i = i + 1
+		  wend
 		  
 		  
 		End Sub
