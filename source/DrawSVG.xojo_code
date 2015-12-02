@@ -1497,7 +1497,8 @@ Protected Module DrawSVG
 		  
 		  fill = style.LookupString("fill", "#000000")
 		  stroke = style.LookupString("stroke", "")
-		  strokeWidth = style.LookupDouble("stroke-width", 2) 
+		  strokeWidth = style.LookupDouble("stroke-width", 1) * 2
+		  
 		  
 		  // fill
 		  
