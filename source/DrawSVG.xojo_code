@@ -326,11 +326,8 @@ Protected Module DrawSVG
 		  Dim yOffset As Double
 		  Dim scale As Double
 		  Dim e As DrawSVG.SVGException
-		  Dim smoothFactor As Double
 		  Dim svgImage As Picture
 		  Dim finalImage As Picture
-		  
-		  smoothFactor = 2
 		  
 		  if Len(svg) > 0 then
 		    
@@ -408,10 +405,10 @@ Protected Module DrawSVG
 		          
 		          ' Smoohing algoritm curtousy of Marco Hof.
 		          
-		          mulMatrix = initScaleMatrix(smoothFactor, smoothFactor)
+		          mulMatrix = initScaleMatrix(2, 2)
 		          matrix = matrixMultiply(matrix, mulMatrix)
 		          
-		          svgImage = new Picture(w * smoothFactor, h * smoothFactor)
+		          svgImage = new Picture(w * 2, h * 2)
 		          
 		          renderNode(xdoc.Child(i), svgImage.Graphics, matrix, new JSONItem("{}"))
 		          finalImage = svgImage.ScalePicture(w, h)
