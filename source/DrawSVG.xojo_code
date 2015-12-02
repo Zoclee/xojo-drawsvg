@@ -403,7 +403,7 @@ Protected Module DrawSVG
 		            end if
 		          end if
 		          
-		          ' Smoohing algoritm curtousy of Marco Hof.
+		          ' Smoohing algoritm courtesy of Marco Hof.
 		          
 		          mulMatrix = initScaleMatrix(2, 2)
 		          matrix = matrixMultiply(matrix, mulMatrix)
