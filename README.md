@@ -25,7 +25,7 @@ Example Code
 		g.DrawSVG myDoc, 100, 100
 	End Sub	
 	
-	// Load SVG as Picture object directly from FolderItem
+	// Load SVG as Picture object
 	
 	Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		Dim myPic As Picture
