@@ -326,6 +326,11 @@ Protected Module DrawSVG
 		  Dim yOffset As Double
 		  Dim scale As Double
 		  Dim e As DrawSVG.SVGException
+		  Dim smoothFactor As Double
+		  Dim svgImage As Picture
+		  Dim finalImage As Picture
+		  
+		  smoothFactor = 2
 		  
 		  if Len(svg) > 0 then
 		    
@@ -401,15 +406,17 @@ Protected Module DrawSVG
 		            end if
 		          end if
 		          
-		          if (w1 > 0) and (h1 > 0) then
-		            mulMatrix = initScaleMatrix(w1 / w, h1 / h)
-		            matrix = matrixMultiply(matrix, mulMatrix)
-		            drawG = g.Clip(x, y, w1, h1)
-		          else
-		            drawG = g.Clip(x, y, w, h)
-		          end if
+		          ' Smoohing algoritm curtousy of Marco Hof.
 		          
-		          renderNode(xdoc.Child(i), drawG, matrix, new JSONItem("{}"))
+		          mulMatrix = initScaleMatrix(smoothFactor, smoothFactor)
+		          matrix = matrixMultiply(matrix, mulMatrix)
+		          
+		          svgImage = new Picture(w * smoothFactor, h * smoothFactor)
+		          
+		          renderNode(xdoc.Child(i), svgImage.Graphics, matrix, new JSONItem("{}"))
+		          finalImage = svgImage.ScalePicture(w, h)
+		          g.DrawPicture finalImage, x, y
+		          
 		        end if
 		        i = i + 1
 		      wend
@@ -3051,6 +3058,26 @@ Protected Module DrawSVG
 		    
 		  end if
 		End Sub
+	#tag EndMethod
+
+	#tag Method, Flags = &h21
+		Private Function ScalePicture(Extends p as picture, width as integer, height as Integer) As Picture
+		  Dim newPic as new picture(width,height)
+		  
+		  #if TargetWin32 then
+		    
+		    // tell GDI+ to do quality scaling
+		    
+		    Soft Declare Function GdipSetInterpolationMode Lib "Gdiplus" (graphics as int32, Mode as int32) As int32
+		    Call GdipSetInterpolationMode(newPic.graphics.Handle(Graphics.HandleTypeGDIPlusGraphics), 7)
+		    
+		  #endif
+		  
+		  newPic.Graphics.DrawPicture(p, 0, 0, width, height, 0, 0, p.width, p.height)
+		  
+		  return newPic
+		  
+		End Function
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
