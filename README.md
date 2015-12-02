@@ -11,6 +11,24 @@ Simply copy the DrawSVG module from the project located in the [source folder](h
 Example Code
 ------------
 
+	// Draw SVG stored as a string
+
 	Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		g.DrawSVG "Some SVG XML", 100, 100
 	End Sub
+
+	// Draw SVG parsed into an XMLDocument object
+	
+	Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		Dim myDoc As XmlDocument
+		myDoc = new XmlDocument("Some SVG XML")
+		g.DrawSVG myDoc, 100, 100
+	End Sub	
+	
+	// Load SVG as Picture object directly from FolderItem
+	
+	Sub Paint(g As Graphics, areas() As REALbasic.Rect)
+		Dim myPic As Picture
+		myPic = SomeFolderItem.OpenAsSVG()
+		g.DrawPicture myPic, 100, 100
+	End Sub	
