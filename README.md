@@ -17,7 +17,7 @@ Example Code
 		g.DrawSVG "Some SVG XML", 100, 100
 	End Sub
 
-	// Draw SVG parsed into an XMLDocument object
+	// Draw SVG stored in an XMLDocument object
 	
 	Sub Paint(g As Graphics, areas() As REALbasic.Rect)
 		Dim myDoc As XmlDocument
