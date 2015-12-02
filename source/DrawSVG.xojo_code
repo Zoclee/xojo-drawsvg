@@ -305,7 +305,7 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h0
-		Sub DrawSVG(Extends g As Graphics, svg As String, x As Integer, y As Integer, w1 As Integer = -10000, h1 As Integer = -10000)
+		Sub DrawSVG(Extends g As Graphics, svg As String, x As Integer, y As Integer, w1 As Integer = -10000, h1 As Integer = -10000, sx As Integer = 0, sy As Integer = 0, w2 As Integer = -10000, h2 As Integer = -10000)
 		  ' This project is a {Zoclee}™ open source initiative.
 		  ' www.zoclee.com
 		  
@@ -412,7 +412,7 @@ Protected Module DrawSVG
 		          
 		          renderNode(xdoc.Child(i), svgImage.Graphics, matrix, new JSONItem("{}"))
 		          finalImage = svgImage.ScalePicture(w, h)
-		          g.DrawPicture finalImage, x, y
+		          g.DrawPicture finalImage, x, y, w1, h1, sx, sy, w2, h2
 		          
 		        end if
 		        i = i + 1
