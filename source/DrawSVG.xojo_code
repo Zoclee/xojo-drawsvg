@@ -1247,7 +1247,7 @@ Protected Module DrawSVG
 		  cy = style.LookupDouble("cy")
 		  fill = style.LookupString("fill", "#000000")
 		  stroke = style.LookupString("stroke", "")
-		  strokeWidth = style.LookupDouble("stroke-width", 1) * 2
+		  strokeWidth = style.LookupDouble("stroke-width", 1) * matrix(0)
 		  r = style.LookupDouble("r") - (strokeWidth / 4) 
 		  
 		  if (r > 0) then
@@ -1341,7 +1341,7 @@ Protected Module DrawSVG
 		  cy = style.LookupDouble("cy")
 		  fill = style.LookupString("fill", "#000000")
 		  stroke = style.LookupString("stroke", "")
-		  strokeWidth = style.LookupDouble("stroke-width", 1) * 2
+		  strokeWidth = style.LookupDouble("stroke-width", 1) * matrix(0)
 		  rx = style.LookupDouble("rx") - (strokeWidth / 4)
 		  ry = style.LookupDouble("ry") - (strokeWidth / 4) 
 		  
@@ -1508,7 +1508,7 @@ Protected Module DrawSVG
 		  x2 = style.LookupDouble("x2")
 		  y2 = style.LookupDouble("y2")
 		  stroke = style.LookupString("stroke", "")
-		  strokeWidth = style.LookupDouble("stroke-width", 1) * 2
+		  strokeWidth = style.LookupDouble("stroke-width", 1) * matrix(0)
 		  
 		  // build polygon
 		  
@@ -1614,8 +1614,7 @@ Protected Module DrawSVG
 		  
 		  fill = style.LookupString("fill", "#000000")
 		  stroke = style.LookupString("stroke", "")
-		  strokeWidth = style.LookupDouble("stroke-width", 1) * 2
-		  
+		  strokeWidth = style.LookupDouble("stroke-width", 1) * matrix(0)
 		  
 		  // fill
 		  
@@ -2814,7 +2813,7 @@ Protected Module DrawSVG
 		  
 		  fill = style.LookupString("fill", "#000000")
 		  stroke = style.LookupString("stroke", "")
-		  strokeWidth = style.LookupDouble("stroke-width", 1) * 2
+		  strokeWidth = style.LookupDouble("stroke-width", 1) * matrix(0)
 		  
 		  // build polygon
 		  
@@ -2889,7 +2888,7 @@ Protected Module DrawSVG
 		  
 		  fill = style.LookupString("fill", "#000000")
 		  stroke = style.LookupString("stroke", "")
-		  strokeWidth = style.LookupDouble("stroke-width", 1) * 2
+		  strokeWidth = style.LookupDouble("stroke-width", 1) * matrix(0)
 		  
 		  // build polygon
 		  
@@ -2977,7 +2976,7 @@ Protected Module DrawSVG
 		  height = style.LookupDouble("height")
 		  fill = style.LookupString("fill", "#000000")
 		  stroke = style.LookupString("stroke", "")
-		  strokeWidth = style.LookupDouble("stroke-width", 1) * 2
+		  strokeWidth = style.LookupDouble("stroke-width", 1) * matrix(0)
 		  
 		  if (width > 0) and (height > 0) then
 		    
