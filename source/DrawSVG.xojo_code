@@ -1707,8 +1707,8 @@ Protected Module DrawSVG
 		        if currentCommand <> path(i) then
 		          additionalPath.Append "M"
 		        end if
-		        additionalPath.Append Str(penX)
-		        additionalPath.Append Str(penY)
+		        additionalPath.Append Str(penX, "##########0.0####")
+		        additionalPath.Append Str(penY, "##########0.0####")
 		      else
 		        penX = Val(path(i + 1))
 		        penY = Val(path(i + 2))
@@ -1915,11 +1915,11 @@ Protected Module DrawSVG
 		        end if
 		        
 		      wend
-		      if i <= path.Ubound then
-		        path.Insert i, "L"
-		        path.Insert i + 1, additionalPath(additionalPath.Ubound - 1)
-		        path.Insert i + 2, additionalPath(additionalPath.Ubound)
-		      end if
+		      'if i <= path.Ubound then
+		      'path.Insert i, "L"
+		      'path.Insert i + 1, additionalPath(additionalPath.Ubound - 1)
+		      'path.Insert i + 2, additionalPath(additionalPath.Ubound)
+		      'end if
 		      i = i + 1
 		      
 		    case else 
