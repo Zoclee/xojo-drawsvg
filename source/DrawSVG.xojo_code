@@ -3112,22 +3112,23 @@ Protected Module DrawSVG
 		        
 		      end if
 		      
-		      g.TextFont = elementStyle.LookupString("font-family", "Arial")
-		      g.TextUnit = FontUnits.Pixel
-		      g.TextSize = elementStyle.LookupDouble("font-size", 16)
-		      g.Bold = false
-		      if elementStyle.LookupString("font-weight", "") = "bold" then
-		        g.Bold = true
-		      end if
 		      if textStr <> "" then
 		        
-		        mulMatrix = initTranslationMatrix(x, y - g.TextAscent)
+		        g.TextFont = elementStyle.LookupString("font-family", "Arial")
+		        g.TextUnit = FontUnits.Pixel
+		        g.TextSize = elementStyle.LookupDouble("font-size", 16)
+		        g.Bold = false
+		        if elementStyle.LookupString("font-weight", "") = "bold" then
+		          g.Bold = true
+		        end if
+		        
+		        mulMatrix = initTranslationMatrix(x, y)
 		        elementMatrix = matrixMultiply(matrix, mulMatrix)
 		        
 		        strShape.FillColor = determineColor(fill)
 		        strShape.TextFont = g.TextFont
 		        strShape.TextUnit = g.TextUnit
-		        strShape.TextSize = g.TextSize
+		        strShape.TextSize = g.TextSize * elementMatrix(0)
 		        strShape.Bold = g.Bold
 		        select case elementStyle.Lookup("text-anchor", "start")
 		        case "end"
@@ -3139,7 +3140,7 @@ Protected Module DrawSVG
 		        case else
 		          strShape.HorizontalAlignment = StringShape.Alignment.Left
 		        end select
-		        strShape.VerticalAlignment = StringShape.Alignment.Top
+		        strShape.VerticalAlignment = StringShape.Alignment.BaseLine
 		        strShape.Text = textStr
 		        
 		        // to speed up rendering and improve quality, we only use DrawTransformedPicture when needed
@@ -3148,7 +3149,7 @@ Protected Module DrawSVG
 		          (elementMatrix(7) = 0) and (elementMatrix(8) = 1) and _
 		          (elementMatrix(0) = elementMatrix(4)) then
 		          
-		          strShape.TextSize = strShape.TextSize * elementMatrix(0)
+		          strShape.TextSize = strShape.TextSize
 		          g.DrawObject strShape, elementMatrix(2), elementMatrix(5)
 		          
 		        else
