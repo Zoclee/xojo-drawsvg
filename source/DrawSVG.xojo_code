@@ -3144,10 +3144,7 @@ Protected Module DrawSVG
 		        
 		        // to speed up rendering and improve quality, we only use DrawTransformedPicture when needed
 		        
-		        if isTranslationMatrix(elementMatrix) then
-		          g.DrawObject strShape, elementMatrix(2), elementMatrix(5)
-		          
-		        elseif (elementMatrix(1) = 0) and (elementMatrix(3) = 0)  and (elementMatrix(6) = 0) and _
+		        if (elementMatrix(1) = 0) and (elementMatrix(3) = 0)  and (elementMatrix(6) = 0) and _
 		          (elementMatrix(7) = 0) and (elementMatrix(8) = 1) and _
 		          (elementMatrix(0) = elementMatrix(4)) then
 		          
