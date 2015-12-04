@@ -1923,11 +1923,11 @@ Protected Module DrawSVG
 		        end if
 		        
 		      wend
-		      'if i <= path.Ubound then
-		      'path.Insert i, "L"
-		      'path.Insert i + 1, additionalPath(additionalPath.Ubound - 1)
-		      'path.Insert i + 2, additionalPath(additionalPath.Ubound)
-		      'end if
+		      if (i <= path.Ubound) and not relativeCommand then
+		        path.Insert i, "L"
+		        path.Insert i + 1, additionalPath(additionalPath.Ubound - 1)
+		        path.Insert i + 2, additionalPath(additionalPath.Ubound)
+		      end if
 		      i = i + 1
 		      
 		    case else 
