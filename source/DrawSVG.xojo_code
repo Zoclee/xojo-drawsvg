@@ -1678,6 +1678,14 @@ Protected Module DrawSVG
 		      end if
 		      path.Append ""
 		      
+		    elseif ch = "." then
+		      
+		      if Instr(0, path(path.Ubound), ".") > 0 then
+		        path.Append "."
+		      else
+		        path(path.Ubound) = path(path.Ubound) + ch
+		      end if
+		      
 		    else
 		      
 		      path(path.Ubound) = path(path.Ubound) + ch
