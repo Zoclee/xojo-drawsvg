@@ -1558,6 +1558,7 @@ Protected Module DrawSVG
 		  Dim strokeWidth As Double
 		  Dim fs as new FigureShape
 		  Dim cs As CurveShape
+		  Dim tmpCs As CurveShape
 		  Dim d As String
 		  Dim ch As String
 		  Dim penX As Double
@@ -2760,38 +2761,54 @@ Protected Module DrawSVG
 		  
 		  if fs.Count > 0 then
 		    
-		    if (itemFill = 100) and (fs.Count > 1) and prevClosed then
-		      
+		    'if (itemFill = 100) and (fs.Count > 1) and prevClosed then
+		    '
+		    'fs.Fill = itemFill
+		    'fs.FillColor = itemFillColor
+		    'fs.Border = itemStroke
+		    'fs.BorderColor = itemStrokeColor
+		    'fs.BorderWidth = strokeWidth
+		    'g.DrawObject fs
+		    '
+		    'else
+		    
+		    if itemFill = 100 then
 		      fs.Fill = itemFill
 		      fs.FillColor = itemFillColor
-		      fs.Border = itemStroke
-		      fs.BorderColor = itemStrokeColor
-		      fs.BorderWidth = strokeWidth
+		      fs.Border = 0
 		      g.DrawObject fs
+		    end if
+		    
+		    if itemStroke = 100 then
+		      grp = new Group2D
+		      i = 0
+		      while i < fs.Count
+		        grp.Append fs.Item(i)
+		        grp.Item(i).Fill = 0
+		        grp.Item(i).Border = itemStroke
+		        grp.Item(i).BorderColor = itemStrokeColor
+		        grp.Item(i).BorderWidth = strokeWidth
+		        i = i + 1
+		      wend
 		      
-		    else
-		      
-		      if itemFill = 100 then
-		        fs.Fill = itemFill
-		        fs.FillColor = itemFillColor
-		        fs.Border = 0
-		        g.DrawObject fs
+		      if prevClosed then
+		        cs =new CurveShape
+		        grp.Append cs
+		        tmpCs = fs.Item(fs.Count - 1)
+		        cs.X = tmpCs.X2
+		        cs.Y = tmpCs.Y2
+		        tmpCs = fs.Item(0)
+		        cs.X2 = tmpCs.X
+		        cs.Y2 = tmpCs.Y
+		        grp.Item(i).Fill = 0
+		        grp.Item(i).Border = itemStroke
+		        grp.Item(i).BorderColor = itemStrokeColor
+		        grp.Item(i).BorderWidth = strokeWidth
 		      end if
 		      
-		      if itemStroke = 100 then
-		        grp = new Group2D
-		        i = 0
-		        while i < fs.Count
-		          grp.Append fs.Item(i)
-		          grp.Item(i).Fill = 0
-		          grp.Item(i).Border = itemStroke
-		          grp.Item(i).BorderColor = itemStrokeColor
-		          grp.Item(i).BorderWidth = strokeWidth
-		          i = i + 1
-		        wend
-		        g.DrawObject grp
-		        
-		      end if
+		      g.DrawObject grp
+		      
+		      'end if
 		      
 		    end if
 		    
