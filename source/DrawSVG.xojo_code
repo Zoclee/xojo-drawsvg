@@ -2240,88 +2240,6 @@ Protected Module DrawSVG
 		      prevCCommand = false
 		      prevQCommand = false
 		      
-		    elseif StrComp(path(i), "Q", 0) = 0 then // absolute quadratic Bézier curveto
-		      do
-		        cs = new CurveShape
-		        fs.Append cs
-		        tmpX = penX
-		        tmpY = penY
-		        transformPoint tmpX, tmpY, matrix
-		        cs.X = tmpX
-		        cs.Y = tmpY
-		        cs.Order = 1
-		        i = i + 1
-		        tmpX = Val(path(i))
-		        i = i + 1
-		        tmpY = Val(path(i))
-		        transformPoint tmpX, tmpY, matrix
-		        cs.ControlX(0) = tmpX
-		        cs.ControlY(0) = tmpY
-		        prevControlX = tmpX
-		        prevControlY = tmpY
-		        i = i + 1
-		        tmpX = Val(path(i))
-		        i = i + 1
-		        tmpY = Val(path(i))
-		        penX = tmpX
-		        penY = tmpY
-		        transformPoint tmpX, tmpY, matrix
-		        cs.X2 = tmpX
-		        cs.Y2 = tmpY
-		        
-		        continueImplicit = false
-		        if i < path.Ubound then
-		          if IsNumeric(path(i + 1)) then
-		            continueImplicit = true
-		          end if
-		        end if
-		        
-		      loop until not continueImplicit
-		      
-		      prevCCommand = false
-		      prevQCommand = true
-		      
-		    elseif StrComp(path(i), "q", 0) = 0 then // relative quadratic Bézier curveto
-		      do
-		        cs = new CurveShape
-		        fs.Append cs
-		        tmpX = penX
-		        tmpY = penY
-		        transformPoint tmpX, tmpY, matrix
-		        cs.X = tmpX
-		        cs.Y = tmpY
-		        cs.Order = 1
-		        i = i + 1
-		        tmpX = penX + Val(path(i))
-		        i = i + 1
-		        tmpY = penY + Val(path(i))
-		        transformPoint tmpX, tmpY, matrix
-		        cs.ControlX(0) = tmpX
-		        cs.ControlY(0) = tmpY
-		        prevControlX = tmpX
-		        prevControlY = tmpY
-		        i = i + 1
-		        tmpX = penX + Val(path(i))
-		        i = i + 1
-		        tmpY = penY + Val(path(i))
-		        penX = tmpX
-		        penY = tmpY
-		        transformPoint tmpX, tmpY, matrix
-		        cs.X2 = tmpX
-		        cs.Y2 = tmpY
-		        
-		        continueImplicit = false
-		        if i < path.Ubound then
-		          if IsNumeric(path(i + 1)) then
-		            continueImplicit = true
-		          end if
-		        end if
-		        
-		      loop until not continueImplicit
-		      
-		      prevCCommand = false
-		      prevQCommand = true
-		      
 		    elseif StrComp(path(i), "L", 0) = 0 then // absolute lineto
 		      
 		      do
@@ -2487,6 +2405,88 @@ Protected Module DrawSVG
 		      
 		      prevCCommand = false
 		      prevQCommand = false
+		      
+		    elseif StrComp(path(i), "Q", 0) = 0 then // absolute quadratic Bézier curveto
+		      do
+		        cs = new CurveShape
+		        fs.Append cs
+		        tmpX = penX
+		        tmpY = penY
+		        transformPoint tmpX, tmpY, matrix
+		        cs.X = tmpX
+		        cs.Y = tmpY
+		        cs.Order = 1
+		        i = i + 1
+		        tmpX = Val(path(i))
+		        i = i + 1
+		        tmpY = Val(path(i))
+		        transformPoint tmpX, tmpY, matrix
+		        cs.ControlX(0) = tmpX
+		        cs.ControlY(0) = tmpY
+		        prevControlX = tmpX
+		        prevControlY = tmpY
+		        i = i + 1
+		        tmpX = Val(path(i))
+		        i = i + 1
+		        tmpY = Val(path(i))
+		        penX = tmpX
+		        penY = tmpY
+		        transformPoint tmpX, tmpY, matrix
+		        cs.X2 = tmpX
+		        cs.Y2 = tmpY
+		        
+		        continueImplicit = false
+		        if i < path.Ubound then
+		          if IsNumeric(path(i + 1)) then
+		            continueImplicit = true
+		          end if
+		        end if
+		        
+		      loop until not continueImplicit
+		      
+		      prevCCommand = false
+		      prevQCommand = true
+		      
+		    elseif StrComp(path(i), "q", 0) = 0 then // relative quadratic Bézier curveto
+		      do
+		        cs = new CurveShape
+		        fs.Append cs
+		        tmpX = penX
+		        tmpY = penY
+		        transformPoint tmpX, tmpY, matrix
+		        cs.X = tmpX
+		        cs.Y = tmpY
+		        cs.Order = 1
+		        i = i + 1
+		        tmpX = penX + Val(path(i))
+		        i = i + 1
+		        tmpY = penY + Val(path(i))
+		        transformPoint tmpX, tmpY, matrix
+		        cs.ControlX(0) = tmpX
+		        cs.ControlY(0) = tmpY
+		        prevControlX = tmpX
+		        prevControlY = tmpY
+		        i = i + 1
+		        tmpX = penX + Val(path(i))
+		        i = i + 1
+		        tmpY = penY + Val(path(i))
+		        penX = tmpX
+		        penY = tmpY
+		        transformPoint tmpX, tmpY, matrix
+		        cs.X2 = tmpX
+		        cs.Y2 = tmpY
+		        
+		        continueImplicit = false
+		        if i < path.Ubound then
+		          if IsNumeric(path(i + 1)) then
+		            continueImplicit = true
+		          end if
+		        end if
+		        
+		      loop until not continueImplicit
+		      
+		      prevCCommand = false
+		      prevQCommand = true
 		      
 		    elseif StrComp(path(i), "S", 0) = 0 then // absolute smooth curveto
 		      
