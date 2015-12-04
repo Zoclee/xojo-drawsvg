@@ -2771,22 +2771,27 @@ Protected Module DrawSVG
 		      
 		    else
 		      
-		      grp = new Group2D
+		      if itemFill = 100 then
+		        fs.Fill = itemFill
+		        fs.FillColor = itemFillColor
+		        fs.Border = 0
+		        g.DrawObject fs
+		      end if
 		      
-		      i = 0
-		      while i < fs.Count
-		        grp.Append fs.Item(i)
+		      if itemStroke = 100 then
+		        grp = new Group2D
+		        i = 0
+		        while i < fs.Count
+		          grp.Append fs.Item(i)
+		          grp.Item(i).Fill = 0
+		          grp.Item(i).Border = itemStroke
+		          grp.Item(i).BorderColor = itemStrokeColor
+		          grp.Item(i).BorderWidth = strokeWidth
+		          i = i + 1
+		        wend
+		        g.DrawObject grp
 		        
-		        grp.Item(i).Fill = itemFill
-		        grp.Item(i).FillColor = itemFillColor
-		        grp.Item(i).Border = itemStroke
-		        grp.Item(i).BorderColor = itemStrokeColor
-		        grp.Item(i).BorderWidth = strokeWidth
-		        
-		        i = i + 1
-		      wend
-		      
-		      g.DrawObject grp
+		      end if
 		      
 		    end if
 		    
