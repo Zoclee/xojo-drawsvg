@@ -1248,7 +1248,7 @@ Protected Module DrawSVG
 		  fill = style.LookupString("fill", "#000000")
 		  stroke = style.LookupString("stroke", "")
 		  strokeWidth = style.LookupDouble("stroke-width", 1) * matrix(0)
-		  r = style.LookupDouble("r")
+		  r = style.LookupDouble("r") 
 		  
 		  if (r > 0) then
 		    
@@ -1342,8 +1342,8 @@ Protected Module DrawSVG
 		  fill = style.LookupString("fill", "#000000")
 		  stroke = style.LookupString("stroke", "")
 		  strokeWidth = style.LookupDouble("stroke-width", 1) * matrix(0)
-		  rx = style.LookupDouble("rx") - (strokeWidth / 4)
-		  ry = style.LookupDouble("ry") - (strokeWidth / 4) 
+		  rx = style.LookupDouble("rx") - 2
+		  ry = style.LookupDouble("ry") - 2
 		  
 		  if (rx > 0) and (ry > 0) then
 		    
@@ -3156,7 +3156,6 @@ Protected Module DrawSVG
 		          (elementMatrix(7) = 0) and (elementMatrix(8) = 1) and _
 		          (elementMatrix(0) = elementMatrix(4)) then
 		          
-		          strShape.TextSize = strShape.TextSize
 		          g.DrawObject strShape, elementMatrix(2), elementMatrix(5)
 		          
 		        else
