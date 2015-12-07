@@ -2761,21 +2761,11 @@ Protected Module DrawSVG
 		  
 		  if fs.Count > 0 then
 		    
-		    'if (itemFill = 100) and (fs.Count > 1) and prevClosed then
-		    '
-		    'fs.Fill = itemFill
-		    'fs.FillColor = itemFillColor
-		    'fs.Border = itemStroke
-		    'fs.BorderColor = itemStrokeColor
-		    'fs.BorderWidth = strokeWidth
-		    'g.DrawObject fs
-		    '
-		    'else
-		    
 		    if itemFill = 100 then
 		      fs.Fill = itemFill
 		      fs.FillColor = itemFillColor
 		      fs.Border = 0
+		      fs.BorderWidth = 0
 		      g.DrawObject fs
 		    end if
 		    
@@ -2807,8 +2797,6 @@ Protected Module DrawSVG
 		      end if
 		      
 		      g.DrawObject grp
-		      
-		      'end if
 		      
 		    end if
 		    
