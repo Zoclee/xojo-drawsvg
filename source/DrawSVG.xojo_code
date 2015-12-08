@@ -304,6 +304,80 @@ Protected Module DrawSVG
 		End Function
 	#tag EndMethod
 
+	#tag Method, Flags = &h21
+		Private Sub drawShape(g As Graphics, fs As FigureShape, fill As String, stroke As String, strokeWidth As Double, closed As Boolean)
+		  Dim itemFill As Double
+		  Dim itemFillColor As Color
+		  Dim itemStroke As Double
+		  Dim itemStrokeColor As Color
+		  Dim grp As Group2D
+		  Dim i As Integer
+		  Dim cs As CurveShape
+		  Dim tmpCs As CurveShape
+		  
+		  if fs.Count > 0 then
+		    
+		    // fill
+		    
+		    if fill <> "none" then
+		      itemFill = 100
+		      itemFillColor = determineColor(fill)
+		    else
+		      itemFill = 0
+		    end if
+		    
+		    // stroke
+		    
+		    if (stroke <> "none") and (stroke <> "") and (strokeWidth > 0) then
+		      itemStroke = 100
+		      itemStrokeColor = determineColor(stroke)
+		    else
+		      itemStroke = 0
+		    end if
+		    
+		    if itemFill = 100 then
+		      fs.Fill = itemFill
+		      fs.FillColor = itemFillColor
+		      fs.Border = 0
+		      fs.BorderWidth = 0
+		      g.DrawObject fs
+		    end if
+		    
+		    if itemStroke = 100 then
+		      grp = new Group2D
+		      i = 0
+		      while i < fs.Count
+		        grp.Append fs.Item(i)
+		        grp.Item(i).Fill = 0
+		        grp.Item(i).Border = itemStroke
+		        grp.Item(i).BorderColor = itemStrokeColor
+		        grp.Item(i).BorderWidth = strokeWidth
+		        i = i + 1
+		      wend
+		      
+		      if closed then
+		        cs =new CurveShape
+		        grp.Append cs
+		        tmpCs = fs.Item(fs.Count - 1)
+		        cs.X = tmpCs.X2
+		        cs.Y = tmpCs.Y2
+		        tmpCs = fs.Item(0)
+		        cs.X2 = tmpCs.X
+		        cs.Y2 = tmpCs.Y
+		        grp.Item(i).Fill = 0
+		        grp.Item(i).Border = itemStroke
+		        grp.Item(i).BorderColor = itemStrokeColor
+		        grp.Item(i).BorderWidth = strokeWidth
+		      end if
+		      
+		      g.DrawObject grp
+		      
+		    end if
+		    
+		  end if
+		End Sub
+	#tag EndMethod
+
 	#tag Method, Flags = &h0
 		Sub DrawSVG(Extends g As Graphics, svg As String, x As Integer, y As Integer, w1 As Integer = -10000, h1 As Integer = -10000, sx As Integer = 0, sy As Integer = 0, w2 As Integer = -10000, h2 As Integer = -10000)
 		  ' This project is a {Zoclee}™ open source initiative.
@@ -1558,7 +1632,6 @@ Protected Module DrawSVG
 		  Dim strokeWidth As Double
 		  Dim fs as new FigureShape
 		  Dim cs As CurveShape
-		  Dim tmpCs As CurveShape
 		  Dim d As String
 		  Dim ch As String
 		  Dim penX As Double
@@ -1571,7 +1644,6 @@ Protected Module DrawSVG
 		  Dim prevQCommand As Boolean
 		  Dim prevControlX As Double
 		  Dim prevControlY As Double
-		  Dim grp As Group2D
 		  Dim itemFill As Double
 		  Dim itemFillColor As Color
 		  Dim itemStroke As Double
@@ -2309,12 +2381,7 @@ Protected Module DrawSVG
 		      
 		    elseif StrComp(path(i), "M", 0) = 0 then // absolute move
 		      if (fs.Count > 0) and not prevclosed then
-		        fs.Fill = itemFill
-		        fs.FillColor = itemFillColor
-		        fs.Border = itemStroke
-		        fs.BorderColor = itemStrokeColor
-		        fs.BorderWidth = strokeWidth
-		        g.DrawObject fs
+		        drawShape g, fs, fill, stroke, strokeWidth, prevClosed
 		        fs = new FigureShape()
 		      end if
 		      i = i + 1
@@ -2358,12 +2425,7 @@ Protected Module DrawSVG
 		    elseif StrComp(path(i), "m", 0) = 0 then // relative move
 		      
 		      if (fs.Count > 0) and not prevClosed then
-		        fs.Fill = itemFill
-		        fs.FillColor = itemFillColor
-		        fs.Border = itemStroke
-		        fs.BorderColor = itemStrokeColor
-		        fs.BorderWidth = strokeWidth
-		        g.DrawObject fs
+		        drawShape g, fs, fill, stroke, strokeWidth, prevClosed
 		        fs = new FigureShape()
 		      end if
 		      
@@ -2759,48 +2821,8 @@ Protected Module DrawSVG
 		    i = i + 1
 		  wend
 		  
-		  if fs.Count > 0 then
-		    
-		    if itemFill = 100 then
-		      fs.Fill = itemFill
-		      fs.FillColor = itemFillColor
-		      fs.Border = 0
-		      fs.BorderWidth = 0
-		      g.DrawObject fs
-		    end if
-		    
-		    if itemStroke = 100 then
-		      grp = new Group2D
-		      i = 0
-		      while i < fs.Count
-		        grp.Append fs.Item(i)
-		        grp.Item(i).Fill = 0
-		        grp.Item(i).Border = itemStroke
-		        grp.Item(i).BorderColor = itemStrokeColor
-		        grp.Item(i).BorderWidth = strokeWidth
-		        i = i + 1
-		      wend
-		      
-		      if prevClosed then
-		        cs =new CurveShape
-		        grp.Append cs
-		        tmpCs = fs.Item(fs.Count - 1)
-		        cs.X = tmpCs.X2
-		        cs.Y = tmpCs.Y2
-		        tmpCs = fs.Item(0)
-		        cs.X2 = tmpCs.X
-		        cs.Y2 = tmpCs.Y
-		        grp.Item(i).Fill = 0
-		        grp.Item(i).Border = itemStroke
-		        grp.Item(i).BorderColor = itemStrokeColor
-		        grp.Item(i).BorderWidth = strokeWidth
-		      end if
-		      
-		      g.DrawObject grp
-		      
-		    end if
-		    
-		  end if
+		  drawShape g, fs, fill, stroke, strokeWidth, prevClosed
+		  
 		End Sub
 	#tag EndMethod
 

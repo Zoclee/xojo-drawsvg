@@ -442,6 +442,11 @@ End
 		EditorType="String"
 	#tag EndViewProperty
 	#tag ViewProperty
+		Name="SvgPicture"
+		Group="Behavior"
+		Type="Picture"
+	#tag EndViewProperty
+	#tag ViewProperty
 		Name="SvgXML"
 		Group="Behavior"
 		Type="String"
