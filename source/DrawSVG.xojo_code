@@ -1673,6 +1673,8 @@ Protected Module DrawSVG
 		  Dim pathMB As MemoryBlock
 		  Dim adjustValue As Integer
 		  Dim relativeCommand As Boolean
+		  Dim tmpMatrix() As Double
+		  Dim tmpMatrix2() As Double
 		  
 		  style = new JSONItem("{}")
 		  style.ApplyValues parentStyle
@@ -2137,6 +2139,14 @@ Protected Module DrawSVG
 		        
 		        currentAngle = theta1 + angleStep
 		        
+		        tmpMatrix = initIdentityMatrix()
+		        tmpMatrix2 = initTranslationMatrix(cx, cy)
+		        tmpMatrix = matrixMultiply(tmpMatrix, tmpMatrix2)
+		        tmpMatrix2 = initRotateMatrix(theta)
+		        tmpMatrix = matrixMultiply(tmpMatrix, tmpMatrix2)
+		        tmpMatrix2 = initTranslationMatrix(-cx, -cy)
+		        tmpMatrix = matrixMultiply(tmpMatrix, tmpMatrix2)
+		        
 		        while currentAngle * adjustValue < (theta1 + thetaDelta) * adjustValue
 		          cs = new CurveShape()
 		          fs.Append cs
@@ -2151,8 +2161,15 @@ Protected Module DrawSVG
 		            tmpX = x2
 		            tmpY = y2
 		          else
+		            
+		            'tmpX = cx + rx * cos(currentAngle * DegToRad) // center a + radius x * cos(theta)
+		            'tmpY = cy + ry * sin(currentAngle * DegToRad) // center b + radius y * sin(theta)
+		            
 		            tmpX = cx + rx * cos(currentAngle * DegToRad) // center a + radius x * cos(theta)
 		            tmpY = cy + ry * sin(currentAngle * DegToRad) // center b + radius y * sin(theta)
+		            
+		            transformPoint tmpX, tmpY, tmpMatrix
+		            
 		          end if
 		          
 		          penX = tmpX
