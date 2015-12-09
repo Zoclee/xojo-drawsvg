@@ -1809,7 +1809,29 @@ Protected Module DrawSVG
 		      
 		      while (i <= path.Ubound) and (path(i) <> "z")
 		        
-		        if StrComp(path(i), "C", 0) = 0 then // absolute curveto
+		        if StrComp(path(i), "A", 0) = 0 then // absolute elliptical arc
+		          
+		          penX = Val(path(i + 6))
+		          penY = Val(path(i + 7))
+		          i = i + 8
+		          while (i <= path.Ubound) and IsNumeric(path(i))
+		            penX = Val(path(i + 5))
+		            penY = Val(path(i + 6))
+		            i = i + 7
+		          wend
+		          
+		        elseif StrComp(path(i), "a", 0) = 0 then // relative elliptical arc
+		          
+		          penX = penX + Val(path(i + 6))
+		          penY = penY + Val(path(i + 7))
+		          i = i + 8
+		          while (i <= path.Ubound) and IsNumeric(path(i))
+		            penX = penX + Val(path(i + 5))
+		            penY = penY + Val(path(i + 6))
+		            i = i + 7
+		          wend
+		          
+		        elseif StrComp(path(i), "C", 0) = 0 then // absolute curveto
 		          
 		          penX = Val(path(i + 5))
 		          penY = Val(path(i + 6))
