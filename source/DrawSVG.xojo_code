@@ -305,11 +305,9 @@ Protected Module DrawSVG
 	#tag EndMethod
 
 	#tag Method, Flags = &h21
-		Private Sub drawShape(g As Graphics, fs As FigureShape, fill As String, stroke As String, strokeWidth As Double, closed As Boolean)
+		Private Sub drawPath(g As Graphics, fs As FigureShape, fill As Boolean, fillColor As Color, stroke As Boolean, strokeColor As Color, strokeWidth As Double, closedPath As Boolean)
 		  Dim itemFill As Double
-		  Dim itemFillColor As Color
 		  Dim itemStroke As Double
-		  Dim itemStrokeColor As Color
 		  Dim grp As Group2D
 		  Dim i As Integer
 		  Dim cs As CurveShape
@@ -319,25 +317,23 @@ Protected Module DrawSVG
 		    
 		    // fill
 		    
-		    if fill <> "none" then
+		    if fill then
 		      itemFill = 100
-		      itemFillColor = determineColor(fill)
 		    else
 		      itemFill = 0
 		    end if
 		    
 		    // stroke
 		    
-		    if (stroke <> "none") and (stroke <> "") and (strokeWidth > 0) then
+		    if stroke then
 		      itemStroke = 100
-		      itemStrokeColor = determineColor(stroke)
 		    else
 		      itemStroke = 0
 		    end if
 		    
 		    if itemFill = 100 then
 		      fs.Fill = itemFill
-		      fs.FillColor = itemFillColor
+		      fs.FillColor = fillColor
 		      fs.Border = 0
 		      fs.BorderWidth = 0
 		      g.DrawObject fs
@@ -350,12 +346,12 @@ Protected Module DrawSVG
 		        grp.Append fs.Item(i)
 		        grp.Item(i).Fill = 0
 		        grp.Item(i).Border = itemStroke
-		        grp.Item(i).BorderColor = itemStrokeColor
+		        grp.Item(i).BorderColor = strokeColor
 		        grp.Item(i).BorderWidth = strokeWidth
 		        i = i + 1
 		      wend
 		      
-		      if closed then
+		      if closedPath then
 		        cs =new CurveShape
 		        grp.Append cs
 		        tmpCs = fs.Item(fs.Count - 1)
@@ -366,7 +362,7 @@ Protected Module DrawSVG
 		        cs.Y2 = tmpCs.Y
 		        grp.Item(i).Fill = 0
 		        grp.Item(i).Border = itemStroke
-		        grp.Item(i).BorderColor = itemStrokeColor
+		        grp.Item(i).BorderColor = strokeColor
 		        grp.Item(i).BorderWidth = strokeWidth
 		      end if
 		      
@@ -1644,9 +1640,9 @@ Protected Module DrawSVG
 		  Dim prevQCommand As Boolean
 		  Dim prevControlX As Double
 		  Dim prevControlY As Double
-		  Dim itemFill As Double
+		  Dim itemFill As Boolean
 		  Dim itemFillColor As Color
-		  Dim itemStroke As Double
+		  Dim itemStroke As Boolean
 		  Dim itemStrokeColor As Color
 		  Dim prevClosed As Boolean
 		  Dim currentCommand As String
@@ -1692,19 +1688,19 @@ Protected Module DrawSVG
 		  // fill
 		  
 		  if fill <> "none" then
-		    itemFill = 100
+		    itemFill = true
 		    itemFillColor = determineColor(fill)
 		  else
-		    itemFill = 0
+		    itemFill = false
 		  end if
 		  
 		  // stroke
 		  
 		  if (stroke <> "none") and (stroke <> "") and (strokeWidth > 0) then
-		    itemStroke = 100
+		    itemStroke = true
 		    itemStrokeColor = determineColor(stroke)
 		  else
-		    itemStroke = 0
+		    itemStroke = false
 		  end if
 		  
 		  // build figure shape
@@ -2381,7 +2377,7 @@ Protected Module DrawSVG
 		      
 		    elseif StrComp(path(i), "M", 0) = 0 then // absolute move
 		      if (fs.Count > 0) and not prevclosed then
-		        drawShape g, fs, fill, stroke, strokeWidth, prevClosed
+		        drawPath g, fs, itemFill, itemFillColor, itemStroke, itemStrokeColor, strokeWidth, prevClosed
 		        fs = new FigureShape()
 		      end if
 		      i = i + 1
@@ -2425,7 +2421,7 @@ Protected Module DrawSVG
 		    elseif StrComp(path(i), "m", 0) = 0 then // relative move
 		      
 		      if (fs.Count > 0) and not prevClosed then
-		        drawShape g, fs, fill, stroke, strokeWidth, prevClosed
+		        drawPath g, fs, itemFill, itemFillColor, itemStroke, itemStrokeColor, strokeWidth, prevClosed
 		        fs = new FigureShape()
 		      end if
 		      
@@ -2821,7 +2817,7 @@ Protected Module DrawSVG
 		    i = i + 1
 		  wend
 		  
-		  drawShape g, fs, fill, stroke, strokeWidth, prevClosed
+		  drawPath g, fs, itemFill, itemFillColor, itemStroke, itemStrokeColor, strokeWidth, prevClosed
 		  
 		End Sub
 	#tag EndMethod
