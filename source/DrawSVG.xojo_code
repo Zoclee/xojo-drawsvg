@@ -2139,7 +2139,9 @@ Protected Module DrawSVG
 		        
 		        currentAngle = theta1 + angleStep
 		        
-		        tmpMatrix = initIdentityMatrix()
+		        // todo... determine correct translation values
+		        //tmpMatrix = initTranslationMatrix(-rx/2, -ry/2) 
+		        tmpMatrix = initTranslationMatrix(0, 0) 
 		        tmpMatrix2 = initTranslationMatrix(cx, cy)
 		        tmpMatrix = matrixMultiply(tmpMatrix, tmpMatrix2)
 		        tmpMatrix2 = initRotateMatrix(theta)
