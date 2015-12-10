@@ -1675,6 +1675,7 @@ Protected Module DrawSVG
 		  Dim relativeCommand As Boolean
 		  Dim tmpMatrix() As Double
 		  Dim tmpMatrix2() As Double
+		  Dim radiScale As Double
 		  
 		  style = new JSONItem("{}")
 		  style.ApplyValues parentStyle
@@ -2086,6 +2087,20 @@ Protected Module DrawSVG
 		          y2 = penY + Val(path(i))
 		        end if
 		        
+		        // correction of out-of-range radii
+		        
+		        'if (rx = 0) or (ry = 0) then
+		        'break // todo: treat arc as straight line from (x1, y1) to (x2, y2)
+		        'end if
+		        'rx = Abs(rx)
+		        'ry = Abs(ry)
+		        '
+		        'radiScale = (x1Comp^2 / rx^2) + (y1Comp^2 / ry^2)
+		        'if radiScale > 1 then
+		        ';rx = Sqrt(radiScale) * rx
+		        'ry = Sqrt(radiScale) * ry
+		        'end if
+		        
 		        ' Given the following variables:
 		        ' x1, y1, x2, y2, fA, fS, rx, ry, theta
 		        ' we want to find:
@@ -2102,9 +2117,11 @@ Protected Module DrawSVG
 		        tmpDbl = tmpDbl / ((rx^2 * y1Comp^2) + (ry^2 * x1Comp^2))
 		        tmpDbl = Sqrt(Abs(tmpDbl))
 		        
+		        'if radiScale <= 1 then
 		        if flagA = flagS then
 		          tmpDbl = -tmpDbl
 		        end if
+		        'end if
 		        
 		        cxComp = tmpDbl * (rx * y1Comp / ry)
 		        cyComp = tmpDbl * -(ry * x1Comp / rx)
@@ -2139,13 +2156,16 @@ Protected Module DrawSVG
 		        
 		        currentAngle = theta1 + angleStep
 		        
-		        tmpMatrix = initTranslationMatrix(0, 0) 
+		        tmpMatrix = initIdentityMatrix() 
 		        tmpMatrix2 = initTranslationMatrix(cx, cy)
 		        tmpMatrix = matrixMultiply(tmpMatrix, tmpMatrix2)
 		        tmpMatrix2 = initRotateMatrix(theta)
 		        tmpMatrix = matrixMultiply(tmpMatrix, tmpMatrix2)
 		        tmpMatrix2 = initTranslationMatrix(-cx, -cy)
 		        tmpMatrix = matrixMultiply(tmpMatrix, tmpMatrix2)
+		        
+		        // correction of out-of-range radii
+		        
 		        
 		        
 		        while currentAngle * adjustValue <= (theta1 + thetaDelta) * adjustValue
@@ -2158,7 +2178,7 @@ Protected Module DrawSVG
 		          cs.X = tmpX
 		          cs.Y = tmpY
 		          
-		          tmpX = cx + rx * cos(currentAngle * DegToRad) // center a + radius x * cos(theta)
+		          tmpX = cx + rx  * cos(currentAngle * DegToRad) // center a + radius x * cos(theta)
 		          tmpY = cy + ry * sin(currentAngle * DegToRad) // center b + radius y * sin(theta)
 		          
 		          transformPoint tmpX, tmpY, tmpMatrix
@@ -2166,12 +2186,32 @@ Protected Module DrawSVG
 		          penX = tmpX
 		          penY = tmpY
 		          transformPoint tmpX, tmpY, matrix
+		          
 		          cs.X2 = tmpX
 		          cs.Y2 = tmpY
 		          
 		          currentAngle = currentAngle + angleStep
 		          
 		        wend 
+		        
+		        if (penX <> x2) or (penY <> y2) then
+		          cs = new CurveShape()
+		          fs.Append cs
+		          
+		          tmpX = penX
+		          tmpY = penY
+		          transformPoint tmpX, tmpY, matrix
+		          cs.X = tmpX
+		          cs.Y = tmpY
+		          
+		          tmpX = x2
+		          tmpY= y2
+		          penX = tmpX
+		          penY = tmpY
+		          transformPoint tmpX, tmpY, matrix
+		          cs.X2 = tmpX
+		          cs.Y2 = tmpY
+		        end if
 		        
 		        continueImplicit = false
 		        if i < path.Ubound then
