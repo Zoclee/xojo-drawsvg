@@ -2139,8 +2139,6 @@ Protected Module DrawSVG
 		        
 		        currentAngle = theta1 + angleStep
 		        
-		        // todo... determine correct translation values
-		        //tmpMatrix = initTranslationMatrix(-rx/2, -ry/2) 
 		        tmpMatrix = initTranslationMatrix(0, 0) 
 		        tmpMatrix2 = initTranslationMatrix(cx, cy)
 		        tmpMatrix = matrixMultiply(tmpMatrix, tmpMatrix2)
@@ -2149,7 +2147,8 @@ Protected Module DrawSVG
 		        tmpMatrix2 = initTranslationMatrix(-cx, -cy)
 		        tmpMatrix = matrixMultiply(tmpMatrix, tmpMatrix2)
 		        
-		        while currentAngle * adjustValue < (theta1 + thetaDelta) * adjustValue
+		        
+		        while currentAngle * adjustValue <= (theta1 + thetaDelta) * adjustValue
 		          cs = new CurveShape()
 		          fs.Append cs
 		          
@@ -2159,20 +2158,10 @@ Protected Module DrawSVG
 		          cs.X = tmpX
 		          cs.Y = tmpY
 		          
-		          if ((currentAngle + angleStep) * adjustValue) >= ((theta1 + thetaDelta) * adjustValue) then
-		            tmpX = x2
-		            tmpY = y2
-		          else
-		            
-		            'tmpX = cx + rx * cos(currentAngle * DegToRad) // center a + radius x * cos(theta)
-		            'tmpY = cy + ry * sin(currentAngle * DegToRad) // center b + radius y * sin(theta)
-		            
-		            tmpX = cx + rx * cos(currentAngle * DegToRad) // center a + radius x * cos(theta)
-		            tmpY = cy + ry * sin(currentAngle * DegToRad) // center b + radius y * sin(theta)
-		            
-		            transformPoint tmpX, tmpY, tmpMatrix
-		            
-		          end if
+		          tmpX = cx + rx * cos(currentAngle * DegToRad) // center a + radius x * cos(theta)
+		          tmpY = cy + ry * sin(currentAngle * DegToRad) // center b + radius y * sin(theta)
+		          
+		          transformPoint tmpX, tmpY, tmpMatrix
 		          
 		          penX = tmpX
 		          penY = tmpY
