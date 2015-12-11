@@ -2095,7 +2095,7 @@ Protected Module DrawSVG
 		        'rx = Abs(rx)
 		        'ry = Abs(ry)
 		        '
-		        'radiScale = (x1Comp^2 / rx^2) + (y1Comp^2 / ry^2)
+		        radiScale = (x1Comp^2 / rx^2) + (y1Comp^2 / ry^2)
 		        'if radiScale > 1 then
 		        ';rx = Sqrt(radiScale) * rx
 		        'ry = Sqrt(radiScale) * ry
@@ -2117,11 +2117,11 @@ Protected Module DrawSVG
 		        tmpDbl = tmpDbl / ((rx^2 * y1Comp^2) + (ry^2 * x1Comp^2))
 		        tmpDbl = Sqrt(Abs(tmpDbl))
 		        
-		        'if radiScale <= 1 then
-		        if flagA = flagS then
-		          tmpDbl = -tmpDbl
+		        if radiScale <= 1 then
+		          if flagA = flagS then
+		            tmpDbl = -tmpDbl
+		          end if
 		        end if
-		        'end if
 		        
 		        cxComp = tmpDbl * (rx * y1Comp / ry)
 		        cyComp = tmpDbl * -(ry * x1Comp / rx)
@@ -2156,7 +2156,13 @@ Protected Module DrawSVG
 		        
 		        currentAngle = theta1 + angleStep
 		        
-		        tmpMatrix = initIdentityMatrix() 
+		        tmpMatrix = initTranslationMatrix(0, 0) 
+		        
+		        if radiScale > 1 then
+		          rx = Sqrt(radiScale) * rx
+		          ry = Sqrt(radiScale) * ry
+		        end if
+		        
 		        tmpMatrix2 = initTranslationMatrix(cx, cy)
 		        tmpMatrix = matrixMultiply(tmpMatrix, tmpMatrix2)
 		        tmpMatrix2 = initRotateMatrix(theta)
@@ -2165,8 +2171,6 @@ Protected Module DrawSVG
 		        tmpMatrix = matrixMultiply(tmpMatrix, tmpMatrix2)
 		        
 		        // correction of out-of-range radii
-		        
-		        
 		        
 		        while currentAngle * adjustValue <= (theta1 + thetaDelta) * adjustValue
 		          cs = new CurveShape()
@@ -2178,12 +2182,11 @@ Protected Module DrawSVG
 		          cs.X = tmpX
 		          cs.Y = tmpY
 		          
-		          tmpX = cx + rx  * cos(currentAngle * DegToRad) // center a + radius x * cos(theta)
+		          tmpX = cx + rx  * cos(currentAngle * DegToRad) // center a + radius x * cos(theta) 
 		          tmpY = cy + ry * sin(currentAngle * DegToRad) // center b + radius y * sin(theta)
 		          
 		          transformPoint tmpX, tmpY, tmpMatrix
-		          
-		          penX = tmpX
+		          penX = tmpX 
 		          penY = tmpY
 		          transformPoint tmpX, tmpY, matrix
 		          
