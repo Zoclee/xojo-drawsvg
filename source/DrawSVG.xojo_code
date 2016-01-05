@@ -1316,6 +1316,15 @@ Protected Module DrawSVG
 		  cx = style.LookupDouble("cx")
 		  cy = style.LookupDouble("cy")
 		  fill = style.LookupString("fill", "#000000")
+		  if (fill <> "none") and style.HasName("fill-opacity") then
+		    if Val(style.Value("fill-opacity")) = 0 then
+		      fill = "none"
+		    elseif Val(style.Value("fill-opacity")) = 1 then
+		      // do nothing
+		    else
+		      break // todo
+		    end if
+		  end if
 		  stroke = style.LookupString("stroke", "")
 		  strokeWidth = style.LookupDouble("stroke-width", 1) * matrix(0)
 		  r = style.LookupDouble("r") 
@@ -1410,6 +1419,15 @@ Protected Module DrawSVG
 		  cx = style.LookupDouble("cx")
 		  cy = style.LookupDouble("cy")
 		  fill = style.LookupString("fill", "#000000")
+		  if (fill <> "none") and style.HasName("fill-opacity") then
+		    if Val(style.Value("fill-opacity")) = 0 then
+		      fill = "none"
+		    elseif Val(style.Value("fill-opacity")) = 1 then
+		      // do nothing
+		    else
+		      break // todo
+		    end if
+		  end if
 		  stroke = style.LookupString("stroke", "")
 		  strokeWidth = style.LookupDouble("stroke-width", 1) * matrix(0)
 		  rx = style.LookupDouble("rx") - 2
@@ -1685,12 +1703,21 @@ Protected Module DrawSVG
 		  matrix = matrixMultiply(parentMatrix, matrix)
 		  
 		  fill = style.LookupString("fill", "#000000")
+		  if (fill <> "none") and style.HasName("fill-opacity") then
+		    if Val(style.Value("fill-opacity")) = 0 then
+		      fill = "none"
+		    elseif Val(style.Value("fill-opacity")) = 1 then
+		      // do nothing
+		    else
+		      break // todo
+		    end if
+		  end if
 		  stroke = style.LookupString("stroke", "")
 		  strokeWidth = style.LookupDouble("stroke-width", 1) * matrix(0)
 		  
 		  // fill
 		  
-		  if fill <> "none" then
+		  if (fill <> "none") then
 		    itemFill = true
 		    itemFillColor = determineColor(fill)
 		  else
@@ -2921,6 +2948,15 @@ Protected Module DrawSVG
 		  matrix = matrixMultiply(parentMatrix, matrix)
 		  
 		  fill = style.LookupString("fill", "#000000")
+		  if (fill <> "none") and style.HasName("fill-opacity") then
+		    if Val(style.Value("fill-opacity")) = 0 then
+		      fill = "none"
+		    elseif Val(style.Value("fill-opacity")) = 1 then
+		      // do nothing
+		    else
+		      break // todo
+		    end if
+		  end if
 		  stroke = style.LookupString("stroke", "")
 		  strokeWidth = style.LookupDouble("stroke-width", 1) * matrix(0)
 		  
@@ -2996,6 +3032,15 @@ Protected Module DrawSVG
 		  matrix = matrixMultiply(parentMatrix, matrix)
 		  
 		  fill = style.LookupString("fill", "#000000")
+		  if (fill <> "none") and style.HasName("fill-opacity") then
+		    if Val(style.Value("fill-opacity")) = 0 then
+		      fill = "none"
+		    elseif Val(style.Value("fill-opacity")) = 1 then
+		      // do nothing
+		    else
+		      break // todo
+		    end if
+		  end if
 		  stroke = style.LookupString("stroke", "")
 		  strokeWidth = style.LookupDouble("stroke-width", 1) * matrix(0)
 		  
@@ -3084,6 +3129,15 @@ Protected Module DrawSVG
 		  width = style.LookupDouble("width")
 		  height = style.LookupDouble("height")
 		  fill = style.LookupString("fill", "#000000")
+		  if (fill <> "none") and style.HasName("fill-opacity") then
+		    if Val(style.Value("fill-opacity")) = 0 then
+		      fill = "none"
+		    elseif Val(style.Value("fill-opacity")) = 1 then
+		      // do nothing
+		    else
+		      break // todo
+		    end if
+		  end if
 		  stroke = style.LookupString("stroke", "")
 		  strokeWidth = style.LookupDouble("stroke-width", 1) * matrix(0)
 		  
@@ -3191,6 +3245,15 @@ Protected Module DrawSVG
 		  x = style.LookupDouble("x")
 		  y = style.LookupDouble("y")
 		  fill = style.LookupString("fill", "#000000")
+		  if (fill <> "none") and style.HasName("fill-opacity") then
+		    if Val(style.Value("fill-opacity")) = 0 then
+		      fill = "none"
+		    elseif Val(style.Value("fill-opacity")) = 1 then
+		      // do nothing
+		    else
+		      break // todo
+		    end if
+		  end if
 		  
 		  // fill
 		  
