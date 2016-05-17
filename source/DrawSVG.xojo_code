@@ -1083,7 +1083,7 @@ Protected Module DrawSVG
 		    loadCSS(styleData)
 		    
 		  case else
-		    break
+		    'break
 		    
 		  end select
 		End Sub
@@ -1322,7 +1322,7 @@ Protected Module DrawSVG
 		    elseif Val(style.Value("fill-opacity")) = 1 then
 		      // do nothing
 		    else
-		      break // todo
+		      'break // todo
 		    end if
 		  end if
 		  stroke = style.LookupString("stroke", "")
@@ -1425,7 +1425,7 @@ Protected Module DrawSVG
 		    elseif Val(style.Value("fill-opacity")) = 1 then
 		      // do nothing
 		    else
-		      break // todo
+		      'break // todo
 		    end if
 		  end if
 		  stroke = style.LookupString("stroke", "")
@@ -1709,7 +1709,7 @@ Protected Module DrawSVG
 		    elseif Val(style.Value("fill-opacity")) = 1 then
 		      // do nothing
 		    else
-		      break // todo
+		      'break // todo
 		    end if
 		  end if
 		  stroke = style.LookupString("stroke", "")
@@ -2954,7 +2954,7 @@ Protected Module DrawSVG
 		    elseif Val(style.Value("fill-opacity")) = 1 then
 		      // do nothing
 		    else
-		      break // todo
+		      'break // todo
 		    end if
 		  end if
 		  stroke = style.LookupString("stroke", "")
@@ -3038,7 +3038,7 @@ Protected Module DrawSVG
 		    elseif Val(style.Value("fill-opacity")) = 1 then
 		      // do nothing
 		    else
-		      break // todo
+		      'break // todo
 		    end if
 		  end if
 		  stroke = style.LookupString("stroke", "")
@@ -3135,7 +3135,7 @@ Protected Module DrawSVG
 		    elseif Val(style.Value("fill-opacity")) = 1 then
 		      // do nothing
 		    else
-		      break // todo
+		      'break // todo
 		    end if
 		  end if
 		  stroke = style.LookupString("stroke", "")
@@ -3251,7 +3251,7 @@ Protected Module DrawSVG
 		    elseif Val(style.Value("fill-opacity")) = 1 then
 		      // do nothing
 		    else
-		      break // todo
+		      'break // todo
 		    end if
 		  end if
 		  
