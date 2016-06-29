@@ -1812,20 +1812,16 @@ Protected Module DrawSVG
 		        if i = 0 then
 		          relativeCommand = true
 		        end if
-		        //if currentCommand <> path(i) then
-		        //additionalPath.Append "M"
-		        //end if
-		        additionalPath.Append Str(penX, "-##########0.0####")
-		        additionalPath.Append Str(penY, "-##########0.0####")
+		        //additionalPath.Append Str(penX, "-##########0.0####")
+		        //additionalPath.Append Str(penY, "-##########0.0####")
+		        additionalPath.Append Str(penX)
+		        additionalPath.Append Str(penY)
 		      else
 		        penX = Val(path(i + 1))
 		        penY = Val(path(i + 2))
 		        if i = 0 then
 		          relativeCommand = false
 		        end if
-		        'if currentCommand <> path(i) then
-		        'additionalPath.Append "M"
-		        'end if
 		        additionalPath.Append path(i + 1)
 		        additionalPath.Append path(i + 2)
 		      end if
@@ -1950,12 +1946,12 @@ Protected Module DrawSVG
 		          
 		        elseif StrComp(path(i), "m", 0) = 0 then // relative  moveto
 		          
-		          penX = penX + Val(path(i + 1))
-		          penY = penY + Val(path(i + 2))
+		          penX = penX + Val(path(i +1))
+		          penY = penY + Val(path(i +2))
 		          i = i + 3
 		          while (i <= path.Ubound) and IsNumeric(path(i))
 		            penX = penX + Val(path(i))
-		            penY = penY + Val(path(i + 1))
+		            penY = penY + Val(path(i +1))
 		            i = i + 2
 		          wend
 		          
