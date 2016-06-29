@@ -1800,6 +1800,7 @@ Protected Module DrawSVG
 		  // prep path to hide any possible artifacts created by multiple closed paths in a single path instruction
 		  
 		  i = 0
+		  additionalPath.Append "M"
 		  currentCommand = ""
 		  while i <= path.Ubound
 		    select case path(i)
@@ -1811,31 +1812,40 @@ Protected Module DrawSVG
 		        if i = 0 then
 		          relativeCommand = true
 		        end if
-		        if currentCommand <> path(i) then
-		          additionalPath.Append "m"
-		        end if
-		        additionalPath.Append Str(penX, "##########0.0####")
-		        additionalPath.Append Str(penY, "##########0.0####")
+		        //if currentCommand <> path(i) then
+		        //additionalPath.Append "M"
+		        //end if
+		        additionalPath.Append Str(penX, "-##########0.0####")
+		        additionalPath.Append Str(penY, "-##########0.0####")
 		      else
 		        penX = Val(path(i + 1))
 		        penY = Val(path(i + 2))
 		        if i = 0 then
 		          relativeCommand = false
 		        end if
-		        if currentCommand <> path(i) then
-		          additionalPath.Append "M"
-		        end if
+		        'if currentCommand <> path(i) then
+		        'additionalPath.Append "M"
+		        'end if
 		        additionalPath.Append path(i + 1)
 		        additionalPath.Append path(i + 2)
 		      end if
 		      
 		      currentCommand = path(i)
+		      
 		      i = i + 3
-		      while (i <= path.Ubound) and IsNumeric(path(i))
-		        penX = Val(path(i))
-		        penY = Val(path(i + 1))
-		        i = i + 2
-		      wend
+		      if StrComp(currentCommand, "m", 0) = 0 then
+		        while (i <= path.Ubound) and IsNumeric(path(i))
+		          penX = penX + Val(path(i))
+		          penY = penY + Val(path(i + 1))
+		          i = i + 2
+		        wend
+		      else
+		        while (i <= path.Ubound) and IsNumeric(path(i))
+		          penX = Val(path(i))
+		          penY = Val(path(i + 1))
+		          i = i + 2
+		        wend
+		      end if
 		      
 		      while (i <= path.Ubound) and (path(i) <> "z")
 		        
@@ -2065,6 +2075,7 @@ Protected Module DrawSVG
 		      additionalPath.Append "0"
 		      additionalPath.Append "0"
 		    end if
+		    
 		    i = 0
 		    while i <= additionalPath.Ubound
 		      path.Insert(i, additionalPath(i))
