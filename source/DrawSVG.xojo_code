@@ -2061,9 +2061,9 @@ Protected Module DrawSVG
 		  if additionalPath.Ubound > 4 then
 		    additionalPath.Append "z"
 		    if relativeCommand then
-		      additionalPath.Insert(0, "M")
-		      additionalPath.Insert(1, "0")
-		      additionalPath.Insert(2, "0")
+		      additionalPath.Append "M"
+		      additionalPath.Append "0"
+		      additionalPath.Append "0"
 		    end if
 		    i = 0
 		    while i <= additionalPath.Ubound
