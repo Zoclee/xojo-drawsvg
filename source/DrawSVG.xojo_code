@@ -54,6 +54,11 @@ Protected Module DrawSVG
 		  
 		  result.EscapeSlashes = false
 		  
+		  if mClasses.HasName(node.Name.Lowercase) then
+		    classProperties = mClasses.Value(node.Name.Lowercase)
+		    result.ApplyValues classProperties
+		  end if
+		  
 		  i = 0
 		  while i < node.AttributeCount
 		    xAttr = node.GetAttributeNode(i)
@@ -61,8 +66,8 @@ Protected Module DrawSVG
 		    if xAttr.Name = "class" then
 		      
 		      className = Trim(Lowercase(node.GetCIAttribute(xAttr.Name)))
-		      if mClasses.HasName(className) then
-		        classProperties = mClasses.Value(className)
+		      if mClasses.HasName("." + className) then
+		        classProperties = mClasses.Value("." + className)
 		        result.ApplyValues classProperties
 		      end if
 		      
@@ -732,6 +737,7 @@ Protected Module DrawSVG
 		  ' www.zoclee.com
 		  
 		  Dim className As String
+		  Dim nodeName As String
 		  Dim i As Integer
 		  Dim ch As String
 		  Dim dataLen As Integer
@@ -761,10 +767,6 @@ Protected Module DrawSVG
 		      mClasses.Value(Lowercase(Trim(className))) = classProperties
 		      state = 0 // next class
 		      
-		    elseif ch = "." then
-		      className = ""
-		      state = 1 // class name
-		      
 		    elseif ch = ";" then
 		      classProperties.Value(Lowercase(propName)) = propValue
 		      propName = ""
@@ -777,6 +779,9 @@ Protected Module DrawSVG
 		      
 		    else
 		      select case state
+		      case 0 // next class
+		        className = ch
+		        state = 1 // class name
 		      case 1 // class name
 		        className = className + ch
 		      case 2 // property name
