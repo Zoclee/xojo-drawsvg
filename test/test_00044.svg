@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet">
+	
+	<style type="text/css">
+			circle {
+				stroke: #909;
+				stroke-width: 9;
+				fill: #f6f;
+			}
+		</style>
+	<circle cx="100" cy="100" r="80" />
+</svg>
